@@ -16,7 +16,7 @@
         <nav class="container flex items-center">
             <a href="@yield('href_inicio')">
                 <div class="py-1 flex items-center gap-4 text-slate-50 uppercase text-sm font-semibold">
-                    <img src="public/img/bicicleta_blanca.png" alt="" class="h-14">
+                    <img src="{{ asset('img/bicicleta_blanca.png') }}" alt="" class="h-14">
                     <h2 class="">Pedalea Comodoro</h2>
                 </div>
             </a>
@@ -33,14 +33,14 @@
             </ul>
             <div class="flex lg:hidden flex-1 justify-end">
                 <div>
-                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                    <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC"
                             stroke-width="0.144"></g>
                         <g id="SVGRepo_iconCarrier">
                             <g clip-path="url(#clip0_429_11066)">
-                                <path d="M3 6.00092H21M3 12.0009H21M3 18.0009H21" stroke="#292929" stroke-width="2.5"
+                                <path d="M3 6.00092H21M3 12.0009H21M3 18.0009H21" stroke="#ffffff" stroke-width="2.5"
                                     stroke-linecap="round" stroke-linejoin="round"></path>
                             </g>
                             <defs>

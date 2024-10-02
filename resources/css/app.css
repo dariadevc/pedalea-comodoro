@@ -4,3 +4,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.btn {
+    @apply shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase;
+}
