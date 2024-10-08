@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             // agregar la columna rol de usuario
+            $table->foreignId('role_id')->nullable()->constrained()->onDelete('set null'); // Agregar relación con roles
             $table->string('nombre');
             $table->string('apellido');
             $table->string('email')->unique();
