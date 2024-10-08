@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            // agregar la columna rol de usuario
-            $table->foreignId('role_id')->nullable()->constrained()->onDelete('set null'); // Agregar relación con roles
+            $table->foreignId('id_rol')->constrained('roles')->onDelete('cascade'); // Clave foránea
             $table->string('nombre');
             $table->string('apellido');
             $table->string('email')->unique();
+            $table->string('numero_telefono');
             // $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('contraseña');
             $table->rememberToken();
         });
 
