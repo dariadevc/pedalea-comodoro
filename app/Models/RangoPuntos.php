@@ -10,7 +10,7 @@ class RangoPuntos extends Model
 
     use HasFactory;
 
-    protected $table = 'rango_puntos';
+    protected $table = 'rangos_puntos';
     public $timestamps = false; // Desactivar marcas de tiempo
 
     protected $fillable = [

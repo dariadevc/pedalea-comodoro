@@ -11,10 +11,14 @@ class EstadoEstacion extends Model
 
     protected $table = 'estados_estacion';
 
+    protected $fillable = [
+        'nombre'
+    ];
+
     // Los atributos que no pueden modificarse
     protected $guarded = [
         'id_estado',
-        'nombre_estado',
+        'nombre',
     ];
 
     public function estacion()

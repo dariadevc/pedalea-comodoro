@@ -11,10 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
+        {
+            Schema::create('estados_clientes', function (Blueprint $table) {
+                $table->id('id_estado');
+                $table->string('nombre');
+            });
+        }
+
         Schema::create('clientes', function (Blueprint $table) {
             $table->foreignId('id_usuario')
             ->constrained('usuarios', 'id_usuario')
             ->onDelete('cascade');
+            $table->foreignId('id_estado_cliente')->constrained('estados_clientes', 'id_estado');
             $table->integer('puntaje');
             $table->double('saldo');
             $table->primary(['id_usuario']);
@@ -45,6 +53,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('estados_clientes');
         Schema::dropIfExists('clientes');
         Schema::dropIfExists('inspectores');
         Schema::dropIfExists('administrativos');
