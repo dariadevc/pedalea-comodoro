@@ -44,4 +44,10 @@ class Cliente extends Model
     {
         return $this->hasMany(HistorialSaldo::class, 'id_usuario');
     }
+
+    public function multa()
+    {
+        return $this->hasMany(Multa::class, 'id_multa');
+    }
+    
 }
