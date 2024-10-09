@@ -28,7 +28,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('calificiones');
-        Schema::dropIfExists('tipo_calificiones');
+        Schema::dropIfExists('calificaciones');
+        Schema::dropIfExists('tipo_calificaciones');
     }
 };
