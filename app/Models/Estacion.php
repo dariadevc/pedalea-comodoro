@@ -30,4 +30,12 @@ class Estacion extends Model
     {
         return $this->belongsTo(EstadoEstacion::class, 'id_estacion');
     }
+    public function calificaciones()
+    {
+        return $this->hasMany(Calificacion::class,'id_calificaciones');
+    }
+    public function promedioCalificaciones()
+    {
+        return $this->calificaciones()->avg('estrellas');
+    }
 }
