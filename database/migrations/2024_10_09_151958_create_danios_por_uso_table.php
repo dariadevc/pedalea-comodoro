@@ -15,9 +15,13 @@ return new class extends Migration
             $table->foreignId('id_bicicleta')
                 ->constrained('bicicletas', 'id_bicicleta')
                 ->onDelete('cascade');
-            $table->foreignId('id_historial_danio')
-                ->constrained('historial_danios', 'id_historial_danio')
-                ->onDelete('cascade');
+
+            $table->integer('id_historial_danio');
+
+            $table->foreign(['id_bicicleta', 'id_historial_danio'])
+                ->references(['id_bicicleta', 'id_historial_danio'])
+                ->on('historiales_danios');
+
             $table->foreignId('id_danio')
                 ->constrained('danios', 'id_danio')
                 ->onDelete('cascade');

@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('historial_danios', function (Blueprint $table) {
+        Schema::create('historiales_danios', function (Blueprint $table) {
             // En laravel las entidades débiles de manejan usando FK y agregandole la eliminación de cascada, para expresar la dependencia de la entidad débil por la fuerte
             $table->foreignId('id_bicicleta')->constrained('bicicletas', 'id_bicicleta')->onDelete('cascade');
             $table->integer('id_historial_danio');
-            $table->timestamp('fecha');
+            $table->timestamp('fecha_hora')->useCurrent();
 
             $table->primary(['id_bicicleta', 'id_historial_danio']);
         });
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('historial_danio');
+        Schema::dropIfExists('historiales_danios');
     }
 };
