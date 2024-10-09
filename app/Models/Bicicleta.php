@@ -32,4 +32,10 @@ class Bicicleta extends Model
     {
         return $this->belongsTo(Estacion::class, 'id_estacion_actual');
     }
+
+    //Relación con la entidad débil historial_danio
+    public function historial_danio()
+    {
+        return $this->hasMany(HistorialDanio::class, 'id_bicicleta');
+    }
 }
