@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
+        Schema::create('usuarios', function (Blueprint $table) {
+            $table->id('id_usuario');
             $table->foreignId('id_rol')->constrained('roles')->onDelete('cascade'); // Clave foránea
             $table->string('nombre');
             $table->string('apellido');
@@ -44,7 +44,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('usuarios');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }

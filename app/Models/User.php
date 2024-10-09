@@ -18,6 +18,10 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $table = 'usuarios';
+    public $timestamps = false; // Desactivar marcas de tiempo
+
+    
     protected $fillable = [
         'id_rol',
         'nombre',
@@ -28,7 +32,7 @@ class User extends Authenticatable
     ];
 
     protected $guarded = [
-        'id',
+        'id_usuario',
     ];
 
     /**
@@ -54,19 +58,19 @@ class User extends Authenticatable
         ];
     }
 
-    // Definir relaciones
+    // Definición de relaciones
     public function cliente()
     {
-        return $this->hasOne(Cliente::class);
+        return $this->hasOne(Cliente::class, 'id_usuario');
     }
 
     public function inspector()
     {
-        return $this->hasOne(Inspector::class);
+        return $this->hasOne(Inspector::class, 'id_usuario');
     }
 
     public function administrativo()
     {
-        return $this->hasOne(Administrativo::class);
+        return $this->hasOne(Administrativo::class, 'id_usuario');
     }
 }

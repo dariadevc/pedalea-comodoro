@@ -9,8 +9,12 @@ class Inspector extends Model
 {
     use HasFactory;
 
+    protected $table = 'inspectores';
+    public $timestamps = false; // Desactivar marcas de tiempo
+
+
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id_usuario');
     }
 }
