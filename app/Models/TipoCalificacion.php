@@ -11,14 +11,10 @@ class TipoCalificacion extends Model
 
     protected $table = 'estaciones';
 
-    // Los atributos que pueden modificarse
-    protected $fillable = [
-        'cantidad_estrellas',
-    ];
-
     // Los atributos que no pueden modificarse
     protected $guarded = [
         'id_tipo_calificaciones',
+        'cantidad_estrellas',
     ];
 
     // Relación con el estado
@@ -28,6 +24,6 @@ class TipoCalificacion extends Model
     }
     public function calificaciones()
     {
-        return $this->hasMany(Calificacion::class,'id_calificaciones');
+        return $this->hasMany(Calificacion::class, 'id_calificaciones');
     }
 }
