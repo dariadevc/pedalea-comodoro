@@ -21,7 +21,7 @@ class User extends Authenticatable
     protected $table = 'usuarios';
     public $timestamps = false; // Desactivar marcas de tiempo
 
-    
+
     protected $fillable = [
         'id_rol',
         'nombre',

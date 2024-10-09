@@ -12,14 +12,14 @@ return new class extends Migration
 
     public function up(): void
     {
-        Schema::create('estado_estacion', function (Blueprint $table) {
-            $table->id();
+        Schema::create('estados_estacion', function (Blueprint $table) {
+            $table->id('id_estado');
             $table->string('nombre_estado');
         });
 
-        Schema::create('estacion', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('estado_id')->constrained('estado_estacion')->onDelete('cascade');
+        Schema::create('estaciones', function (Blueprint $table) {
+            $table->id('id_estacion');
+            $table->foreignId('id_estado')->constrained('estados_estacion')->onDelete('cascade');
             $table->string('nombre');
             $table->decimal('latitud', 10, 8);
             $table->decimal('longitud', 11, 8);
@@ -32,6 +32,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('estacion');
+        Schema::dropIfExists('estaciones');
+        Schema::dropIfExists('estados_estacion');
     }
 };
