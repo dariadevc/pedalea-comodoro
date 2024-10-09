@@ -19,7 +19,7 @@ return new class extends Migration
 
         Schema::create('estaciones', function (Blueprint $table) {
             $table->id('id_estacion');
-            $table->foreignId('id_estado')->constrained('estados_estacion')->onDelete('cascade');
+            $table->foreignId('id_estado')->constrained('estados_estacion', 'id_estado')->onDelete('cascade');
             $table->string('nombre');
             $table->decimal('latitud', 10, 8);
             $table->decimal('longitud', 11, 8);
