@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('clientes', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_usuario')->constrained('users')->onDelete('cascade'); // Clave foránea
+            $table->foreignId('id_usuario')
+            ->constrained('usuarios', 'id_usuario')
+            ->onDelete('cascade') 
+            ->primary(); 
             $table->integer('puntaje');
             $table->double('saldo');
 
@@ -21,15 +23,19 @@ return new class extends Migration
         });
         
         Schema::create('inspectores', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_usuario')->constrained('users')->onDelete('cascade'); // Clave foránea
+            $table->foreignId('id_usuario')
+            ->constrained('usuarios', 'id_usuario')
+            ->onDelete('cascade') 
+            ->primary();
 
         });
         
 
         Schema::create('administrativos', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_usuario')->constrained('users')->onDelete('cascade'); // Clave foránea
+            $table->foreignId('id_usuario')
+            ->constrained('usuarios', 'id_usuario')
+            ->onDelete('cascade')
+            ->primary();
         });
     }
 

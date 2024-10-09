@@ -10,6 +10,10 @@ class Cliente extends Model
 
     use HasFactory;
 
+    protected $table = 'clientes';
+    public $timestamps = false; // Desactivar marcas de tiempo
+
+
     protected $fillable = [
         'puntaje',
         'saldo',
