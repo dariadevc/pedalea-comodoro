@@ -34,7 +34,7 @@ class Bicicleta extends Model
     }
 
     //Relación con la entidad débil historial_danio
-    public function historial_danio()
+    public function historialDanios()
     {
         return $this->hasMany(HistorialDanio::class, 'id_bicicleta');
     }
