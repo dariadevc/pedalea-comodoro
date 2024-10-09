@@ -5,23 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EstadoEstacion extends Model
+class TipoDanio extends Model
 {
     use HasFactory;
 
-    protected $table = 'estados_estacion';
+    protected $table = 'tipos_danio';
 
+    // Los atributos que pueden modificarse
     protected $fillable = [
-        'nombre'
+        'descripcion',
     ];
 
     // Los atributos que no pueden modificarse
     protected $guarded = [
-        'id_estado',
+        'id_tipo_danio',
     ];
 
-    public function estacion()
+    public function danio()
     {
-        return $this->hasMany(Estacion::class, 'id_estacion', 'id_estado');
+        return $this->hasMany(Danio::class, 'id_danio', 'id_tipo_danio');
     }
 }

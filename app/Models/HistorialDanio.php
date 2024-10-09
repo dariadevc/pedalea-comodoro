@@ -9,11 +9,12 @@ class HistorialDanio extends Model
 {
     use HasFactory;
 
-    protected $table = 'historial_danio';
+    protected $table = 'historiales_danios';
+    protected $primaryKey = ['id_bicicleta', 'id_historial_danio'];
 
     protected $fillable = [
         'id_bicicleta',
-        'fecha'
+        'fecha_hora'
     ];
 
     protected $guarded = [
@@ -23,5 +24,24 @@ class HistorialDanio extends Model
     public function bicicleta()
     {
         return $this->belongsTo(Bicicleta::class, 'id_bicicleta');
+    }
+
+    //Devuelve los daños asociados a una entrada del historial de daños
+    public function danios()
+    {
+        return $this->belongsToMany(Danio::class, 'danios_por_uso', 'id_historial_danio', 'id_danio')
+            ->using(DanioPorUso::class)
+            ->withPivot('id_bicicleta');
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($historialDanio) {
+            $ultimoHistorialDanio = historialDanio::where('id_bicicleta', $historialDanio->id_bicicleta)
+                ->orderBy('id_historial_danio', 'desc')
+                ->first();
+
+            $historialDanio->id_historial_danio = $ultimoHistorialDanio ? $ultimoHistorialDanio->id_historial_danio + 1 : 1;
+        });
     }
 }
