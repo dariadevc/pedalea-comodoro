@@ -24,7 +24,7 @@ class Bicicleta extends Model
     // Relación con el estado
     public function estado()
     {
-        return $this->belongsTo(EstadoBicicletas::class, 'id_estado');
+        return $this->belongsTo(EstadoBicicleta::class, 'id_estado');
     }
 
     //Relación con la estación actual
