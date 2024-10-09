@@ -49,4 +49,9 @@ class Estacion extends Model
     {
         return $this->hasMany(Calificacion::class, 'id_estacion');
     }
+
+    public function bicicleta()
+    {
+        return $this->hasMany(Bicicleta::class, 'id_estacion');
+    }
 }
