@@ -38,4 +38,9 @@ class Bicicleta extends Model
     {
         return $this->hasMany(HistorialDanio::class, 'id_bicicleta');
     }
+
+    public function reserva()
+    {
+        return $this->hasMany(Bicicleta::class, 'id_bicicleta');
+    }
 }
