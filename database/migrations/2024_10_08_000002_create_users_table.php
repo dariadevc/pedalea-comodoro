@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            // agregar la columna rol de usuario
-            $table->foreignId('role_id')->nullable()->constrained()->onDelete('set null'); // Agregar relación con roles
+        Schema::create('usuarios', function (Blueprint $table) {
+            $table->id('id_usuario');
+            $table->foreignId('id_rol')->constrained('roles')->onDelete('cascade'); // Clave foránea
             $table->string('nombre');
             $table->string('apellido');
             $table->string('email')->unique();
+            $table->string('numero_telefono');
             // $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('contraseña');
             $table->rememberToken();
         });
 
@@ -44,7 +44,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('usuarios');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }

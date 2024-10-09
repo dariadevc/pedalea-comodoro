@@ -18,10 +18,21 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $table = 'usuarios';
+    public $timestamps = false; // Desactivar marcas de tiempo
+
+
     protected $fillable = [
-        'name',
+        'id_rol',
+        'nombre',
+        'apellido',
         'email',
-        'password',
+        'numero_telefono',
+        'contraseña',
+    ];
+
+    protected $guarded = [
+        'id_usuario',
     ];
 
     /**
@@ -30,7 +41,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        'contraseña',
         'remember_token',
     ];
 
@@ -42,8 +53,24 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            // 'email_verified_at' => 'datetime',
+            'contraseña' => 'hashed',
         ];
+    }
+
+    // Definición de relaciones
+    public function cliente()
+    {
+        return $this->hasOne(Cliente::class, 'id_usuario');
+    }
+
+    public function inspector()
+    {
+        return $this->hasOne(Inspector::class, 'id_usuario');
+    }
+
+    public function administrativo()
+    {
+        return $this->hasOne(Administrativo::class, 'id_usuario');
     }
 }
