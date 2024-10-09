@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tipo_calificiones', function (Blueprint $table) {
+        Schema::create('tipo_calificaciones', function (Blueprint $table) {
             $table->id('id_tipo_calificaciones');
-            $table->integer('cantidad estrellas');
+            $table->integer('cantidad_estrellas');
         });
 
         Schema::create('calificiones', function (Blueprint $table) {
