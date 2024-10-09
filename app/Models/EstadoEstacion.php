@@ -22,6 +22,6 @@ class EstadoEstacion extends Model
 
     public function estacion()
     {
-        return $this->hasMany(Estacion::class, 'id_estacion');
+        return $this->hasMany(Estacion::class, 'id_estacion', 'id_estado');
     }
 }
