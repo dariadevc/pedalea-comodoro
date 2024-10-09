@@ -18,7 +18,6 @@ class EstadoEstacion extends Model
     // Los atributos que no pueden modificarse
     protected $guarded = [
         'id_estado',
-        'nombre',
     ];
 
     public function estacion()
