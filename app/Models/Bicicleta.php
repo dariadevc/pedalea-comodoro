@@ -24,12 +24,18 @@ class Bicicleta extends Model
     // Relación con el estado
     public function estado()
     {
-        return $this->belongsTo(EstadoBicicletas::class, 'id_estado');
+        return $this->belongsTo(EstadoBicicleta::class, 'id_estado');
     }
 
     //Relación con la estación actual
     public function estacionActual()
     {
         return $this->belongsTo(Estacion::class, 'id_estacion_actual');
+    }
+
+    //Relación con la entidad débil historial_danio
+    public function historial_danio()
+    {
+        return $this->hasMany(HistorialDanio::class, 'id_bicicleta');
     }
 }
