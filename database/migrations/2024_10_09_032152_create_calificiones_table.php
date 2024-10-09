@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('cantidad_estrellas');
         });
 
-        Schema::create('calificiones', function (Blueprint $table) {
+        Schema::create('calificaciones', function (Blueprint $table) {
             $table->id('id_calificaciones');
             $table->foreignId('id_estacion')->constrained('estaciones', 'id_estacion')->onDelete('cascade');
             $table->foreignId('id_tipo_calificaciones')->constrained('tipo_calificaciones', 'id_tipo_calificaciones')->onDelete('cascade');
