@@ -17,12 +17,14 @@ return new class extends Migration
             $table->foreignId('id_usuario') 
             ->constrained('clientes', 'id_usuario')
             ->onDelete('cascade');
-            $table->bigIncrements('id_historial_saldo');
-            $table->date('fecha_hora');
+            $table->integer('id_historial_saldo');
+            $table->primary(['id_usuario', 'id_historial_saldo']);
+            $table->timestamp('fecha_hora')->useCurrent();
             $table->double('monto');
             $table->text('motivo');
 
         });
+
     }
 
     /**
