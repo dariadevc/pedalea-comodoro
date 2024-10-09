@@ -41,6 +41,6 @@ class Bicicleta extends Model
 
     public function reserva()
     {
-        return $this->hasMany(Bicicleta::class, 'id_bicicleta');
+        return $this->hasMany(Reserva::class, 'id_bicicleta');
     }
 }
