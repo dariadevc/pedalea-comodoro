@@ -24,4 +24,12 @@ class HistorialDanio extends Model
     {
         return $this->belongsTo(Bicicleta::class, 'id_bicicleta');
     }
+
+    //Devuelve los daños asociados a una entrada del historial de daños
+    public function danios()
+    {
+        return $this->belongsToMany(Danio::class, 'danios_por_uso', 'id_historial_danio', 'id_danio')
+            ->using(DanioPorUso::class)
+            ->withPivot('id_bicicleta');
+    }
 }
