@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             EstadosClienteSeeder::class,
             UsersSeeder::class,
             RangosPuntosSeeder::class,
+            HistorialesSaldoSeeder::class,
         ]);
     }
 }
