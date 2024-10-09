@@ -36,4 +36,10 @@ class Cliente extends Model
                     ->using(ClienteRangoPuntos::class)  // Especifica el modelo de pivote
                     ->withPivot('multa_hecha_por_dia', 'suspension_hecha_por_dia', 'cantidad_veces');
     }
+
+    public function multa()
+    {
+        return $this->hasMany(Multa::class, 'id_multa');
+    }
+    
 }
