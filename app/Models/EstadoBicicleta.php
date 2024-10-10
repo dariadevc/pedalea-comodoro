@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EstadoEstacion extends Model
+class EstadoBicicleta extends Model
 {
     use HasFactory;
 
-    protected $table = 'estados_estacion';
+    protected $table = 'estados_bicicleta';
 
+    // Los atributos que se pueden modificar
     protected $fillable = [
         'nombre'
     ];
@@ -20,8 +21,8 @@ class EstadoEstacion extends Model
         'id_estado',
     ];
 
-    public function estacion()
+    public function bicicleta()
     {
-        return $this->hasMany(Estacion::class, 'id_estacion', 'id_estado');
+        return $this->hasMany(Bicicleta::class, 'id_bicicleta', 'id_estado');
     }
 }
