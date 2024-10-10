@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Cliente extends Model
 {
@@ -25,7 +25,7 @@ class Cliente extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id_usuario');
     }
 
     public function estadoCliente()
@@ -60,4 +60,8 @@ class Cliente extends Model
         return $this->hasMany(Reserva::class, 'id_cliente_devuelve');
     }
     
+    public function infracciones()
+    {
+        return $this->hasMany(Infraccion::class, 'id_usuario_cliente', 'id_usuario');
+    }
 }
