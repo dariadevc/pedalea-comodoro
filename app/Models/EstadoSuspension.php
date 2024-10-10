@@ -22,7 +22,7 @@ class EstadoSuspension extends Model
     ];
 
     // Relación con el estado
-    public function multa()
+    public function multas()
     {
         return $this->hasMany(Suspension::class, 'id_suspensiones');
     }

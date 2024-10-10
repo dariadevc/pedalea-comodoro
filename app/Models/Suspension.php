@@ -29,7 +29,7 @@ class Suspension extends Model
     {
         return $this->belongsTo(User::class, 'id_usuario');
     }
-    public function estado_suspension()
+    public function estadoSuspension()
     {
         return $this->belongsTo(EstadoSuspension::class, 'id_estado_suspensiones');
     }
