@@ -9,7 +9,7 @@ class EstadoSuspension extends Model
 {
     use HasFactory;
 
-    protected $table = 'estado_suspensiones';
+    protected $table = 'estados_suspension';
 
     // Los atributos que pueden modificarse
     protected $fillable = [
