@@ -17,4 +17,9 @@ class Inspector extends Model
     {
         return $this->belongsTo(User::class, 'id_usuario');
     }
+
+    public function infracciones()
+    {
+        return $this->hasMany(Infraccion::class, 'id_usuario_inspector', 'id_usuario');
+    }
 }

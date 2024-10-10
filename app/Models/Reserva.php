@@ -10,6 +10,8 @@ class Reserva extends Model
     use HasFactory;
 
     protected $table = 'reservas';
+    protected $primaryKey = 'id_reserva';
+
 
     protected $fillable = [
         'id_bicicleta',
@@ -57,5 +59,10 @@ class Reserva extends Model
     public function clienteDevuelve()
     {
         return $this->belongsTo(Cliente::class, 'id_cliente_devuelve');
+    }
+
+    public function infracciones()
+    {
+        return $this->hasMany(Infraccion::class, 'id_reserva', 'id_reserva');
     }
 }
