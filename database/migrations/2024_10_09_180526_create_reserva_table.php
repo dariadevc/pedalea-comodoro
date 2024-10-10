@@ -25,8 +25,8 @@ return new class extends Migration
             $table->foreignId('id_estado_reserva')->constrained('estados_reserva', 'id_estado_reserva')->onDelete('cascade');
             $table->foreignId('id_cliente_reservo')->constrained('clientes', 'id_usuario')->onDelete('cascade');
             $table->foreignId('id_cliente_devuelve')->constrained('clientes', 'id_usuario')->onDelete('cascade');
-            $table->datetime('fecha_hora_retiro'); //Cual conviene usar para este caso: datetimes o timestamp.
-            $table->datetime('fecha_hora_devolucion');
+            $table->timestamp('fecha_hora_retiro'); //Cual conviene usar para este caso: datetimes o timestamp.
+            $table->timestamp('fecha_hora_devolucion');
             $table->double('monto');
             $table->double('seña');
             $table->integer('puntaje_obtenido');
