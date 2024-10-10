@@ -12,10 +12,13 @@ class EstadoMulta extends Model
     protected $table = 'estados_multa';
 
 
+    protected $fillable = [
+        'nombre',
+    ];
     //No se pueden modificar:
     protected $guarded = [
         'id_estado_multa',
-        'nombre',  //le puse en guarded asi tampoco es modificable. (a chequear)
+
     ];
 
 

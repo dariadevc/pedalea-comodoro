@@ -49,5 +49,15 @@ class Cliente extends Model
     {
         return $this->hasMany(Multa::class, 'id_multa');
     }
+
+    public function reservaReservo()  //Cliente que realizo la reserva
+    {
+        return $this->hasMany(Reserva::class, 'id_cliente_reservo');
+    }
+
+    public function reservaDevuelve()//Cliente que puede devolver si se reasigna la devolucion
+    {
+        return $this->hasMany(Reserva::class, 'id_cliente_devuelve');
+    }
     
 }
