@@ -16,27 +16,39 @@ class HistorialesSaldoSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->crearHistorialSaldoClientePrueba();
+
         $cliente = Cliente::inRandomOrder()->first();
-        HistorialSaldo::create([
-            'id_usuario' => $cliente->id_usuario,
+        $cliente->historialesSaldo()->create([
             'motivo' => 'Carga saldo',
             'monto' => 1000.00,
         ]);
-        HistorialSaldo::create([
-            'id_usuario' => $cliente->id_usuario,
+        $cliente->historialesSaldo()->create([
             'motivo' => 'Pagar multa',
             'monto' => 100.00,
         ]);
-        HistorialSaldo::create([
-            'id_usuario' => $cliente->id_usuario,
+        $cliente->historialesSaldo()->create([
             'motivo' => 'Pagar reserva',
             'monto' => 200.00,
         ]);
-        HistorialSaldo::create([
-            'id_usuario' => $cliente->id_usuario,
+        $cliente->historialesSaldo()->create([
             'motivo' => 'Pagar alquiler',
             'monto' => 300.00,
         ]);
-        
+    }
+
+    private function crearHistorialSaldoClientePrueba()
+    {
+        $cliente = Cliente::find(3);
+
+        $cliente->historialesSaldo()->create([
+            'motivo' => 'Carga saldo',
+            'monto' => 500.00,
+        ]);
+
+        $cliente->historialesSaldo()->create([
+            'motivo' => 'Carga saldo',
+            'monto' => 500.00,
+        ]);
     }
 }

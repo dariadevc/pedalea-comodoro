@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('historiales_danios', function (Blueprint $table) {
             // En laravel las entidades débiles de manejan usando FK y agregandole la eliminación de cascada, para expresar la dependencia de la entidad débil por la fuerte
             $table->foreignId('id_bicicleta')->constrained('bicicletas', 'id_bicicleta')->onDelete('cascade');
-            $table->integer('id_historial_danio');
+            $table->unsignedBigInteger('id_historial_danio');
             $table->timestamp('fecha_hora')->useCurrent();
 
             $table->primary(['id_bicicleta', 'id_historial_danio']);

@@ -10,6 +10,8 @@ class EstadoEstacion extends Model
     use HasFactory;
 
     protected $table = 'estados_estacion';
+    protected $primaryKey = 'id_estado';
+    public $timestamps = false;
 
     protected $fillable = [
         'nombre'

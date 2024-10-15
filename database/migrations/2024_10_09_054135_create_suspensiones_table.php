@@ -12,16 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('estados_suspension', function (Blueprint $table) {
-            $table->id('id_estado_suspension');
+            $table->id('id_estado');
             $table->string('nombre');
         });
 
         Schema::create('suspensiones', function (Blueprint $table) {
-            $table->id('id_suspensiones');
+            $table->id('id_suspension');
             $table->foreignId('id_usuario')->constrained('clientes', 'id_usuario')->onDelete('cascade');
-            $table->foreignId('id_estado_suspension')->constrained('estados_suspension', 'id_estado_suspension')->onDelete('cascade');
+            $table->foreignId('id_estado')->constrained('estados_suspension', 'id_estado')->onDelete('cascade');
             $table->date('fecha_desde');
             $table->date('fecha_hasta');
+            $table->datetime('fecha_hora');
             $table->string('descripcion');
         });
     }

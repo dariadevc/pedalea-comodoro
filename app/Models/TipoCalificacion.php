@@ -9,21 +9,17 @@ class TipoCalificacion extends Model
 {
     use HasFactory;
 
-    protected $table = 'estaciones';
+    protected $table = 'tipos_calificacion';
+    protected $primaryKey = 'id_tipo_calificacion';
+    public $timestamps = false;
 
     // Los atributos que no pueden modificarse
     protected $guarded = [
-        'id_tipo_calificaciones',
         'cantidad_estrellas',
     ];
-
-    // Relación con el estado
-    public function estado()
-    {
-        return $this->belongsTo(EstadoEstacion::class, 'id_estacion');
-    }
+    
     public function calificaciones()
     {
-        return $this->hasMany(Calificacion::class, 'id_calificaciones');
+        return $this->hasMany(Calificacion::class, 'id_tipo_calificacion', 'id_tipo_calificacion');
     }
 }

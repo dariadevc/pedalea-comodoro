@@ -5,28 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Cliente extends Model
+class Cliente extends User
 {
 
     use HasFactory;
 
-    protected $primaryKey = 'id_usuario';
     protected $table = 'clientes';
+    protected $primaryKey = 'id_usuario';
     public $timestamps = false; // Desactivar marcas de tiempo
 
 
-    protected $fillable = 
-    [
+    protected $fillable = [
+        'id_usuario',
         'id_estado_cliente',
         'puntaje',
         'saldo',
     ];
-
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'id_usuario');
-    }
 
     public function estadoCliente()
     {
@@ -42,22 +36,22 @@ class Cliente extends Model
 
     public function historialesSaldo()
     {
-        return $this->hasMany(HistorialSaldo::class, 'id_usuario');
+        return $this->hasMany(HistorialSaldo::class, 'id_usuario', 'id_usuario');
     }
 
-    public function multa()
+    public function multas()
     {
-        return $this->hasMany(Multa::class, 'id_multa');
+        return $this->hasMany(Multa::class, 'id_usuario', 'id_usuario');
     }
 
     public function reservaReservo()  //Cliente que realizo la reserva
     {
-        return $this->hasMany(Reserva::class, 'id_cliente_reservo');
+        return $this->hasMany(Reserva::class, 'id_cliente_reservo', 'id_usuario');
     }
 
     public function reservaDevuelve()//Cliente que puede devolver si se reasigna la devolucion
     {
-        return $this->hasMany(Reserva::class, 'id_cliente_devuelve');
+        return $this->hasMany(Reserva::class, 'id_cliente_devuelve', 'id_usuario');
     }
     
     public function infracciones()

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('id_reserva')->constrained('reservas', 'id_reserva')->onDelete('cascade');
             $table->foreignId('id_usuario_inspector')->constrained('inspectores', 'id_usuario')->onDelete('cascade');
             $table->integer('cantidad_puntos');
+            $table->dateTime('fecha_hora');
             $table->text('motivo');
         });
     }

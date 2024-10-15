@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('estados_bicicleta', function (Blueprint $table) {
             $table->id('id_estado');
-            $table->string('nombre_estado');
+            $table->string('nombre');
         });
 
         Schema::create('bicicletas', function (Blueprint $table) {
             $table->id('id_bicicleta');
             $table->foreignId('id_estado')->constrained('estados_bicicleta', 'id_estado')->onDelete('cascade');
-            $table->foreignId('id_estacion_actual')->constrained('estaciones', 'id_estado')->onDelete('cascade');
-            $table->string('patente');
+            $table->foreignId('id_estacion_actual')->nullable()->constrained('estaciones', 'id_estacion')->onDelete('cascade');
+            $table->string('patente', 3)->unique();
         });
     }
 

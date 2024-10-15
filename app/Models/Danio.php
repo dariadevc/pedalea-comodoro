@@ -10,6 +10,8 @@ class Danio extends Model
     use HasFactory;
 
     protected $table = 'danios';
+    protected $primaryKey = 'id_danio';
+    public $timestamps = false;
 
     // Los atributos que pueden modificarse
     protected $fillable = [
@@ -24,7 +26,7 @@ class Danio extends Model
 
     public function tipoDanio()
     {
-        return $this->belongsTo(TipoDanio::class, 'id_tipo_danio');
+        return $this->belongsTo(TipoDanio::class, 'id_tipo_danio', 'id_tipo_danio');
     }
 
     public function historialDanio()

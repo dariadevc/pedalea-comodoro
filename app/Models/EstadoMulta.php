@@ -10,6 +10,8 @@ class EstadoMulta extends Model
     use HasFactory;
 
     protected $table = 'estados_multa';
+    protected $primaryKey = 'id_estado';
+    public $timestamps = false;
 
 
     protected $fillable = [
@@ -25,7 +27,7 @@ class EstadoMulta extends Model
     //La rela 1aM 
     public function multa()
     {
-        return $this->hasMany(Multa::class, 'id_multa');
+        return $this->hasMany(Multa::class, 'id_estado', 'id_estado');
     }
 
 

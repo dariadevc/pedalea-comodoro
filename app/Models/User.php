@@ -19,6 +19,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $table = 'usuarios';
+    protected $primaryKey = 'id_usuario';
     public $timestamps = false; // Desactivar marcas de tiempo
 
 
@@ -28,7 +29,7 @@ class User extends Authenticatable
         'apellido',
         'email',
         'numero_telefono',
-        'contraseña',
+        'contrasenia',
     ];
 
     protected $guarded = [
@@ -56,21 +57,5 @@ class User extends Authenticatable
             // 'email_verified_at' => 'datetime',
             'contraseña' => 'hashed',
         ];
-    }
-
-    // Definición de relaciones
-    public function cliente()
-    {
-        return $this->hasOne(Cliente::class, 'id_usuario');
-    }
-
-    public function inspector()
-    {
-        return $this->hasOne(Inspector::class, 'id_usuario');
-    }
-
-    public function administrativo()
-    {
-        return $this->hasOne(Administrativo::class, 'id_usuario');
     }
 }

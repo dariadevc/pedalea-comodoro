@@ -9,12 +9,14 @@ class Calificacion extends Model
 {
     use HasFactory;
 
-    protected $table = 'estaciones';
+    protected $table = 'calificaciones';
+    protected $primaryKey = 'id_calificacion';
+    public $timestamps = false;
 
     // Los atributos que pueden modificarse
     protected $fillable = [
         'id_estacion',
-        'id_tipo_calificaciones',
+        'id_tipo_calificacion',
 
     ];
 
@@ -32,13 +34,13 @@ class Calificacion extends Model
     }
 
     // Relación con el estado
-    public function tipo_calificaciones()
+    public function tipoCalificacion()
     {
-        return $this->belongsTo(TipoCalificacion::class, 'id_tipo_calificaciones');
+        return $this->belongsTo(TipoCalificacion::class, 'id_tipo_calificacion', 'id_tipo_calificacion');
     }
 
     public function estacion()
     {
-        return $this->belongsTo(Estacion::class, 'id_estacion');
+        return $this->belongsTo(Estacion::class, 'id_estacion', 'id_estacion');
     }
 }

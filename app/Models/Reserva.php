@@ -11,13 +11,14 @@ class Reserva extends Model
 
     protected $table = 'reservas';
     protected $primaryKey = 'id_reserva';
+    public $timestamps = false;
 
 
     protected $fillable = [
         'id_bicicleta',
         'id_estacion_retiro',
         'id_estacion_devolucion',
-        'id_estado_reserva',
+        'id_estado',
         'id_cliente_reservo',
         'id_cliente_devuelve',
         'fecha_hora_retiro',
@@ -48,17 +49,17 @@ class Reserva extends Model
 
     public function estado()
     {
-        return $this->belongsTo(EstadoReserva::class, 'id_estado_reserva');
+        return $this->belongsTo(EstadoReserva::class, 'id_estado', 'id_estado');
     }
 
     public function clienteReservo()
     {
-        return $this->belongsTo(Cliente::class, 'id_cliente_reservo');
+        return $this->belongsTo(Cliente::class, 'id_cliente_reservo', 'id_usuario');
     }
 
     public function clienteDevuelve()
     {
-        return $this->belongsTo(Cliente::class, 'id_cliente_devuelve');
+        return $this->belongsTo(Cliente::class, 'id_cliente_devuelve', 'id_usuario');
     }
 
     public function infracciones()
