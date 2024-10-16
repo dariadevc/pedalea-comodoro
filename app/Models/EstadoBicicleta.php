@@ -10,6 +10,8 @@ class EstadoBicicleta extends Model
     use HasFactory;
 
     protected $table = 'estados_bicicleta';
+    protected $primaryKey = 'id_estado';
+    public $timestamps = false;
 
     // Los atributos que se pueden modificar
     protected $fillable = [

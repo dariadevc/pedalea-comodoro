@@ -11,19 +11,17 @@ class HistorialDanio extends Model
 
     protected $table = 'historiales_danios';
     protected $primaryKey = ['id_bicicleta', 'id_historial_danio'];
+    public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'id_bicicleta',
         'fecha_hora'
     ];
 
-    protected $guarded = [
-        'id_historial_danio',
-    ];
-
     public function bicicleta()
     {
-        return $this->belongsTo(Bicicleta::class, 'id_bicicleta');
+        return $this->belongsTo(Bicicleta::class, 'id_bicicleta', 'id_bicicleta');
     }
 
     //Devuelve los daños asociados a una entrada del historial de daños

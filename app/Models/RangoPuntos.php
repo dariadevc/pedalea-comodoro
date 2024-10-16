@@ -11,7 +11,8 @@ class RangoPuntos extends Model
     use HasFactory;
 
     protected $table = 'rangos_puntos';
-    public $timestamps = false; // Desactivar marcas de tiempo
+    protected $primaryKey = 'id_rango_puntos';
+    public $timestamps = false;
 
     protected $fillable = [
         'rango_minimo',

@@ -10,17 +10,17 @@ class EstadoReserva extends Model
     use HasFactory;
 
     protected $table = 'estados_reserva';
+    protected $primaryKey = 'id_estado';
+    public $timestamps = false;
 
-    protected $fillable = ['nombre',
+    
+    protected $fillable = [
+        'nombre'
     ];
 
-    protected $guarded = [
-        'id_estado_reserva',
-    ];
-
-    public function reserva()
+    public function reservas()
     {
-        return $this->hasMany(Reserva::class, 'id_estado_reserva');
+        return $this->hasMany(Reserva::class, 'id_estado', 'id_estado');
     }
 
 }

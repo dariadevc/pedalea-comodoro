@@ -25,7 +25,7 @@ class HistorialSaldo extends Model
 
     public function cliente()
     {
-        return $this->belongsTo(Cliente::class, 'id_usuario');
+        return $this->belongsTo(Cliente::class, 'id_usuario', 'id_usuario');
     }
 
     // Generar dependiente_id automáticamente

@@ -10,6 +10,8 @@ class EstadoSuspension extends Model
     use HasFactory;
 
     protected $table = 'estados_suspension';
+    protected $primaryKey = 'id_estado_suspensiones';
+    public $timestamps = false;
 
     // Los atributos que pueden modificarse
     protected $fillable = [

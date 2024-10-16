@@ -12,11 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('danios_por_uso', function (Blueprint $table) {
-            $table->foreignId('id_bicicleta')
-                ->constrained('bicicletas', 'id_bicicleta')
-                ->onDelete('cascade');
+            // Para mi esto no va porque sino es como que estas relacionando
+            // $table->foreignId('id_bicicleta')
+            //     ->constrained('bicicletas', 'id_bicicleta')
+            //     ->onDelete('cascade');
 
-            $table->integer('id_historial_danio');
+            $table->unsignedBigInteger('id_historial_danio');
+            $table->unsignedBigInteger('id_bicicleta');
 
             $table->foreign(['id_bicicleta', 'id_historial_danio'])
                 ->references(['id_bicicleta', 'id_historial_danio'])

@@ -11,6 +11,7 @@ class EstadoCliente extends Model
     use HasFactory;
     
     protected $table = 'estados_clientes';
+    protected $primaryKey = 'id_estado';
     public $timestamps = false;
 
 

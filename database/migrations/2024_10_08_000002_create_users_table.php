@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('apellido');
             $table->string('email')->unique();
-            $table->string('numero_telefono');
+            $table->string('numero_telefono', 20);
             // $table->timestamp('email_verified_at')->nullable();
-            $table->string('contraseña');
+            $table->string('contrasenia');
             $table->rememberToken();
         });
 

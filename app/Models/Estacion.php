@@ -10,6 +10,8 @@ class Estacion extends Model
     use HasFactory;
 
     protected $table = 'estaciones';
+    protected $primaryKey = 'id_estacion';
+    public $timestamps = false;
 
     // Los atributos que pueden modificarse
     protected $fillable = [
@@ -31,38 +33,36 @@ class Estacion extends Model
         return $this->belongsTo(EstadoEstacion::class, 'id_estado'); //Acá va la clave foránea
     }
 
-    //TODO: Probar en la BD que calcule bien el promedio.
-    // Método para actualizar el promedio de la estación, hay que llamarlo al crear una nueva calificación
-    public function actualizarPromedioEstacion()
+
+    public function calificaciones()
+    {
+        return $this->hasMany(Calificacion::class, 'id_estacion', 'id_estacion');
+    }
+
+    public function bicicleta()
+    {
+        return $this->hasMany(Bicicleta::class, 'id_estacion_actual', 'id_estacion');
+    }
+
+    public function reservaRetiro()
+    {
+        return $this->hasMany(Reserva::class, 'id_estacion_retiro', 'id_estacion');
+    }
+
+    public function reservaDevolucion()
+    {
+        return $this->hasMany(Reserva::class, 'id_estacion_devolucion', 'id_estacion');
+    }
+
+    public function actualizarPromedio()
     {
         // Calcular el promedio de todas las calificaciones de esta estación
-        $promedio = Calificacion::where('id_estacion', $this->id)
-            ->join('tipo_calificacion', 'calificacion.id_tipo_calificacion', '=', 'tipo_calificacion.id_tipo_calificacion')
-            ->avg('tipo_calificacion.cantidad_estrellas');
+        $promedio = $this->calificaciones()  // Usar la relación ya existente
+            ->join('tipos_calificacion', 'calificaciones.id_tipo_calificacion', '=', 'tipos_calificacion.id_tipo_calificacion')
+            ->avg('tipos_calificacion.cantidad_estrellas');
 
         // Actualizar la calificación promedio de la estación
         $this->calificacion = $promedio ?? 0;
         $this->save();
     }
-
-    public function calificaciones()
-    {
-        return $this->hasMany(Calificacion::class, 'id_estacion');
-    }
-
-    public function bicicleta()
-    {
-        return $this->hasMany(Bicicleta::class, 'id_estacion');
-    }
-
-    public function reservaRetiro()
-    {
-        return $this->hasMany(Reserva::class, 'id_estacion_retiro');
-    }
-
-    public function reservaDevolucion()
-    {
-        return $this->hasMany(Reserva::class, 'id_estacion_devolucion');
-    }
-    
 }

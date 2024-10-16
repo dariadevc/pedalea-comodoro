@@ -9,12 +9,16 @@ class PuntajeDevolucion extends Model
 {
     use HasFactory;
 
-    protected $table = 'puntaje_devolucion';
+    protected $table = 'puntajes_devolucion';
+    protected $primaryKey = 'id_puntaje_devolucion';
+    public $timestamps = false;
 
     //Atributos modificables:
     protected $fillable = [
         'tope_horario_entrega',
-        'puntaje',
+        'puntaje_sin_danio',
+        'puntaje_con_danio_recuperable',
+        'puntaje_con_danio_no_recuperable',
     ];
 
     //Atributos no modificables:

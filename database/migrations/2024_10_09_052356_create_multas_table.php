@@ -12,15 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('estados_multa', function (Blueprint $table) {
-            $table->id('id_estado_multa');
+            $table->id('id_estado');
             $table->string('nombre');
         });
 
         Schema::create('multas', function (Blueprint $table) {
             $table->id('id_multa');
             $table->foreignId('id_usuario')->constrained('clientes', 'id_usuario')->onDelete('cascade'); 
-            $table->foreignId('id_estado_multa')->constrained('estados_multa', 'id_estado_multa')->onDelete('cascade'); 
+            $table->foreignId('id_estado')->constrained('estados_multa', 'id_estado')->onDelete('cascade'); 
             $table->double('monto');
+            $table->datetime('fecha_hora');
             $table->string('descripcion');
         });
     }
