@@ -1,6 +1,6 @@
 @extends('layouts.invitado')
 
-@section('title', 'Pedalea Comodoro')
+@section('titulo', 'Pedalea Comodoro')
 
 {{-- TODO: Ver el tema de las rutas para linkear la landing page cada vez que hacen click en el logo --}}
 @section('href_inicio', 'invitado.landing')
