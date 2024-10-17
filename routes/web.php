@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EstacionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,8 +34,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 // })->name('home');
 
 Route::get('/', function () {
-    return view('invitado.landing')
-    ->name('home');
+    return view('invitado.landing');
+    // ->name('home');
 });
 
 Route::get('/alquilar', function () {
@@ -48,6 +49,10 @@ Route::get('/devolver', function () {
 Route::get('/reservar', function () {
     return view('cliente.reservar');  // Renderiza la vista 'home.blade.php'
 });
+
+
+// Ruta para obtener estaciones, protegida por autenticación y CSRF
+Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
 
 
 require __DIR__.'/auth.php';
