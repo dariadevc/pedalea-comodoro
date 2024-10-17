@@ -27,6 +27,11 @@ return [
         'role' => Spatie\Permission\Models\Role::class,
 
     ],
+    
+    'middleware' => [
+        'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+    ],
 
     'table_names' => [
 
