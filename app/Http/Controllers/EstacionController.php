@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bicicleta;
-use App\Models\Estacion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -47,24 +45,6 @@ class EstacionController extends Controller
             ->whereNull('r.id_bicicleta') // Excluir bicicletas en reservas activas
             ->groupBy('e.id_estacion', 'e.nombre', 'e.latitud', 'e.longitud')
             ->get();
-
-
-        // $estacionesConBicicletasDisponibles = Estacion::with(['bicicletas' => function ($query) {
-        //     $query->whereDoesntHave('reservas', function ($subQuery) {
-        //         $subQuery->whereIn('id_estado', [1, 2, 5, 6]); // Estados: Alquilada, Activa, Reasignada, Modificada
-        //     });
-        // }])
-        //     ->where('id_estado', 1)
-        //     ->select('id_estacion', 'nombre AS nombre_estacion', 'latitud', 'longitud')
-        //     ->get()
-        //     ->map(function ($estacion) {
-        //         return [
-        //             'nombre_estacion' => $estacion->nombre_estacion,
-        //             'latitud' => $estacion->latitud,
-        //             'longitud' => $estacion->longitud,
-        //             'cantidad_bicicletas_disponibles' => $estacion->bicicletas->count(),
-        //         ];
-        //     });
 
         return response()->json($estacionesConBicicletasDisponibles);
     }
