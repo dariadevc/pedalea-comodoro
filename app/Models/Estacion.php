@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Reserva;
 
 class Estacion extends Model
 {
@@ -54,6 +55,7 @@ class Estacion extends Model
         return $this->hasMany(Reserva::class, 'id_estacion_devolucion', 'id_estacion');
     }
 
+
     public function actualizarPromedio()
     {
         // Calcular el promedio de todas las calificaciones de esta estación
@@ -65,4 +67,46 @@ class Estacion extends Model
         $this->calificacion = $promedio ?? 0;
         $this->save();
     }
+
+    /* Se supone que el horario_retiro que ha ingresado el usuario, es uno tal que es hasta
+    dos horas de antelación, por lo que este metodo trabaja sobre un horario de retiro ya valido previamente!    
+    */
+
+    /*Una bicicleta está disponible (es decir, no está reservada ni alquilada ni fuera
+    de servicio) en una estación, si en mi colección de reservas
+    está disponible exactamente en el horario de retiro. ¿Qué pasa con las reservas que
+    no han sido confirmadas aún ?(no estan alquiladas) ¿no están disponibles en todo el día
+    (es decir, hasta que estén disponibles nuevamente), hasta que sean devueltas 
+    o que no hayan ido a alquilarlas (y entonces el sistema las cambia a estado disponible
+    automaticamente) ? sí. exactamente. 
+    No hay rangos a tener en cuenta, o está disponible en el horario de retiro que 
+    quiere el cliente, o no lo está. Nada más.
+        
+    Una bicicleta solo dejará de estar reservada, si el cliente hace la devolución,
+    si un cliente indica que la bicicleta está disponible físicamente en el momento 
+    de la devolución (aún cuando a nivel sistema no lo estaba. Esto sucede cuando alguien
+    la devuelve pero no confirma la devolución y quedó a nivel sistema sin ser devuelta, pero 
+    físicamente sí fue devuelta) o si no va a retirarla en el 
+    momento de confirmar la reserva (alquiler).
+    */
+
+    
+    public function calcularBicisDisponibles(int $cantidadNoDisponibles)
+    {
+        $cantidadDisponibles = $this->bicicletas - $cantidadNoDisponibles;
+        return $cantidadDisponibles;
+    }
+
+    public function verificarDisponibilidad(DateTime $horario_retiro)
+    {   
+        $horario_retiro_mysql = $horario_retiro->format('Y-m-d H:i:s');
+
+        // Me fijo las reservas que tiene la estación en ese horario de retiro
+        // y cuento la cantidad de bicicletas (es decir, las no disponibles) que hay en ese momento.
+        $bicisNoDisponibles = DB::table('reservas') // Corrige la forma de acceder a la tabla
+            ->where('id_estacion', $this->id_estacion)
+            ->where('horario_retiro', $horario_retiro_mysql) // Usa $horario_retiro_mysql
+            ->count('id_bicicleta'); // Cuenta la cantidad de bicicletas reservadas
+        return $bicisNoDisponibles;
+     }
 }

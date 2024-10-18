@@ -48,4 +48,45 @@ class EstacionController extends Controller
 
         return response()->json($estacionesConBicicletasDisponibles);
     }
+
+    //el horario de retiro debe ser uno validado en el formulario, en el momento en que llena el formulario, con javascript..
+    //A partir de tener un horario de retiro validado, este método comenzará a funcionar 
+    public function buscarDisponibilidad(DateTime $horario_retiro)
+    {
+        $estaciones = Estaciones::all(); //array de objetos
+
+        $estacionesDisponibles = [];
+        
+        foreach ($estaciones as $estacion) {
+        
+        $cantidadNoDisponibles = $estacion->verificarDisponibilidad($horario_retiro);
+        $cantidadBicisDisponibles= $estacion->calcularBicisDisponibles($cantidadNoDisponibles);
+        
+        if ($cantidadBicisDisponibles>0){
+            $estacionesDisponibles[]=$estacion;
+        }
+
+
+    }
+    
+    return $estacionesDisponibles;
+
+        
+        
+            /*
+        estaciones ; array de objetos estaciones
+        estacionesDisponibles ; array vacío que se va a ir llenando con las estaciones que determinemos que estan disponibles
+        for (estaciones){
+            cantidadNoDisponibles = estacion.verificarDisponibilidad(horario_retiro)
+            cantidad = estacion.calcularBicisDisponibles(cantidadNoDisponibles)
+            
+            if (cantidad>0){
+            estacionesDisponibles.add(estacion)
+            }
+        }
+
+        return estacionesDisponibles;
+
+        */
+    }
 }
