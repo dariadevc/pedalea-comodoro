@@ -23,8 +23,8 @@ class EstadoBicicleta extends Model
         'id_estado',
     ];
 
-    public function bicicleta()
+    public function bicicletas()
     {
-        return $this->hasMany(Bicicleta::class, 'id_bicicleta', 'id_estado');
+        return $this->hasMany(Bicicleta::class, 'id_estado', 'id_estado');
     }
 }

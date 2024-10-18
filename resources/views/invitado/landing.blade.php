@@ -124,8 +124,8 @@
     </section>
 
     {{-- TODO: Agregar mapa real! --}}
-    <!-- MAPA INTERACTIVO  -->
-    <section id="mapa" class="relative scroll-mt-28">
+    {{-- <!-- MAPA INTERACTIVO  -->
+    <section id="seccion-mapa" class="relative scroll-mt-28">
         <div class="container my-12 mt-20">
             <!-- CONTENIDO -->
             <div class="text-center my-12">
@@ -135,9 +135,32 @@
                 <p class="text-pc-texto-p">Podes hacer click en cada punto del mapa para acceder a la información disponible
                     de cada estación.</p>
             </div>
-            <div class="flex justify-center flex-1 mb-0 z-10">
+            <div class="flex justify-center flex-1 mb-0 z-10" id="mapa">
                 <img src="{{ asset('img/mapa_comodoro.jpg') }}" alt="" class="">
             </div>
         </div>
+    </section> --}}
+    <!-- MAPA INTERACTIVO  -->
+    <section id="seccion-mapa" class="relative scroll-mt-28">
+        <div class="container my-12 mt-20">
+            <!-- CONTENIDO -->
+            <div class="text-center my-12">
+                <h2 class="text-pc-texto-h font-bold text-3xl sm:text-4xl capitalize my-6">Estaciones en la ciudad</h2>
+                <p class="text-pc-texto-p">En este mapa interactivo podes encontrar todas las estaciones que se encuentran
+                    en la ciudad de Comodoro Rivadavia.</p>
+                <p class="text-pc-texto-p">Podes hacer click en cada punto del mapa para acceder a la información disponible
+                    de cada estación.</p>
+            </div>
+            <!-- Contenedor para el mapa interactivo -->
+            <div class="flex justify-center flex-1 mb-0 z-10" id="mapa" style="width: 100%; height: 500px;"></div>
+        </div>
     </section>
+@endsection
+
+@section('scripts')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
+    <script src="{{ asset('js/mapa.js') }}"></script>
 @endsection

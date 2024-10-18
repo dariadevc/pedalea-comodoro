@@ -35,7 +35,7 @@ class Reserva extends Model
 
     public function bicicleta()
     {
-        return $this->belongsTo(Bicicleta::class, 'id_bicicleta');
+        return $this->belongsTo(Bicicleta::class, 'id_bicicleta', 'id_bicicleta');
     }
 
     public function estacionRetiro()
