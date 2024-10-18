@@ -39,7 +39,7 @@ class Estacion extends Model
         return $this->hasMany(Calificacion::class, 'id_estacion', 'id_estacion');
     }
 
-    public function bicicleta()
+    public function bicicletas()
     {
         return $this->hasMany(Bicicleta::class, 'id_estacion_actual', 'id_estacion');
     }
