@@ -29,9 +29,8 @@ class UsersSeeder extends Seeder
         for ($i = 0; $i < 50; $i++) {
             
             $rol = $roles->random();
-            $usuario = User::factory()->create([
-                'id_rol' => $rol->id,
-            ]);
+            $usuario = User::factory()->create();
+            $usuario->assignRole($rol);
 
             switch ($rol->name) {
                 case 'cliente':
@@ -69,9 +68,9 @@ class UsersSeeder extends Seeder
             'apellido' => 'Perez',
             'email' => 'clientebike1@gmail.com',
             'numero_telefono' => '2974999999',
-            'contrasenia' => Hash::make('12345678'),
-            'id_rol' => $rol->id,
+            'password' => Hash::make('12345678'),
         ]);
+        $usuario->assignRole($rol->name);
 
         Cliente::create([
             'id_usuario' => $usuario->id_usuario,
@@ -87,9 +86,9 @@ class UsersSeeder extends Seeder
             'apellido' => 'Colapinto',
             'email' => 'inspectorbike1@gmail.com',
             'numero_telefono' => '2974999999',
-            'contrasenia' => Hash::make('12345678'),
-            'id_rol' => $rol->id,
+            'password' => Hash::make('12345678'),
         ]);
+        $usuario->assignRole($rol->name);
 
         Inspector::create([
             'id_usuario' => $usuario->id_usuario,
@@ -102,9 +101,9 @@ class UsersSeeder extends Seeder
             'apellido' => 'Messi',
             'email' => 'admbike15@gmail.com',
             'numero_telefono' => '2974999999',
-            'contrasenia' => Hash::make('12345678'),
-            'id_rol' => $rol->id,
+            'password' => Hash::make('12345678'),
         ]);
+        $usuario->assignRole($rol->name);
 
         Administrativo::create([
             'id_usuario' => $usuario->id_usuario,
