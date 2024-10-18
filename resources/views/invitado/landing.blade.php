@@ -2,6 +2,11 @@
 
 @section('titulo', 'Pedalea Comodoro')
 
+{{-- TODO: Ver el tema de las rutas para linkear la landing page cada vez que hacen click en el logo --}}
+@section('href_inicio', 'invitado.landing')
+
+
+{{-- TODO: Ver el tema de las rutas para linkear el registro y el inicio de sesión --}}
 {{-- TODO: Ver como hacer para que los números de las estadísticas se actualicen con los datos de la BD --}}
 {{-- TODO: Agregar sección para acceder al manual de usuario --}}
 @section('contenido')
@@ -24,7 +29,7 @@
                 <div class="flex justify-center flex-wrap gap-6">
                     <button
                         class="btn bg-slate-50 border outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50"><a
-                            href="{{ route('register') }}">Registrarse</a></button>
+                            href="{{ route('registrarse') }}">Registrarse</a></button>
                     <button
                         class="btn bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-rojo text-pc-rojo hover:bg-pc-rojo hover:text-slate-50"><a
                             href="{{ route('iniciar_sesion') }}">Iniciar Sesión</a></button>
