@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdministrativoController;
+use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\EstacionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -22,12 +24,35 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     })->name('cliente.dashboard');
 });
 
-// Ruta para el dashboard de administrador
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard'); // Vista para el administrador
-    })->name('admin.dashboard');
+// HAY QUE USAR LA LINEA COMENTADA NO OLVIDARSE
+
+// Route::middleware(['auth', 'role:admin'])->group(function () {  
+Route::middleware([])->group(function () {
+    Route::get('/dashboard', [AdministrativoController::class, 'dashboard'])->name('administrativo.dashboard');
+    
+    // Rutas para gestión de bicicletas
+    Route::get('/bicicletas', [BicicletaController::class, 'index'])->name('bicicletas.index');
+    Route::get('/bicicletas/create', [BicicletaController::class, 'create'])->name('bicicletas.create');
+    Route::post('/bicicletas', [BicicletaController::class, 'store'])->name('bicicletas.store');
+    Route::get('/bicicletas/edit/{bicicleta}', [BicicletaController::class, 'edit'])->name('bicicletas.edit');
+    Route::put('/bicicletas/{bicicleta}', [BicicletaController::class, 'update'])->name('bicicletas.update');
+    Route::delete('/bicicletas/{bicicleta}', [BicicletaController::class, 'destroy'])->name('bicicletas.destroy');
+
+    // Rutas para gestión de estaciones
+    Route::get('/estaciones', [EstacionController::class, 'index'])->name('estaciones.index');
+    Route::get('/estaciones/create', [EstacionController::class, 'create'])->name('estaciones.create');
+    Route::post('/estaciones', [EstacionController::class, 'store'])->name('estaciones.store');
+    Route::get('/estaciones/edit/{estacion}', [EstacionController::class, 'edit'])->name('estaciones.edit');
+    Route::put('/estaciones/{estacion}', [EstacionController::class, 'update'])->name('estaciones.update');
+    Route::delete('/estaciones/{estacion}', [EstacionController::class, 'destroy'])->name('estaciones.destroy');
+
+    // Rutas para gestion tarifas
+    Route::get('/tarifas', [AdministrativoController::class, 'indexTarifa'])->name('tarifas.index');
+    Route::get('/tarifas/edit', [AdministrativoController::class, 'editTarifa'])->name('tarifas.edit');
+    Route::put('/tarifas', [AdministrativoController::class, 'updateTarifa'])->name('tarifas.update');
+
 });
+
 
 // Route::get('/', function () {
 //     return view('welcome'); // Vista por defecto
@@ -51,8 +76,8 @@ Route::get('/reservar', function () {
 });
 
 
-// Ruta para obtener estaciones, protegida por autenticación y CSRF
+// Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
