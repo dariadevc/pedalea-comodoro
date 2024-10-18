@@ -30,7 +30,7 @@
                 <!-- BOTÓN -->
                 <button type="button"
                     class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50 "><a
-                        href="iniciar_sesion.html">Iniciar Sesión</a></button>
+                        href="{{ route('iniciar_sesion') }}">Iniciar Sesión</a></button>
             </ul>
             <div class="flex lg:hidden flex-1 justify-end">
                 <div>

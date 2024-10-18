@@ -1,3 +1,10 @@
+/* Agrega la fuente Montserrat */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.btn {
+    @apply shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase;
+}
