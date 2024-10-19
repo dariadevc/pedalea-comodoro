@@ -67,7 +67,7 @@
                     <div class="flex flex-col gap-2">
                         <label for="celular">Número de Celular</label>
                         <input class="p-2 rounded-xl border shadow-sm" type="tel" name="numero_telefono"
-                            id="numero_telefono" placeholder="2974148635" value="{{old('numero_telefono')}}" required
+                            id="numero_telefono" placeholder="+542974148635" value="{{old('numero_telefono')}}" required
                             autocomplete="numero_telefono">
                         @error('numero_telefono')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
