@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignId('id_estado')->constrained('estados_bicicleta', 'id_estado')->onDelete('cascade');
             $table->foreignId('id_estacion_actual')->nullable()->constrained('estaciones', 'id_estacion')->onDelete('cascade');
             $table->string('patente', 3)->unique();
+            $table->softDeletes();
         });
     }
 

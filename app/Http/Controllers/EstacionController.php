@@ -21,7 +21,7 @@ class EstacionController extends Controller
         return view('estaciones.create', compact('estados'));
     }
 
-    public function store(Request $request) 
+    public function store(Request $request)
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
@@ -65,14 +65,28 @@ class EstacionController extends Controller
         $estacion->latitud = $request->input('latitud');
         $estacion->longitud = $request->input('longitud');
         $estacion->id_estado = $request->input('estado');
-        
+
         $estacion->save();
         return redirect()->route('estaciones.index')->with('success', 'Estación actualizada correctamente');
     }
 
-    public function destroy(Estacion $estacion) 
+    public function destroy(Estacion $estacion)
     {
+    $tiene_reservas_con_devolucion = $estacion->reservasDevolucion()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+    $tiene_reservas_con_retiro = $estacion->reservasRetiro()->whereIn('id_estado', [1, 2, 5, 6])->exists();
 
+
+    $bicicletas = $estacion->bicicletas; // Obtiene las bicicletas asociadas a la estación
+    $bicicletas_con_reservas = $bicicletas->filter(function ($bicicleta) {
+        return $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+    });
+
+    if ($tiene_reservas_con_devolucion || $tiene_reservas_con_retiro || $bicicletas_con_reservas->isNotEmpty()) {
+        return redirect()->back()->with('error', 'No se puede eliminar la estación. Tiene reservas activas o bicicletas asociadas con reservas.');
+    }
+
+    $estacion->delete();
+    return redirect()->route('estaciones.index')->with('success', 'Estación eliminada correctamente.');
     }
 
 
@@ -104,15 +118,14 @@ class EstacionController extends Controller
                 'e.nombre',
                 'e.latitud',
                 'e.longitud',
-                DB::raw('COUNT(b.id_bicicleta) AS cantidad_bicicletas_disponibles')
+                DB::raw('COUNT(b.id_bicicleta) - COUNT(r.id_bicicleta) AS cantidad_bicicletas_disponibles')
             )
             ->leftJoin('bicicletas as b', 'b.id_estacion_actual', '=', 'e.id_estacion')
             ->leftJoin('reservas as r', function ($join) {
                 $join->on('r.id_bicicleta', '=', 'b.id_bicicleta')
-                    ->whereIn('r.id_estado', [1, 2, 5, 6]); // Estados: Alquilada, Activa, Reasignada, Modificada
+                    ->whereIn('r.id_estado', [1, 2, 5, 6]);
             })
-            ->where('e.id_estado', 1) // Estaciones habilitadas
-            ->whereNull('r.id_bicicleta') // Excluir bicicletas en reservas activas
+            ->where('e.id_estado', 1)
             ->groupBy('e.id_estacion', 'e.nombre', 'e.latitud', 'e.longitud')
             ->get();
 

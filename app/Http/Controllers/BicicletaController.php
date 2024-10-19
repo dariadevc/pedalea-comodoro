@@ -78,6 +78,12 @@ class BicicletaController extends Controller
 
     public function destroy(Bicicleta $bicicleta) 
     {
-
+        $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        if ($existe_bicicleta_en_reservas) {
+            return redirect()->route('bicicletas.index')->with('error', 'No se puede eliminar la bicicleta. Está asociada a una reserva.');
+        } else {
+            $bicicleta->delete();
+            return redirect()->route('bicicletas.index')->with('success', 'Bicicleta eliminada correctamente');
+        }
     }
 }
