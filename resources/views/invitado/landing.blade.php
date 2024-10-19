@@ -29,10 +29,10 @@
                 <div class="flex justify-center flex-wrap gap-6">
                     <button
                         class="btn bg-slate-50 border outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50"><a
-                            href="registrarse.html">Registrarse</a></button>
+                            href="{{ route('registrarse') }}">Registrarse</a></button>
                     <button
                         class="btn bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-rojo text-pc-rojo hover:bg-pc-rojo hover:text-slate-50"><a
-                            href="iniciar_sesion.html">Iniciar Sesión</a></button>
+                            href="{{ route('iniciar_sesion') }}">Iniciar Sesión</a></button>
                 </div>
             </div>
             <!-- IMÁGEN -->
