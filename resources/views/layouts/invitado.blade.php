@@ -15,7 +15,7 @@
 <body class="antialiased font-Montserrat bg-gray-50">
     <header class=" bg-pc-rojo sticky top-0 w-full left-0 z-10 py-1">
         <nav class="container flex items-center">
-            <a href="@yield('href_inicio')">
+            <a href="{{ route('landing') }}">
                 <div class="py-1 flex items-center gap-4 text-slate-50 uppercase text-sm font-semibold">
                     <img src="{{ asset('img/bicicleta_blanca.png') }}" alt="" class="h-14">
                     <h2 class="">Pedalea Comodoro</h2>
@@ -28,9 +28,19 @@
                 <li><a href="#como-funciona">¿Cómo funciona?</a></li>
                 <li><a href="#mapa">Estaciones</a></li>
                 <!-- BOTÓN -->
-                <button type="button"
-                    class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50 "><a
-                        href="{{ route('iniciar_sesion') }}">Iniciar Sesión</a></button>
+                <a href="{{ route('iniciar-sesion') }}"
+                    class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50">Iniciar
+                    Sesión</a>
+                @if (Auth::user())
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover:outline-slate-50">
+                            {{ __('Log Out') }}
+                        </button>
+                    </form>
+                @endif
+
             </ul>
             <div class="flex lg:hidden flex-1 justify-end">
                 <div>

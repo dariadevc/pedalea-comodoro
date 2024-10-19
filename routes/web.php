@@ -9,13 +9,7 @@ Route::get('/', function () {
     return view('invitado.landing'); // Vista por defecto
 })->name('landing');
 
-//* Por ahora voy a trabajar con las vistas sueltas, pero estas dos deberían estar agrupadas en el grupo de invitados
-Route::get('/iniciar-sesion', function () {
-    return view('invitado.iniciar_sesion'); // Vista para iniciar sesión
-})->name('iniciar_sesion');
-Route::get('/registrarse', function () {
-    return view('invitado.registrarse'); // Vista para registrarse
-})->name('registrarse');
+
 
 //? Cuando lo meto en el grupo de rutas para invitados no me permite entrar a esas vistas, ¿no me reconoce como invitado?
 // // Grupo de rutas para invitados
@@ -40,20 +34,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Ruta para el dashboard de usuario
+
+
+Route::middleware(['auth', 'role:administrativo'])->group(function () {
+    Route::get('/admin-inicio', function () {
+        return view('administrativo.inicio'); // Vista para el administrador
+    })->name('administrativo.inicio');
+});
+
 Route::middleware(['auth', 'role:cliente'])->group(function () {
-    Route::get('/cliente/inicio', function () {
+    Route::get('/inicio', function () {
         return view('cliente.inicio'); // Vista para el usuario
-    })->name('cliente.home');
+    })->name('cliente.inicio');
 });
-
-// Ruta para el dashboard de administrador
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.inicio'); // Vista para el administrador
-    })->name('admin.home');
-});
-
 
 
 
