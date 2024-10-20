@@ -93,20 +93,24 @@ class Estacion extends Model
     
     public function calcularBicisDisponibles(int $cantidadNoDisponibles)
     {
-        $cantidadDisponibles = $this->bicicletas - $cantidadNoDisponibles;
+        $totalBicicletas = $this->bicicletas()->count();
+        $cantidadDisponibles = $totalBicicletas - $cantidadNoDisponibles;
+
         return $cantidadDisponibles;
     }
 
-    public function verificarDisponibilidad(DateTime $horario_retiro)
+    public function verificarDisponibilidad(\DateTime $horario_retiro)
     {   
-        $horario_retiro_mysql = $horario_retiro->format('Y-m-d H:i:s');
+        $horario_formateado = $horario_retiro->format('Y-m-d H:i:s');
 
         // Me fijo las reservas que tiene la estación en ese horario de retiro
         // y cuento la cantidad de bicicletas (es decir, las no disponibles) que hay en ese momento.
-        $bicisNoDisponibles = DB::table('reservas') // Corrige la forma de acceder a la tabla
-            ->where('id_estacion', $this->id_estacion)
-            ->where('horario_retiro', $horario_retiro_mysql) // Usa $horario_retiro_mysql
-            ->count('id_bicicleta'); // Cuenta la cantidad de bicicletas reservadas
+        //Cuento las bicicletas que estan reservada en ese horario de retiro, pues pueden haber varias reservadas en esa misma hora, para la misma estación, y esa es la cantidad de bicicletas no disponibles que hay en esa estacion de retiro, pues son las bicicletas que han sido reservadas en el momento en que quiere el cliente reservar, en esa estación de retiro.
+            $bicisNoDisponibles = Reserva::where('id_estacion_retiro', $this->id_estacion)
+            ->where('fecha_hora_retiro', $horario_formateado)
+            ->count('id_bicicleta'); 
+               
+            dd($bicisNoDisponibles);
         return $bicisNoDisponibles;
      }
 }

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Models\Estacion;
+
 
 class EstacionController extends Controller
 {
@@ -51,29 +54,9 @@ class EstacionController extends Controller
 
     //el horario de retiro debe ser uno validado en el formulario, en el momento en que llena el formulario, con javascript..
     //A partir de tener un horario de retiro validado, este método comenzará a funcionar 
-    public function buscarDisponibilidad(DateTime $horario_retiro)
-    {
-        $estaciones = Estaciones::all(); //array de objetos
-
-        $estacionesDisponibles = [];
-        
-        foreach ($estaciones as $estacion) {
-        
-        $cantidadNoDisponibles = $estacion->verificarDisponibilidad($horario_retiro);
-        $cantidadBicisDisponibles= $estacion->calcularBicisDisponibles($cantidadNoDisponibles);
-        
-        if ($cantidadBicisDisponibles>0){
-            $estacionesDisponibles[]=$estacion;
-        }
-
-
-    }
     
-    return $estacionesDisponibles;
-
-        
-        
-            /*
+    
+        /* Pseudocódigo que debe hacer el módulo estaciones_disponibles_reservar
         estaciones ; array de objetos estaciones
         estacionesDisponibles ; array vacío que se va a ir llenando con las estaciones que determinemos que estan disponibles
         for (estaciones){
@@ -88,5 +71,31 @@ class EstacionController extends Controller
         return estacionesDisponibles;
 
         */
+
+    public function buscarDisponibilidad(\DateTime $horario_retiro)
+    {
+        $horario_retiro = new \DateTime("2023-11-17 15:00:00"); //Dato de prueba
+       
+       /* Descomentar, cuando venga un \DateTime como parametro.
+        $horario_retiro = $horario_retiro->format('Y-m-d H:i:s');
+        */
+
+        //dd($horario_retiro);
+        $estaciones = Estacion::all();
+        $estacionesDisponibles = [];
+        
+        foreach ($estaciones as $estacion) {
+        
+        $cantidadNoDisponibles = $estacion->verificarDisponibilidad($horario_retiro);
+
+        $cantidadBicisDisponibles= $estacion->calcularBicisDisponibles($cantidadNoDisponibles);
+
+        if ($cantidadBicisDisponibles>0){
+            $estacionesDisponibles[]=$estacion;
+        }
+    }
+    //dd($estacionesDisponibles);
+    
+    return view('cliente.pruebaview')->with('estacionesDisponibles', $estacionesDisponibles);
     }
 }

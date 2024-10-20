@@ -54,5 +54,8 @@ Route::get('/reservar', function () {
 // Ruta para obtener estaciones, protegida por autenticación y CSRF
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
 
+//URL /PRUEBA DEBE SER CAMBIADA
+Route::get('/estaciones_disponibles_reserva', [EstacionController::class, 'buscarDisponibilidad']);
+    
 
 require __DIR__.'/auth.php';
