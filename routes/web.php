@@ -47,9 +47,8 @@ Route::middleware([])->group(function () {
     Route::delete('/estaciones/{estacion}', [EstacionController::class, 'destroy'])->name('estaciones.destroy');
 
     // Rutas para gestion tarifas
-    Route::get('/tarifas', [AdministrativoController::class, 'indexTarifa'])->name('tarifas.index');
-    Route::get('/tarifas/edit', [AdministrativoController::class, 'editTarifa'])->name('tarifas.edit');
-    Route::put('/tarifas', [AdministrativoController::class, 'updateTarifa'])->name('tarifas.update');
+    Route::get('/modificar-tarifa', [AdministrativoController::class, 'editTarifa'])->name('administrativo.editTarifa');
+    Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
 
 });
 

@@ -26,8 +26,7 @@
             <h2 class="text-lg font-semibold">Tarifa</h2>
             <p class="mt-2">Gestiona la tarifa actual del sistema.</p>
             <div class="mt-4">
-                <a href="{{ route('tarifas.index') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Ver tarifa actual</a>
-                <a href="{{ route('tarifas.edit') }}" class="ml-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Modificar tarifa</a>
+                <a href="{{ route('administrativo.editTarifa') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Ver tarifa actual</a>
             </div>
         </div>
     </div>
