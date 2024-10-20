@@ -7,9 +7,11 @@ use App\Models\Cliente;
 use App\Models\EstadoCliente;
 use App\Models\Inspector;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Testing\Fakes\Fake;
 use Spatie\Permission\Models\Role;
 
 class UsersSeeder extends Seeder
@@ -36,6 +38,7 @@ class UsersSeeder extends Seeder
                 case 'cliente':
                     $estado = $estados->random();
                     Cliente::create([
+                        'fecha_nacimiento' => Carbon::now()->subYears(rand(18, 50))->format('Y-m-d'),
                         'id_usuario' => $usuario->id_usuario,
                         'id_estado_cliente' => $estado->id_estado,
                         'puntaje' => rand(-200, 1000),
@@ -64,6 +67,7 @@ class UsersSeeder extends Seeder
     private function crearUsuarioCliente($rol, $estado_cliente) 
     {
         $usuario = User::create([
+            'dni' => 30000000,
             'nombre' => 'Juan',
             'apellido' => 'Perez',
             'email' => 'clientebike1@gmail.com',
@@ -73,6 +77,7 @@ class UsersSeeder extends Seeder
         $usuario->assignRole($rol->name);
 
         Cliente::create([
+            'fecha_nacimiento' => Carbon::now()->subYears(rand(18, 50))->format('Y-m-d'),
             'id_usuario' => $usuario->id_usuario,
             'id_estado_cliente' => $estado_cliente->id_estado,
             'puntaje' => 50,
@@ -82,6 +87,7 @@ class UsersSeeder extends Seeder
     private function crearUsuarioInspector($rol) 
     {
         $usuario = User::create([
+            'dni' => 30000001,
             'nombre' => 'Federico',
             'apellido' => 'Colapinto',
             'email' => 'inspectorbike1@gmail.com',
@@ -97,6 +103,7 @@ class UsersSeeder extends Seeder
     private function crearUsuarioAdministrativo($rol) 
     {
         $usuario = User::create([
+            'dni' => 30000002,
             'nombre' => 'Lionel',
             'apellido' => 'Messi',
             'email' => 'admbike15@gmail.com',

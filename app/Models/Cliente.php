@@ -20,6 +20,7 @@ class Cliente extends User
         'id_estado_cliente',
         'puntaje',
         'saldo',
+        'fecha_nacimiento',
     ];
 
     public function estadoCliente()

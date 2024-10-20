@@ -6,10 +6,11 @@ use App\Http\Controllers\EstacionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-// Esta se puede sacar
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+// Vista principal
+Route::get('/', function () {
+    return view('invitado.landing'); // Vista por defecto
+})->name('landing');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -17,18 +18,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Ruta para el dashboard de usuario
 Route::middleware(['auth', 'role:cliente'])->group(function () {
-    Route::get('/cliente/dashboard', function () {
-        return view('cliente.dashboard'); // Vista para el usuario
-    })->name('cliente.dashboard');
+    Route::get('/inicio', function () {
+        return view('cliente.inicio');
+    })->name('cliente.inicio');
 });
 
-// HAY QUE USAR LA LINEA COMENTADA NO OLVIDARSE
 
-// Route::middleware(['auth', 'role:admin'])->group(function () {  
-Route::middleware([])->group(function () {
-    Route::get('/dashboard', [AdministrativoController::class, 'dashboard'])->name('administrativo.dashboard');
+Route::middleware(['auth', 'role:administrativo'])->group(function () {
+    Route::get('/admin-inicio', [AdministrativoController::class, 'inicio'])->name('administrativo.inicio');
     
     // Rutas para gestión de bicicletas
     Route::get('/bicicletas', [BicicletaController::class, 'index'])->name('bicicletas.index');
@@ -52,19 +50,9 @@ Route::middleware([])->group(function () {
 
 });
 
-
-// Route::get('/', function () {
-//     return view('welcome'); // Vista por defecto
-// })->name('home');
-
-Route::get('/', function () {
-    return view('invitado.landing');
-    // ->name('home');
-});
-
 Route::get('/alquilar', function () {
     return view('cliente.alquilar');  // Renderiza la vista 'home.blade.php'
-});
+})->name('alquiler');
 
 Route::get('/devolver', function () {
     return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
