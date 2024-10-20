@@ -108,6 +108,7 @@ class Estacion extends Model
         //Cuento las bicicletas que estan reservada en ese horario de retiro, pues pueden haber varias reservadas en esa misma hora, para la misma estación, y esa es la cantidad de bicicletas no disponibles que hay en esa estacion de retiro, pues son las bicicletas que han sido reservadas en el momento en que quiere el cliente reservar, en esa estación de retiro.
             $bicisNoDisponibles = Reserva::where('id_estacion_retiro', $this->id_estacion)
             ->where('fecha_hora_retiro', $horario_formateado)
+            ->whereIn('id_estado', ['Alquilada', 'Activa'])
             ->count('id_bicicleta'); 
                
             dd($bicisNoDisponibles);
