@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 class AdministrativoController extends Controller
 {
-    public function dashboard()
+    public function inicio()
     {
-        return view('administrativo.dashboard');
+        return view('administrativo.inicio');
     }
 
     public function editTarifa()
