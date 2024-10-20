@@ -25,9 +25,8 @@ return new class extends Migration
             $table->foreignId('id_estado_cliente')->constrained('estados_clientes', 'id_estado');
             $table->integer('puntaje');
             $table->double('saldo');
+            $table->date('fecha_nacimiento');
             $table->primary(['id_usuario']);
-
-
         });
         
         Schema::create('inspectores', function (Blueprint $table) {

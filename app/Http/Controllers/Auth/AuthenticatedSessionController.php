@@ -16,7 +16,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.login');
+        return view('invitado.iniciar_sesion');
     }
 
     /**
@@ -31,14 +31,14 @@ class AuthenticatedSessionController extends Controller
         $authenticatedUser = Auth::user();
     
         // Redirigir según el rol
-        if ($authenticatedUser->hasRole('admin')) {
-            return redirect()->route('admin.dashboard');
+        if ($authenticatedUser->hasRole('administrativo')) {
+            return redirect()->route('administrativo.inicio');
         } elseif ($authenticatedUser->hasRole('cliente')) {
-            return redirect()->route('cliente.dashboard');
+            return redirect()->route('cliente.inicio');
         }
     
         // Redirigir a una ruta por defecto si no hay coincidencia de rol
-        return redirect()->route('home'); // Cambia 'home' por tu ruta por defecto
+        return redirect()->route('landing'); // Cambia 'home' por tu ruta por defecto
     }
 
     /**
