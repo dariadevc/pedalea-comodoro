@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('latitud', 16, 14);
             $table->decimal('longitud', 17, 14);
             $table->decimal('calificacion', 4, 2);
+            $table->softDeletes(); // Agrega esta línea para habilitar soft deletes
         });
     }
 

@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
             InfraccionesSeeder::class,
             DaniosPorUsoSeeder::class,
             PuntajesDevolucionSeeder::class,
+            ConfiguracionesSeeder::class,
         ]);
     }
 }
