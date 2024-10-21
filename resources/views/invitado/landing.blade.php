@@ -22,10 +22,12 @@
 
                 <!-- BOTONES -->
                 <div class="flex justify-center flex-wrap gap-6">
-                    <a href="{{ route('registrarse') }}"
-                        class="btn bg-slate-50 border outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50">Registrarse</a>
-                    <a href="{{ route('iniciar-sesion') }}"
-                        class="btn bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-rojo text-pc-rojo hover:bg-pc-rojo hover:text-slate-50">Iniciar Sesión</a>
+                    <a href="{{ route('registrarse') }}">
+                        <x-btn-azul-blanco>{{ 'Registrarse' }}</x-btn-azul-blanco>
+                    </a>
+                    <a href="{{ route('iniciar-sesion') }}">
+                        <x-btn-rojo-blanco>{{ 'Iniciar Sesión' }}</x-btn-rojo-blanco>
+                    </a>
                 </div>
             </div>
             <!-- IMÁGEN -->
