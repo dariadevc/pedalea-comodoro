@@ -7,7 +7,6 @@ use App\Models\EstadoEstacion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use App\Models\Estacion;
 
 
 class EstacionController extends Controller
@@ -166,18 +165,21 @@ class EstacionController extends Controller
         //dd($horario_retiro);
         $estaciones = Estacion::all();
         $estacionesDisponibles = [];
-        
+
         foreach ($estaciones as $estacion) {
-        
+        $cantidadBicisDisponibles=0;
         $cantidadNoDisponibles = $estacion->verificarDisponibilidad($horario_retiro);
 
         $cantidadBicisDisponibles= $estacion->calcularBicisDisponibles($cantidadNoDisponibles);
+       
+       // dump($estacion->id_estacion."   ".$cantidadBicisDisponibles);
 
-        if ($cantidadBicisDisponibles>0){
+        if ($cantidadBicisDisponibles>0){   
             $estacionesDisponibles[]=$estacion;
         }
     }
     //dd($estacionesDisponibles);
+
     
     return view('cliente.pruebaview')->with('estacionesDisponibles', $estacionesDisponibles);
     }
