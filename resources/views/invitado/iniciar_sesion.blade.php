@@ -40,7 +40,7 @@
 
                 {{-- TODO: Agregar enlace con vista de recuperar contraseña --}}
                 <div class="mt-5 border-b border-pc-azul py-4">
-                    <a href="" class="text-pc-texto-p text-sm hover:text-pc-naranja">¿Olvidaste tu contraseña?</a>
+                    <a href="{{ route('password.request') }}" class="text-pc-texto-p text-sm hover:text-pc-naranja">¿Olvidaste tu contraseña?</a>
                 </div>
 
                 <div class="mt-3 flex justify-between items-center gap-3">

@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\EstacionController;
-use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EstacionController;
 
 // Vista principal
 Route::get('/', function () {
@@ -67,6 +68,18 @@ Route::get('/reservar', function () {
 
 // Ruta para obtener estaciones, protegida por autenticación y CSRF
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
+
+
+
+Route::get('/send-test-email', function () {
+    Mail::raw('Este es un correo de prueba enviado desde Laravel usando Mailtrap.', function ($message) {
+        $message->to('clientebike1@gmail.com')
+                ->subject('Correo de Prueba');
+    });
+
+    return 'Correo de prueba enviado!';
+});
+
 
 
 require __DIR__ . '/auth.php';
