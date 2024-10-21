@@ -1,13 +1,16 @@
 <?php
 
+use App\Http\Controllers\AdministrativoController;
+use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\EstacionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-// Esta se puede sacar
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+// Vista principal
+Route::get('/', function () {
+    return view('invitado.landing'); // Vista por defecto
+})->name('landing');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -15,32 +18,41 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Ruta para el dashboard de usuario
 Route::middleware(['auth', 'role:cliente'])->group(function () {
-    Route::get('/cliente/dashboard', function () {
-        return view('cliente.dashboard'); // Vista para el usuario
-    })->name('cliente.dashboard');
+    Route::get('/inicio', function () {
+        return view('cliente.inicio');
+    })->name('cliente.inicio');
 });
 
-// Ruta para el dashboard de administrador
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard'); // Vista para el administrador
-    })->name('admin.dashboard');
-});
 
-// Route::get('/', function () {
-//     return view('welcome'); // Vista por defecto
-// })->name('home');
+Route::middleware(['auth', 'role:administrativo'])->group(function () {
+    Route::get('/admin-inicio', [AdministrativoController::class, 'inicio'])->name('administrativo.inicio');
+    
+    // Rutas para gestión de bicicletas
+    Route::get('/bicicletas', [BicicletaController::class, 'index'])->name('bicicletas.index');
+    Route::get('/bicicletas/create', [BicicletaController::class, 'create'])->name('bicicletas.create');
+    Route::post('/bicicletas', [BicicletaController::class, 'store'])->name('bicicletas.store');
+    Route::get('/bicicletas/edit/{bicicleta}', [BicicletaController::class, 'edit'])->name('bicicletas.edit');
+    Route::put('/bicicletas/{bicicleta}', [BicicletaController::class, 'update'])->name('bicicletas.update');
+    Route::delete('/bicicletas/{bicicleta}', [BicicletaController::class, 'destroy'])->name('bicicletas.destroy');
 
-Route::get('/', function () {
-    return view('invitado.landing');
-    // ->name('home');
+    // Rutas para gestión de estaciones
+    Route::get('/estaciones', [EstacionController::class, 'index'])->name('estaciones.index');
+    Route::get('/estaciones/create', [EstacionController::class, 'create'])->name('estaciones.create');
+    Route::post('/estaciones', [EstacionController::class, 'store'])->name('estaciones.store');
+    Route::get('/estaciones/edit/{estacion}', [EstacionController::class, 'edit'])->name('estaciones.edit');
+    Route::put('/estaciones/{estacion}', [EstacionController::class, 'update'])->name('estaciones.update');
+    Route::delete('/estaciones/{estacion}', [EstacionController::class, 'destroy'])->name('estaciones.destroy');
+
+    // Rutas para gestion tarifas
+    Route::get('/modificar-tarifa', [AdministrativoController::class, 'editTarifa'])->name('administrativo.editTarifa');
+    Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
+
 });
 
 Route::get('/alquilar', function () {
     return view('cliente.alquilar');  // Renderiza la vista 'home.blade.php'
-});
+})->name('alquiler');
 
 Route::get('/devolver', function () {
     return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
@@ -51,11 +63,11 @@ Route::get('/reservar', function () {
 });
 
 
-// Ruta para obtener estaciones, protegida por autenticación y CSRF
+// Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
 
 //URL /PRUEBA DEBE SER CAMBIADA
 Route::get('/estaciones_disponibles_reserva', [EstacionController::class, 'buscarDisponibilidad']);
     
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

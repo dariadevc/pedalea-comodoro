@@ -6,11 +6,10 @@
 
 @section('contenido')
     {{-- BIENVENIDA --}}
-    {{-- TODO: El nombre del usuario se tiene que modificar según quién haya iniciado sesión --}}
     <div class="flex flex-col items-center gap-1">
         <!-- CAMBIAR LOGO POR LA VERSIÓN FINAL -->
         <img src="img/bicicleta.png" alt="" class="h-14 w-14">
-        <p class="text-xl font-semibold text-pc-texto-h">¡Hola, <span class="font-bold text-pc-rojo">Daria</span>!</p>
+        <p class="text-xl font-semibold text-pc-texto-h">¡Hola, <span class="font-bold text-pc-rojo"> {{ Auth::user()->nombre }}</span>!</p>
     </div>
     {{-- TARJETA RESERVA/ALQUILER ACTUAL --}}
     {{-- * La información de esta tarjeta se actualiza, si no tiene reserva lo va a mandar a reservar, si tiene reserva en curso muestra algunos datos y te manda a consultar reserva, si tiene alquiler en curso muestra algunos datos y te manda a consultar alquiler * --}}
