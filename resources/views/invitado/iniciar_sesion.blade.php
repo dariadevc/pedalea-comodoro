@@ -17,8 +17,8 @@
 
                     {{-- EMAIL --}}
                     <div>
-                        <input class="p-2 mt-8 rounded-xl border w-full shadow-sm" id='email' type="email"
-                            name="email" placeholder="Correo Electrónico" required autofocus autocomplete="email">
+                        <x-text-input id='email' type="email" name="email" placeholder="Correo Electrónico" required
+                            autofocus autocomplete="email" class="mt-8" />
                         @error('email')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -26,16 +26,14 @@
 
                     {{-- CONTRASEÑA --}}
                     <div class="relative">
-                        <input class="p-2 rounded-xl border w-full shadow-sm" id="password" type="password" name="password"
-                            placeholder="Contraseña" required autocomplete="current-password">
+                        <x-text-input id="password" type="password" name="password" placeholder="Contraseña" required
+                            autocomplete="current-password" />
                         {{-- TODO: Agregar opción que te permita ver la contraseña (con el icono del ojito) --}}
                         @error('password')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
-                    <button
-                        class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 outline outline-4 -outline-offset-4 outline-pc-rojo"
-                        type="submit">Iniciar Sesión</button>
+                    <x-btn-rojo-blanco type="submit">{{ 'Iniciar Sesión' }}</x-btn-rojo-blanco>
                 </form>
 
                 {{-- TODO: Agregar enlace con vista de recuperar contraseña --}}
@@ -45,8 +43,10 @@
 
                 <div class="mt-3 flex justify-between items-center gap-3">
                     <p class="text-sm text-pc-texto-p">¿Todavía no tenes una cuenta?</p>
-                    <a href="{{ route('registrarse') }}"
-                        class="shadow-md py-2 px-5 rounded-full transition duration-500 font-semibold text-xs uppercase bg-slate-50 border outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50">Registrate</a>
+                    <a href="{}"></a>
+                    <a href="{{ route('registrarse') }}">
+                        <x-btn-azul-blanco class="text-xs">{{ 'Registrate' }}</x-btn-rojo-blanco>
+                    </a>
                 </div>
             </div>
 

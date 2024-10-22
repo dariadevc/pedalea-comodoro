@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\EstacionController;
+use App\Http\Controllers\InicioController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+
 
 // Vista principal
 Route::get('/', function () {
@@ -10,58 +12,33 @@ Route::get('/', function () {
 })->name('landing');
 
 
-
-//? Cuando lo meto en el grupo de rutas para invitados no me permite entrar a esas vistas, ¿no me reconoce como invitado?
-// // Grupo de rutas para invitados
-// Route::middleware('guest')->group(function () {
-//     Route::get('/iniciar-sesion', function () {
-//         return view('invitado.iniciar_sesion'); // Vista para iniciar sesión
-//     })->name('iniciar_sesion');
-//     Route::get('/registrarse', function () {
-//         return view('invitado.registrarse'); // Vista para registrarse
-//     })->name('registrarse');
+// NO ELIMINAR, cuando hagamos la parte del perfil nos puede ayudar
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 // });
 
 
-// Esta se puede sacar
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
+// Ruta para redirigir a inicio
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/inicio', [InicioController::class, 'index'])->name('inicio');
 });
 
 
-
-Route::middleware(['auth', 'role:administrativo'])->group(function () {
-    Route::get('/admin-inicio', function () {
-        return view('administrativo.inicio'); // Vista para el administrador
-    })->name('administrativo.inicio');
-});
-
+// Rutas para el cliente
 Route::middleware(['auth', 'role:cliente'])->group(function () {
-    Route::get('/inicio', function () {
-        return view('cliente.inicio'); // Vista para el usuario
-    })->name('cliente.inicio');
-});
+    Route::get('/alquilar', function () {
+        return view('cliente.alquilar');  // Renderiza la vista 'home.blade.php'
+    })->name('alquiler');
 
+    Route::get('/devolver', function () {
+        return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
+    });
 
-
-
-
-Route::get('/alquilar', function () {
-    return view('cliente.alquilar');  // Renderiza la vista 'home.blade.php'
-})->name('alquiler');
-
-Route::get('/devolver', function () {
-    return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
-});
-
-Route::get('/reservar', function () {
-    return view('cliente.reservar');  // Renderiza la vista 'home.blade.php'
+    Route::get('/reservar', function () {
+        return view('cliente.reservar');  // Renderiza la vista 'home.blade.php'
+    });
 });
 
 
