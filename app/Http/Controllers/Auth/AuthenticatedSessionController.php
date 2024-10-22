@@ -28,8 +28,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $authenticatedUser = Auth::user();
-
         return redirect()->route('inicio');
     }
 

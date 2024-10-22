@@ -22,12 +22,15 @@
 
                 <!-- BOTONES -->
                 <div class="flex justify-center flex-wrap gap-6">
-                    <a href="{{ route('registrarse') }}">
-                        <x-btn-azul-blanco>{{ 'Registrarse' }}</x-btn-azul-blanco>
-                    </a>
-                    <a href="{{ route('iniciar-sesion') }}">
-                        <x-btn-rojo-blanco>{{ 'Iniciar Sesión' }}</x-btn-rojo-blanco>
-                    </a>
+                    @if (!Auth::user())
+                        <a href="{{ route('registrarse') }}">
+                            <x-btn-azul-blanco>{{ 'Registrarse' }}</x-btn-azul-blanco>
+                        </a>
+
+                        <a href="{{ route('iniciar-sesion') }}">
+                            <x-btn-rojo-blanco>{{ 'Iniciar Sesión' }}</x-btn-rojo-blanco>
+                        </a>
+                    @endif
                 </div>
             </div>
             <!-- IMÁGEN -->
