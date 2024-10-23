@@ -45,6 +45,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('cliente.inicio'));
+        return redirect(route('inicio'));
     }
 }
