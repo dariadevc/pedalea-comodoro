@@ -28,9 +28,13 @@
                 <li><a href="#como-funciona">¿Cómo funciona?</a></li>
                 <li><a href="#mapa">Estaciones</a></li>
                 <!-- BOTÓN -->
-                <a href="{{ route('iniciar-sesion') }}"
-                    class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50">Iniciar
-                    Sesión</a>
+                @if (!Auth::user())
+                    <a href="{{ route('iniciar-sesion') }}"
+                        class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50">Iniciar
+                        Sesión</a>
+                @endif
+
+                {{-- Si inicio sesión le va a permitir cerrar sesión --}}
                 @if (Auth::user())
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

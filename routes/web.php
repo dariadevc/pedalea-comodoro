@@ -3,31 +3,30 @@
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\EstacionController;
+use App\Http\Controllers\InicioController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+
 
 // Vista principal
 Route::get('/', function () {
     return view('invitado.landing'); // Vista por defecto
 })->name('landing');
 
-
+// NO ELIMINAR, cuando hagamos la parte del perfil nos puede ayudar
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/inicio', [InicioController::class, 'index'])->name('inicio');
 });
 
-Route::middleware(['auth', 'role:cliente'])->group(function () {
-    Route::get('/inicio', function () {
-        return view('cliente.inicio');
-    })->name('cliente.inicio');
-});
 
 
 Route::middleware(['auth', 'role:administrativo'])->group(function () {
-    Route::get('/admin-inicio', [AdministrativoController::class, 'inicio'])->name('administrativo.inicio');
-    
+
     // Rutas para gestión de bicicletas
     Route::get('/bicicletas', [BicicletaController::class, 'index'])->name('bicicletas.index');
     Route::get('/bicicletas/create', [BicicletaController::class, 'create'])->name('bicicletas.create');
@@ -47,19 +46,20 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     // Rutas para gestion tarifas
     Route::get('/modificar-tarifa', [AdministrativoController::class, 'editTarifa'])->name('administrativo.editTarifa');
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
-
 });
 
-Route::get('/alquilar', function () {
-    return view('cliente.alquilar');  // Renderiza la vista 'home.blade.php'
-})->name('alquiler');
+Route::middleware(['auth', 'role:cliente'])->group(function () {
+    Route::get('/alquilar', function () {
+        return view('cliente.alquilar');  // Renderiza la vista 'home.blade.php'
+    })->name('alquiler');
 
-Route::get('/devolver', function () {
-    return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
-});
+    Route::get('/devolver', function () {
+        return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
+    });
 
-Route::get('/reservar', function () {
-    return view('cliente.reservar');  // Renderiza la vista 'home.blade.php'
+    Route::get('/reservar', function () {
+        return view('cliente.reservar');  // Renderiza la vista 'home.blade.php'
+    });
 });
 
 
