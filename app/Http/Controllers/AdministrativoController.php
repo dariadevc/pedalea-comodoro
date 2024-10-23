@@ -8,11 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class AdministrativoController extends Controller
 {
-    public function inicio()
-    {
-        return view('administrativo.inicio');
-    }
-
     public function editTarifa()
     {
         $tarifa = Configuracion::where('clave', 'tarifa')
@@ -36,6 +31,6 @@ class AdministrativoController extends Controller
         // Actualizar el monto de la tarifa en la tabla de configuraciones
         Configuracion::where('clave', 'tarifa')->update(['valor' => $request->monto]);
 
-        return redirect()->route('administrativo.dashboard')->with('message', 'Tarifa actualizada con éxito.');
+        return redirect()->route('inicio')->with('message', 'Tarifa actualizada con éxito.');
     }
 }

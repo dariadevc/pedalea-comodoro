@@ -24,7 +24,6 @@ Route::middleware('auth')->group(function () {
 });
 
 
-
 Route::middleware(['auth', 'role:administrativo'])->group(function () {
 
     // Rutas para gestión de bicicletas
