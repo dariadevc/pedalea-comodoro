@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Estacion extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'estaciones';
     protected $primaryKey = 'id_estacion';
@@ -44,12 +46,12 @@ class Estacion extends Model
         return $this->hasMany(Bicicleta::class, 'id_estacion_actual', 'id_estacion');
     }
 
-    public function reservaRetiro()
+    public function reservasRetiro()
     {
         return $this->hasMany(Reserva::class, 'id_estacion_retiro', 'id_estacion');
     }
 
-    public function reservaDevolucion()
+    public function reservasDevolucion()
     {
         return $this->hasMany(Reserva::class, 'id_estacion_devolucion', 'id_estacion');
     }
