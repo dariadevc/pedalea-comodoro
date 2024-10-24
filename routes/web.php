@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\BicicletaController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\EstacionController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\ProfileController;
@@ -59,6 +60,10 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/reservar', function () {
         return view('cliente.reservar');  // Renderiza la vista 'home.blade.php'
     });
+
+    Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
+
+    Route::post('/cargar-saldo', [ClienteController::class,'storeCargarSaldo'])->name('cargar-saldo.store');
 });
 
 
