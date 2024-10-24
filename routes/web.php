@@ -2,11 +2,11 @@
 
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\BicicletaController;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EstacionController;
 use App\Http\Controllers\InicioController;
-use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
-
 
 // Vista principal
 Route::get('/', function () {
@@ -64,6 +64,9 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
 // Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
+
+
+
 
 
 require __DIR__ . '/auth.php';
