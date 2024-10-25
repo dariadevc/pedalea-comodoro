@@ -7,11 +7,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EstacionController;
 use App\Http\Controllers\InicioController;
+use App\Http\Controllers\InformeController;
 
 // Vista principal
 Route::get('/', function () {
     return view('invitado.landing'); // Vista por defecto
 })->name('landing');
+
 
 // NO ELIMINAR, cuando hagamos la parte del perfil nos puede ayudar
 // Route::middleware('auth')->group(function () {
@@ -45,6 +47,8 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     // Rutas para gestion tarifas
     Route::get('/modificar-tarifa', [AdministrativoController::class, 'editTarifa'])->name('administrativo.editTarifa');
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
+
+    Route::get('/multas', [InformeController::class, 'multas'])->name('informes.multas');
 });
 
 Route::middleware(['auth', 'role:cliente'])->group(function () {
@@ -64,7 +68,6 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
 // Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
-
 
 
 
