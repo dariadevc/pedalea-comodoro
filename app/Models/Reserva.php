@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Mail\MailTextoSimple;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
 
 class Reserva extends Model
 {
@@ -32,9 +34,25 @@ class Reserva extends Model
         'id_reserva',
     ];
 
-    public function alquilar($cliente) 
+    public function alquilar($cliente, $usuario) 
     {
-        $cliente->pagar($this->calcularMontoRestante());
+        if ($cliente->pagar($this->calcularMontoRestante())) {
+            $this->cambiarEstado('Alquilada');
+
+            $mensaje = "Su alquiler se ha realizado correctamente.";
+            $asunto = "Alquler realizado";
+            $destinatario = $usuario->email;
+        
+            Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
+            return true;        
+        } else {
+            return false;
+        }
+    }
+
+    function cambiarEstado($nombre_estado) {
+        $estado = EstadoReserva::where('nombre', $nombre_estado)->first();
+        $this->id_estado = $estado->id_estado;
     }
 
     public function calcularMontoRestante(): float

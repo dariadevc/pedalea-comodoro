@@ -5,7 +5,6 @@ window.$ = $;
 window.mandarFormularioDisponibilidad = function(valorBoton) {
     $('#bicicletaDisponible').val(valorBoton);
     
-    // Verificar si se ha seleccionado una opción
     if (valorBoton === "") {
         alert("Por favor, seleccione si la bicicleta está disponible o no.");
         return;
@@ -33,15 +32,16 @@ window.mandarFormularioDisponibilidad = function(valorBoton) {
 };
 
 window.mandarFormularioPagar = function(valorBoton) {
+    console.log(valorBoton);
     $('#pagar').val(valorBoton);
     
-    // Verificar si se ha seleccionado una opción
     if (valorBoton === "") {
         alert("Por favor, seleccione pagar.");
         return;
     }
 
-    var datos = $('#formularioPagarAlquiler').serialize();
+    var datos = $('#formularioPagar').serialize();
+    console.log(datos);
 
     $.ajax({
         url: urlPagar,
@@ -53,6 +53,9 @@ window.mandarFormularioPagar = function(valorBoton) {
         success: function (response) {
             if (response.success) {
                 console.log('Anda');
+            } else {
+                console.log('Hubo un error al pagar');
+                alert('Hubo un error al pagar');
             }
         },
         error: function (response) {

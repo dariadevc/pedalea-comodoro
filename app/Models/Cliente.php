@@ -31,8 +31,10 @@ class Cliente extends User
 
     public function pagar($monto) 
     {
+        // FALTA HACER LA LOGICA DE MONTO NEGATIVO
         $this->saldo -= $monto;
         $this->save();
+        return true;
     }
 
     /**

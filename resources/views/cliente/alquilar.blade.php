@@ -78,13 +78,15 @@
         </div>
         {{-- TODO: Al apretar el botón debería saltar un cartel que tenga un mensaje informando que la reserva se realizó con éxito y un botón que te manda al inicio --}}
         <div class="flex gap-6 self-center">
-            <form action="{{ route('alquilar.pagar-alquiler') }}" method="POST" id="formularioPagar"></form>
-            <meta name="csrf-token" content="{{ csrf_token() }}">
-            <input type="hidden" name="pagar" id="pagar" value="">
-            <button class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul"
-                type="button" onclick="mandarFormularioPagar()">
-                Pagar Alquiler
-            </button>
+            <form action="{{ route('alquilar.pagar-alquiler') }}" method="POST" id="formularioPagar">
+                @csrf
+                <meta name="csrf-token" content="{{ csrf_token() }}">
+                <input type="hidden" name="pagar" id="pagar" value="">
+                <button class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul"
+                    type="button" onclick="mandarFormularioPagar('1')">
+                    Pagar Alquiler
+                </button>
+            </form>
         </div>
     </div>
 

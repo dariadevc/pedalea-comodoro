@@ -23,7 +23,7 @@ class ReservaController extends Controller
         if ($se_encuentra_bicicleta === 'Si') {
             return response()->json(['success' => true]);
         } elseif ($se_encuentra_bicicleta === 'No') {
-            return response()->json(['error' => true]);
+            return response()->json(['success' => false]);
         }
     }
 
@@ -34,7 +34,11 @@ class ReservaController extends Controller
             $usuario = Auth::user();
             $cliente = $usuario->obtenerCliente();
             $reserva = $cliente->obtenerReservaActual();
-            $reserva->pagar($cliente);
+            if ($reserva->pagar($cliente)) {
+                return redirect()->route('inicio')->with('success', 'Alquiler realizado correctamente');
+            } else {
+                return response()->json(['success' => false]);
+            }
         }
     }
 }
