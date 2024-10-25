@@ -52,8 +52,8 @@ Route::middleware(['auth', 'role:inspector'])->group(function () {
     // Rutas para gestión de bicicletas
     Route::get('/bicicletas', [BicicletaController::class, 'vistaDeshabilitar'])->name('inspector.bicicletas');
     Route::get('/infraccion', [InfraccionController::class, 'index'])->name('inspector.infraccion');
-
-    // Rutas para gestion tarifas
+    Route::post('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
+    Route::put('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
 });
 
 Route::middleware(['auth', 'role:cliente'])->group(function () {
