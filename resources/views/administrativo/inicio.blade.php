@@ -29,5 +29,12 @@
                 <a href="{{ route('administrativo.editTarifa') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Ver tarifa actual</a>
             </div>
         </div>
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h2 class="text-lg font-semibold">Multas</h2>
+            <p class="mt-2">Gestiona los informes de multas.</p>
+            <div class="mt-4">
+                <a href="{{ route('informes.multas') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Ver informes de multas</a>
+            </div>
+        </div>
     </div>
 @endsection
