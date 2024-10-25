@@ -50,7 +50,7 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 Route::middleware(['auth', 'role:inspector'])->group(function () {
 
     // Rutas para gestión de bicicletas
-    Route::get('/bicicletas', [BicicletaController::class, 'index2'])->name('inspector.bicicletas');
+    Route::get('/bicicletas', [BicicletaController::class, 'vistaDeshabilitar'])->name('inspector.bicicletas');
     Route::get('/infraccion', [InfraccionController::class, 'index'])->name('inspector.infraccion');
 
     // Rutas para gestion tarifas

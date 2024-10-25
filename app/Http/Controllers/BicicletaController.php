@@ -17,11 +17,6 @@ class BicicletaController extends Controller
         return view('bicicletas.index', compact('bicicletas'));
     }
 
-    public function index2()
-    {
-        $bicicletas = Bicicleta::with(['estado', 'estacionActual'])->get();
-        return view('inspector.bicicletas', compact('bicicletas'));
-    }
     public function create()
     {
         $estados = EstadoBicicleta::all();
@@ -90,5 +85,9 @@ class BicicletaController extends Controller
             $bicicleta->delete();
             return redirect()->route('bicicletas.index')->with('success', 'Bicicleta eliminada correctamente');
         }
+    }
+    public function vistaDeshabilitar()
+    {
+        return view('inspector.bicicletas');
     }
 }
