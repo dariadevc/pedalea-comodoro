@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+
 class Cliente extends User
 {
 
@@ -23,6 +24,30 @@ class Cliente extends User
         'fecha_nacimiento',
     ];
 
+
+
+
+
+    /**
+     * ACA VAN FUNCIONES DEL MODELO
+     */
+    public function estoySuspendido(): bool
+    {
+        return $this->estadoCliente->nombre == 'Suspendido';
+    }
+
+    public function agregarSaldo($monto): void
+    {
+        $this->saldo += $monto;
+        $this->save();
+    }
+    
+    
+
+
+    /**
+     * ACA VAN FUNCIONES QUE RELACIONAN A OTROS MODELOS
+     */
     public function estadoCliente()
     {
         return $this->belongsTo(EstadoCliente::class, 'id_estado_cliente');
