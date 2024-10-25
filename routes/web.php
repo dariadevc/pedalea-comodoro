@@ -7,11 +7,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EstacionController;
 use App\Http\Controllers\InicioController;
+use App\Http\Controllers\LandingController;
 
 // Vista principal
-Route::get('/', function () {
-    return view('invitado.landing'); // Vista por defecto
-})->name('landing');
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 // NO ELIMINAR, cuando hagamos la parte del perfil nos puede ayudar
 // Route::middleware('auth')->group(function () {
