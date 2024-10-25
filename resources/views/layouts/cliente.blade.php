@@ -7,7 +7,7 @@
 
     <title>@yield('titulo')</title>
 
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css'])
 
 </head>
 {{-- TODO: Ver cómo hacer para que cambie el main y el título del header según la sección en que se encuentra usando AJAX --}}
@@ -49,7 +49,7 @@
     <main class="flex flex-col my-8 px-8 gap-8">
         @yield('contenido')
     </main>
-
+    @yield('scripts') {{-- Aquí se cargarán los scripts específicos de cada vista --}}
 </body>
 
 </html>

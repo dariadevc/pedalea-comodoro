@@ -46,30 +46,29 @@
         </div>
     </div>
     {{-- INDICAR DISPONIBILIDAD DE BICICLETA EN LA ESTACIÓN --}}
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4" id="contenedorDisponibilidad">
         <div class="">
             <p class="text-pc-texto-p text-sm border-l-4 border-l-pc-azul pl-2">¿La bicicleta se encuentra en la
                 estación?</p>
         </div>
         <div class="flex gap-6 self-center">
-            {{-- <form action="{{ route('alquilar.store') }}" method="POST">
-                @csrf
-                <button class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">Si</button>
-            </form>
-            <form action="{{ route('alquilar.store') }}" method="POST">
-                @csrf
-                <button class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">No</button>
-            </form> --}}
-            <form action="{{ route('alquilar.store') }}" method="POST">
-                @csrf
-                <button type="submit" name="bicicletaDisponible" value="1" class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">Si</button>
-                <button type="submit" name="bicicletaDisponible" value="0" class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">No</button>
+            <form action="{{ route('alquilar.se-encuentra-bici') }}" method="POST" class="row-auto"
+                id="formularioDisponibilidad">
+                <meta name="csrf-token" content="{{ csrf_token() }}">
+                <div class="flex gap-4 mb-4">
+                    <input type="hidden" name="bicicletaDisponible" id="bicicletaDisponible" value="">
+                    <input type="button" value="Si"
+                        class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer">
+                    <input type="button" value="No"
+                        class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer">
+                </div>
             </form>
         </div>
     </div>
+
     {{-- PAGAR ALQUILER --}}
     {{-- TODO: Mostrar lo que corresponda según la selección que haga en el div anterior --}}
-    <div class="flex flex-col gap-4 hidden">
+    <div class="flex flex-col gap-4 hidden" id="contenedorPagarAlquiler">
         <div class="">
             <p class="text-pc-texto-p text-sm border-l-4 border-l-pc-azul pl-2">
                 Ya podes pagar el alquiler para retirar tu bicicleta!
@@ -82,4 +81,12 @@
             </button>
         </div>
     </div>
+
+@endsection
+
+@section('scripts')
+    @vite('resources/js/alquilar.js')
+    <script>
+        var urlAlquilar = "{{ route('alquilar.se-encuentra-bici') }}";
+    </script>
 @endsection

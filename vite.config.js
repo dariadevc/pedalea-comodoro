@@ -13,8 +13,14 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/js/alquilar.js'
             ],
             refresh: true,
         }),
     ],
+    resolve: {
+        alias: {
+            $: 'jquery',
+        },
+    },
 });

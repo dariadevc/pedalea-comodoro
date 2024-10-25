@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class ReservaController extends Controller
@@ -12,10 +13,17 @@ class ReservaController extends Controller
         return view('cliente.alquilar');
     }
 
-    public function alquilar(Request $request)
+    public function seEncuentraBici(Request $request)
     {
-        if ($request->bicicletaDisponible) {
-            
+        $se_encuentra_bicicleta = $request->input('bicicletaDisponible');
+        $usuario = Auth::user();
+        // $cliente = $usuario->obtenerCliente();
+        // $reserva = $cliente->obtenerReservaActual();
+
+        if ($se_encuentra_bicicleta === 'Si') {
+            return response()->json(['success' => true]);
+        } elseif ($se_encuentra_bicicleta === 'No') {
+            return response()->json(['error' => true]);
         }
     }
 }

@@ -23,6 +23,15 @@ class Cliente extends User
         'fecha_nacimiento',
     ];
 
+
+    public function obtenerReservaActual(): Reserva
+    {
+        return $this->reservaReservo->whereIn('id_estado', [1, 5])->first();
+    }
+
+
+
+
     public function estadoCliente()
     {
         return $this->belongsTo(EstadoCliente::class, 'id_estado_cliente');
