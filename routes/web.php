@@ -50,15 +50,19 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/alquilar', function () {
         return view('cliente.alquilar');  // Renderiza la vista 'home.blade.php'
-    })->name('alquiler');
+    })->name('alquilar');
 
     Route::get('/devolver', function () {
         return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
-    });
+    })->name('devolver');
 
     Route::get('/reservar', function () {
         return view('cliente.reservar');  // Renderiza la vista 'home.blade.php'
-    });
+    })->name('reservar');
+
+    Route::get('/profile', function () {
+        return view('profile.edit');  // Renderiza la vista 'home.blade.php'
+    })->name('perfil');
 });
 
 
