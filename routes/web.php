@@ -65,6 +65,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
 
 Route::post('/alquilar/se-encuentra-bici',  [ReservaController::class, 'seEncuentraBici'])->name('alquilar.se-encuentra-bici');
+Route::post('/alquilar/pagar-alquler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
 
 
 

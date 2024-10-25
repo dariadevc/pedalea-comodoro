@@ -32,6 +32,15 @@ class Reserva extends Model
         'id_reserva',
     ];
 
+    public function alquilar($cliente) 
+    {
+        $cliente->pagar($this->calcularMontoRestante());
+    }
+
+    public function calcularMontoRestante(): float
+    {
+        return $this->monto - $this->seña;
+    }
 
     public function bicicleta()
     {

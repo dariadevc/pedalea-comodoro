@@ -29,6 +29,11 @@ class Cliente extends User
         return $this->reservaReservo->whereIn('id_estado', [1, 5])->first();
     }
 
+    public function pagar($monto) 
+    {
+        $this->saldo -= $monto;
+        $this->save();
+    }
 
 
 

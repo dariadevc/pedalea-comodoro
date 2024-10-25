@@ -58,9 +58,11 @@
                 <div class="flex gap-4 mb-4">
                     <input type="hidden" name="bicicletaDisponible" id="bicicletaDisponible" value="">
                     <input type="button" value="Si"
-                        class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer">
+                        class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer"
+                        onclick="mandarFormularioDisponibilidad('Si')">
                     <input type="button" value="No"
-                        class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer">
+                        class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer"
+                        onclick="mandarFormularioDisponibilidad('No')">
                 </div>
             </form>
         </div>
@@ -76,7 +78,11 @@
         </div>
         {{-- TODO: Al apretar el botón debería saltar un cartel que tenga un mensaje informando que la reserva se realizó con éxito y un botón que te manda al inicio --}}
         <div class="flex gap-6 self-center">
-            <button class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">
+            <form action="{{ route('alquilar.pagar-alquiler') }}" method="POST" id="formularioPagar"></form>
+            <meta name="csrf-token" content="{{ csrf_token() }}">
+            <input type="hidden" name="pagar" id="pagar" value="">
+            <button class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul"
+                type="button" onclick="mandarFormularioPagar()">
                 Pagar Alquiler
             </button>
         </div>
@@ -88,5 +94,6 @@
     @vite('resources/js/alquilar.js')
     <script>
         var urlAlquilar = "{{ route('alquilar.se-encuentra-bici') }}";
+        var urlPagar = "{{ route('alquilar.pagar-alquiler') }}";
     </script>
 @endsection

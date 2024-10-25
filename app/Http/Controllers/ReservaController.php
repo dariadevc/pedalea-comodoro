@@ -26,4 +26,15 @@ class ReservaController extends Controller
             return response()->json(['error' => true]);
         }
     }
+
+    public function pagarAlquiler(Request $request)
+    {
+        $inputPagar = $request->input('pagar');
+        if (!($inputPagar === '')) {
+            $usuario = Auth::user();
+            $cliente = $usuario->obtenerCliente();
+            $reserva = $cliente->obtenerReservaActual();
+            $reserva->pagar($cliente);
+        }
+    }
 }

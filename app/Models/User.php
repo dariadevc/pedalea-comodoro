@@ -58,4 +58,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function obtenerCliente(): Cliente
+    {
+        return Cliente::where('id_usuario', $this->id_usuario)->first();
+    }
 }
