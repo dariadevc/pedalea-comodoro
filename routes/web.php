@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\EstacionController;
+use App\Http\Controllers\InfraccionController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,14 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     // Rutas para gestion tarifas
     Route::get('/modificar-tarifa', [AdministrativoController::class, 'editTarifa'])->name('administrativo.editTarifa');
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
+});
+Route::middleware(['auth', 'role:inspector'])->group(function () {
+
+    // Rutas para gestión de bicicletas
+    Route::get('/bicicletas', [BicicletaController::class, 'index2'])->name('inspector.bicicletas');
+    Route::get('/infraccion', [InfraccionController::class, 'index'])->name('inspector.infraccion');
+
+    // Rutas para gestion tarifas
 });
 
 Route::middleware(['auth', 'role:cliente'])->group(function () {

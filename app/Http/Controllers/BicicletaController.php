@@ -17,6 +17,11 @@ class BicicletaController extends Controller
         return view('bicicletas.index', compact('bicicletas'));
     }
 
+    public function index2()
+    {
+        $bicicletas = Bicicleta::with(['estado', 'estacionActual'])->get();
+        return view('inspector.bicicletas', compact('bicicletas'));
+    }
     public function create()
     {
         $estados = EstadoBicicleta::all();
@@ -24,7 +29,7 @@ class BicicletaController extends Controller
         return view('bicicletas.create', compact('estados', 'estaciones'));
     }
 
-    public function store(Request $request) 
+    public function store(Request $request)
     {
         $request->validate([
             'estacion' => 'required|integer',
@@ -35,7 +40,7 @@ class BicicletaController extends Controller
             'id_estado' => $request->input('estado'),
             'id_estacion_actual' => $request->input('estacion') == '0' ? null : $request->input('estacion'),
         ]);
-        
+
         return redirect()->route('bicicletas.index')->with('success', 'Bicicleta creada exitosamente.');
 
     }
@@ -50,7 +55,7 @@ class BicicletaController extends Controller
             $estaciones = Estacion::where('id_estado', 1)->get();
             return view('bicicletas.edit', compact('bicicleta', 'estados', 'estaciones'));
         }
-            
+
     }
 
     public function update(Request $request, Bicicleta $bicicleta)
@@ -76,7 +81,7 @@ class BicicletaController extends Controller
         return redirect()->route('bicicletas.index')->with('success', 'Bicicleta actualizada correctamente');
     }
 
-    public function destroy(Bicicleta $bicicleta) 
+    public function destroy(Bicicleta $bicicleta)
     {
         $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
         if ($existe_bicicleta_en_reservas) {
