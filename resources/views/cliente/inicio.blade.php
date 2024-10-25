@@ -9,13 +9,30 @@
     <div class="flex flex-col items-center gap-1">
         <!-- CAMBIAR LOGO POR LA VERSIÓN FINAL -->
         <img src="img/bicicleta.png" alt="" class="h-14 w-14">
-        <p class="text-xl font-semibold text-pc-texto-h">¡Hola, <span class="font-bold text-pc-rojo"> {{ Auth::user()->nombre }}</span>!</p>
+        <p class="text-xl font-semibold text-pc-texto-h">¡Hola, <span class="font-bold text-pc-rojo">
+                {{ Auth::user()->nombre }}</span>!</p>
+
+        {{-- ALERTA DE EXITO --}}
+        @if (session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        @endif
+
+        {{-- ALERTA DE ERROR --}}
+        @if (session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+        @endif
+        
     </div>
     {{-- TARJETA RESERVA/ALQUILER ACTUAL --}}
     {{-- * La información de esta tarjeta se actualiza, si no tiene reserva lo va a mandar a reservar, si tiene reserva en curso muestra algunos datos y te manda a consultar reserva, si tiene alquiler en curso muestra algunos datos y te manda a consultar alquiler * --}}
     {{-- TODO: Actualizar la tarjeta si el usuario tiene alguna reserva o alquiler en curso, reserva = rojo, alquiler = azul --}}
     <div class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full h-40 p-4 shadow-md rounded-xl flex flex-col">
-        <h2 class="text-sm text-left uppercase font-semibold text-slate-50 tracking-wider border-b-2 border-slate-50">Reserva
+        <h2 class="text-sm text-left uppercase font-semibold text-slate-50 tracking-wider border-b-2 border-slate-50">
+            Reserva
         </h2>
         <p class="mt-4 text-left text-slate-50">No te olvides de...</p>
         <button class="mt-6 text-center">
@@ -26,6 +43,7 @@
     {{-- OTRAS OPCIONES --}}
     {{-- TODO: Conectar los botones a las vistas correspondientes --}}
     <div class="grid grid-cols-2 gap-6">
+
         {{-- CONSULTAR SALDO --}}
         <div class=" bg-gray-50 w-full h-36 p-4 shadow-md rounded-xl flex flex-col items-center gap-1">
             <svg width="50px" height="50px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
