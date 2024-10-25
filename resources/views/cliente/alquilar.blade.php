@@ -52,8 +52,19 @@
                 estación?</p>
         </div>
         <div class="flex gap-6 self-center">
-            <button class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">Si</button>
-            <button class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">No</button>
+            {{-- <form action="{{ route('alquilar.store') }}" method="POST">
+                @csrf
+                <button class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">Si</button>
+            </form>
+            <form action="{{ route('alquilar.store') }}" method="POST">
+                @csrf
+                <button class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">No</button>
+            </form> --}}
+            <form action="{{ route('alquilar.store') }}" method="POST">
+                @csrf
+                <button type="submit" name="bicicletaDisponible" value="1" class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">Si</button>
+                <button type="submit" name="bicicletaDisponible" value="0" class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">No</button>
+            </form>
         </div>
     </div>
     {{-- PAGAR ALQUILER --}}

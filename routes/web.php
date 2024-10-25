@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\AdministrativoController;
-use App\Http\Controllers\BicicletaController;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InicioController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EstacionController;
-use App\Http\Controllers\InicioController;
+use App\Http\Controllers\BicicletaController;
+use App\Http\Controllers\AdministrativoController;
+use App\Http\Controllers\ReservaController;
 
 // Vista principal
 Route::get('/', function () {
@@ -48,9 +49,8 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:cliente'])->group(function () {
-    Route::get('/alquilar', function () {
-        return view('cliente.alquilar');  // Renderiza la vista 'home.blade.php'
-    })->name('alquiler');
+    Route::get('/alquilar',  [ReservaController::class, 'mostrarVistaAlquilar'])->name('alquilar.index');// Renderiza la vista 'home.blade.php'
+    Route::post('/alquilar',  [ReservaController::class, 'alquilar'])->name('alquilar.store');
 
     Route::get('/devolver', function () {
         return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
