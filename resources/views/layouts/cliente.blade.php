@@ -7,99 +7,141 @@
 
     <title>@yield('titulo')</title>
 
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
 
 <body class="antialiased font-Montserrat bg-gray-100">
 
-    <header
-        class="fixed bg-gray-50 top-0 left-0 w-screen p-3 shadow-sm transition-transform h-14 lg:translate-x-0 lg:pl-64">
-        <div class="flex flex-row gap-4 items-center mx-auto md:justify-between px-4">
-            <!-- BOTÓN DEL MENÚ -->
-            <div class="lg:hidden">
-                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC"
-                        stroke-width="0.144"></g>
-                    <g id="SVGRepo_iconCarrier">
-                        <g clip-path="url(#clip0_429_11066)">
-                            <path d="M3 6.00092H21M3 12.0009H21M3 18.0009H21" stroke="#292929" stroke-width="2.5"
-                                stroke-linecap="round" stroke-linejoin="round"></path>
-                        </g>
-                        <defs>
-                            <clipPath id="clip0_429_11066">
-                                <rect width="24" height="24" fill="white" transform="translate(0 0.000915527)">
-                                </rect>
-                            </clipPath>
-                        </defs>
-                    </g>
-                </svg>
+
+    {{-- Este contenedor es para que el botón del menú que está en el header y la sidebar compartan la información del open --}}
+    <div x-data="{ open: false }" @resize.window="if (window.innerWidth >= 1024) open = true" @click.away="open = false"
+        x-init="window.addEventListener('resize', () => {
+            if (window.innerWidth < 1024) open = false;
+        });">
+
+        <header
+            class="fixed bg-gray-50 top-0 left-0 w-screen p-3 shadow-sm transition-transform h-14 md:translate-y-0 lg:-translate-y-full lg:pl-64 lg:hidden duration-500">
+            <div class="flex items-center mx-auto justify-between px-4">
+                <!-- BOTÓN DEL MENÚ -->
+                <div class="hidden md:block absolute">
+                    <button @click="open= !open">
+                        <x-icon-hmenu-oscuro height="30px" width="30px" />
+                    </button>
+                </div>
+                <!-- TÍTULO SECCIÓN -->
+                <div class="flex flex-1 justify-center">
+                    <h1 class="lg:hidden font-bold text-lg uppercase text-pc-texto-h ml-2 transition-transform">
+                        @yield('nombre_seccion')
+                    </h1>
+                </div>
             </div>
-            <!-- TÍTULO SECCIÓN -->
-            <h1 class="font-bold text-lg uppercase text-pc-texto-h ml-2 transition-transform lg:translate-x-0">
-                @yield('nombre_seccion')
-            </h1>
-            {{-- TODO: Agregar nombre, saldo, puntaje, datos importantes --}}
-            <p class="hidden md:block">Perfil</p>
-        </div>
-    </header>
+        </header>
 
 
-    {{-- * Para pantallas más grandes (a partir de large) * --}}
-    {{-- SIDEBAR --}}
-    <aside
-        class="fixed top-0 left-0 w-64 h-screen transition-transform -translate-x-full bg-gray-50 shadow-sm border-r-gray-100 lg:translate-x-0 flex flex-col justify-between">
+        {{-- * Para pantallas grandes (a partir de medium es un desplegable, desde large queda fijo) * --}}
+        {{-- SIDEBAR --}}
+        <aside x-show="open || window.innerWidth >= 1024"
+            x-transition:enter="transition-transform transform duration-500"
+            x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
+            x-transition:leave="transition-transform transform duration-500" x-transition:leave-start="translate-x-0"
+            x-transition:leave-end="-translate-x-full"
+            class="fixed top-0 left-0 w-64 h-screen bg-gray-50 shadow-sm border-r border-gray-100 lg:translate-x-0 lg:block">
+            {{-- CRUZ --}}
+            <div class="place-self-end block lg:hidden">
+                <button @click="open = false" class="p-2">
+                    <x-icon-cruz-oscura height="20px" width="20px" />
+                </button>
+            </div>
+            <div class="flex flex-col gap-4 p-8 text-lg font-medium">
+                {{-- LOGO --}}
+                <div
+                    class="py-1 flex flex-col items-center gap-4 text-pc-texto-h uppercase text-lg font-bold text-center">
+                    <img src="{{ asset('img/bicicleta.png') }}" alt="" class="h-12">
+                    <h2 class="">Pedalea Comodoro</h2>
+                </div>
+                {{-- USUARIO --}}
+                <div class="text-sm">
+                    <ul>
+                        <x-item-sidebar href="{{ route('inicio') }}" @click="open = false">Inicio</x-item-sidebar>
+                        <x-item-sidebar href="{{ route('perfil') }}">Perfil</x-item-sidebar>
+                        <x-item-sidebar href="">Cargar Saldo</x-item-sidebar>
+                    </ul>
+                </div>
+                <hr>
+                {{-- SECCIONES --}}
+                <div class="text-sm">
+                    <p class="text-pc-rojo mt-2">Reservas y Alquileres</p>
+                    <ul>
+                        <x-item-sidebar href="">Ver Estaciones</x-item-sidebar>
+                        <x-item-sidebar href="{{ route('reservar') }}">Reservar una Bicicleta</x-item-sidebar>
+                        {{-- ? Que cambie la palabra (Reserva o Alquiler) según lo que tenga, si no tiene nada, que no aparezca la opción? --}}
+                        <x-item-sidebar href="">Reserva/Alquiler Actual</x-item-sidebar>
+                    </ul>
+                </div>
+                <hr>
+                {{-- HISTORIALES --}}
+                <div class="text-sm">
+                    <p class="text-pc-rojo mt-2">Historiales</p>
+                    <ul>
+                        <x-item-sidebar href="">Movimientos del Saldo</x-item-sidebar>
+                        <x-item-sidebar href="">Historial de Reservas</x-item-sidebar>
+                        {{-- TODO: Que el texto de esta sección se marque de rojo o tenga un puntito si tiene una multa pendiente de pago --}}
+                        <x-item-sidebar href="">Historial de Multas</x-item-sidebar>
+                        <x-item-sidebar href="">Historial de Suspensiones</x-item-sidebar>
+                        <li></li>
+                    </ul>
+                </div>
+            </div>
+            {{-- LOGOUT --}}
+            {{-- TODO: Arreglar, el cerrar sesión se fue muy abajo --}}
+            <div class="p-8 place-self-center">
+                <ul>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                class="text-center text-base py-2 px-4 text-pc-texto-h font-medium rounded-full bg-gray-200 hover:bg-white hover:shadow-md my-1">
+                                {{ __('Log Out') }}
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+            {{-- FONDO --}}
+        </aside>
+    </div>
 
-        <div class="flex flex-col gap-4 p-8 text-lg font-medium">
-            {{-- USUARIO --}}
-            <div>
-                {{-- TODO: Pedalea Comodoro --}}
-                <p class="text-center text-2xl font-semibold text-pc-texto-h border-b-2 border-pc-naranja my-8">
-                    {{ Auth::user()->nombre }} {{ Auth::user()->apellido }}
-                </p>
-                <ul>
-                    <x-item-sidebar href="{{ route('inicio') }}">Inicio</x-item-sidebar>
-                    <x-item-sidebar href="{{ route('perfil') }}">Perfil</x-item-sidebar>
-                    <x-item-sidebar href="">Cargar Saldo</x-item-sidebar>
-                </ul>
+    {{-- * Para vista sm (MOBILE) * --}}
+    <div>
+        {{-- TODO: Mejorar sombra --}}
+        <nav class="bg-gray-50 fixed bottom-0 left-0 w-screen h-20 md:hidden shadow-[0_-2px_4px_0_rgba(0,0,0,0.05)]">
+            {{-- BOTONES --}}
+            <div class="h-full p-5 flex justify-between items-center text-sm">
+                {{-- INICIO --}}
+                {{-- TODO: Cuando estas en una sección el color del fondo del icono cambia de color y la fuente pasa a bold --}}
+                <button class="flex flex-col justify-center items-center gap-1 p-1">
+                    <x-icon-casa-oscura height="30px" width="30px" />
+                    <p class="font-semibold text-pc-texto-p">Inicio</p>
+                </button>
+                {{-- RESERVAR/ALQUILAR --}}
+                <button class="flex flex-col justify-center items-center gap-1 p-1">
+                    <x-icon-bicicleta-oscura height="30px" width="30px" />
+                    <p class="font-semibold text-pc-texto-p">Reservar</p>
+                </button>
+                {{-- ESTACIONES --}}
+                <button class="flex flex-col justify-center items-center gap-1 p-1">
+                    <x-icon-mapa-oscuro height="30px" width="30px" />
+                    <p class="font-semibold text-pc-texto-p">Estaciones</p>
+                </button>
+                {{-- ESTACIONES --}}
+                <button class="flex flex-col justify-center items-center gap-1 p-1">
+                    <x-icon-puntos-oscuros height="30px" width="30px" />
+                    <p class="font-semibold text-pc-texto-p">Más</p>
+                </button>
             </div>
-            <hr>
-            {{-- SECCIONES --}}
-            <div class="">
-                <p class="text-sm text-pc-texto-p mt-2">Reservas y Alquileres</p>
-                <ul>
-                    <x-item-sidebar href="">Ver Estaciones</x-item-sidebar>
-                    <x-item-sidebar href="{{ route('reservar') }}">Reservar una Bicicleta</x-item-sidebar>
-                    {{-- ? Que cambie la palabra (Reserva o Alquiler) según lo que tenga, si no tiene nada, que no aparezca la opción? --}}
-                    <x-item-sidebar href="">Reserva/Alquiler Actual</x-item-sidebar>
-                </ul>
-            </div>
-            <hr>
-            {{-- HISTORIALES --}}
-            <div class="">
-                <p class="text-sm text-pc-texto-p mt-2">Historiales</p>
-                <ul>
-                    <x-item-sidebar href="">Movimientos del Saldo</x-item-sidebar>
-                    <x-item-sidebar href="">Historial de Reservas</x-item-sidebar>
-                    {{-- TODO: Que el texto de esta sección se marque de rojo o tenga un puntito si tiene una multa pendiente de pago --}}
-                    <x-item-sidebar href="">Historial de Multas</x-item-sidebar>
-                    <x-item-sidebar href="">Historial de Suspensiones</x-item-sidebar>
-                    <li></li>
-                </ul>
-            </div>
-        </div>
-        {{-- LOGOUT --}}
-        {{-- TODO: Arreglar, el cerrar sesión se fue muy abajo --}}
-        <div class="p-8">
-            <ul>
-                <li
-                    class="text-center text-base p-2 text-pc-texto-h font-medium rounded-full bg-gray-200 hover:bg-white hover:shadow-md my-1">
-                    <a href="">Cerrar Sesión</a>
-                </li>
-            </ul>
-        </div>
-    </aside>
+        </nav>
+    </div>
 
     {{-- CONTENIDO PRINCIPAL --}}
     <main class="flex flex-col mt-14 p-8 gap-8  lg:ml-64 overflow-y-auto">

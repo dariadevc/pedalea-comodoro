@@ -5,15 +5,17 @@
 @section('nombre_seccion', 'Inicio')
 
 @section('contenido')
+    {{-- TODO: Agregar nombre, saldo, puntaje, datos importantes --}}
     {{-- BIENVENIDA --}}
     <div class="flex flex-col items-center gap-1">
         <!-- CAMBIAR LOGO POR LA VERSIÓN FINAL -->
         <img src="img/bicicleta.png" alt="" class="h-14 w-14">
         <p class="text-xl font-semibold text-pc-texto-h">¡Hola, <span class="font-bold text-pc-rojo">
-                {{ Auth::user()->nombre }}</span>!</p>
+                {{ Auth::user()->nombre }} {{ Auth::user()->apellido }}</span>!</p>
     </div>
     {{-- TARJETA RESERVA/ALQUILER ACTUAL --}}
     {{-- * La información de esta tarjeta se actualiza, si no tiene reserva lo va a mandar a reservar, si tiene reserva en curso muestra algunos datos y te manda a consultar reserva, si tiene alquiler en curso muestra algunos datos y te manda a consultar alquiler * --}}
+
     {{-- TODO: Actualizar la tarjeta si el usuario tiene alguna reserva o alquiler en curso, reserva = rojo, alquiler = azul --}}
     <div class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full h-40 p-4 shadow-md rounded-xl flex flex-col">
         <h2 class="text-sm text-left uppercase font-semibold text-slate-50 tracking-wider border-b-2 border-slate-50">Reserva
