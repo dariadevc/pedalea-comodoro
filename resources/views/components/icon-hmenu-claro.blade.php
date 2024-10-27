@@ -1,3 +1,5 @@
+{{-- Icono sacado de: https://icons8.com/icons/set/hamburger-menu --}}
+
 <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0,0,256,256"
     {{ $attributes->merge(['width' => '100', 'height' => '100']) }}>
     <g fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
