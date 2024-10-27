@@ -49,6 +49,9 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
 
     Route::get('/multas', [InformeController::class, 'multas'])->name('informes.multas');
+
+    Route::get('/estacionesInforme', [InformeController::class, 'estaciones'])->name('informes.estaciones');
+
 });
 
 Route::middleware(['auth', 'role:cliente'])->group(function () {
