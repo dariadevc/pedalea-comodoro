@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Multa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Constraint\Count;
 
 class InformeController extends Controller
 {
@@ -27,10 +28,33 @@ class InformeController extends Controller
         }
         return view('informes.multas', compact('multas'));
     }
+
+//De la otra forma con la lista y el validatte, tendria que probar con date_format, no con date solo.
+
+    public function estaciones (Request $request)
+    {
+        $fechaInicio = $request->input('fecha_inicio') . ' 00:00:00';
+        $fechaFin = $request->input('fecha_fin') . ' 23:59:59'; 
+
+        if($fechaInicio && $fechaFin)
+        {
+            $estaciones = DB::table('reservas')
+            ->select(DB::raw('id_estacion_retiro, estaciones.nombre, COUNT(*) as total_reservas')) //DB::RAW sirve para utilizar funciones SQL que laravel no tiene
+            ->join('estaciones', 'reservas.id_estacion_retiro' ,'=', 'estaciones.id_estacion')
+            ->whereBetween(DB::raw('DATE(fecha_hora_retiro)'), [$fechaInicio, $fechaFin])
+            ->groupBy('id_estacion_retiro', 'nombre')
+            ->orderBy('total_reservas', 'desc')
+            ->get();
+
+        }else{
+            $estaciones = [];
+        }
+        return view('informes.estacionesInforme', compact('estaciones'));
+
+    }
     
 }
 
-//De la otra forma con la lista y el validatte, tendria que probar con date_format, no con date solo.
 
 
 
