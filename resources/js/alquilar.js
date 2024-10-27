@@ -2,23 +2,21 @@ import $ from 'jquery';
 window.$ = $;
 
 
-window.mandarFormularioDisponibilidad = function(valorBoton) {
-    $('#bicicletaDisponible').val(valorBoton);
-    
-    if (valorBoton === "") {
-        alert("Por favor, seleccione si la bicicleta está disponible o no.");
-        return;
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
+});
 
-    var datos = $('#formularioDisponibilidad').serialize();
+
+
+window.mandarFormularioBiciDisponible = function () {
+    var datos = $('#formularioBiciDisponible').serialize();
 
     $.ajax({
-        url: urlAlquilar,
+        url: urlBiciDisponible,
         type: 'POST',
         data: datos,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
         success: function (response) {
             if (response.success) {
                 window.ocultarDisponible();
@@ -30,11 +28,40 @@ window.mandarFormularioDisponibilidad = function(valorBoton) {
         },
     });
 };
+window.mandarFormularioBiciNoDisponible = function () {
+    var datos = $('#formularioBiciNoDisponible').serialize();
 
-window.mandarFormularioPagar = function(valorBoton) {
+    $.ajax({
+        url: urlBiciNoDisponible,
+        type: 'POST',
+        data: datos,
+        success: function (response) {
+            if (response.success) {
+                window.ocultarDisponible();
+                window.mostrarPagarAlquiler();
+            } else {
+
+                /**
+                 * 
+                 * FALTA REALIZAR LA LOGICA DE MOSTRAR SI QUIERE QUE SE LO MODIFIQUE LA RESERVA ACTUAL
+                 * 
+                 */
+
+                alert(response.mensaje);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log('Status:', status); // Ver el estado (como 500, 404, etc.)
+            console.log('Error:', error); // Mensaje general de error
+            console.log('Response:', xhr.responseText); // Ver el cuerpo completo de la respuesta
+        }
+    });
+};
+
+window.mandarFormularioPagar = function (valorBoton) {
     console.log(valorBoton);
     $('#pagar').val(valorBoton);
-    
+
     if (valorBoton === "") {
         alert("Por favor, seleccione pagar.");
         return;
@@ -52,15 +79,18 @@ window.mandarFormularioPagar = function(valorBoton) {
         },
         success: function (response) {
             if (response.success) {
-                console.log('Anda');
+                alert(response.mensaje);
+                window.location.href = response.redirect;
             } else {
-                console.log('Hubo un error al pagar');
-                alert('Hubo un error al pagar');
+                alert(response.mensaje);
             }
         },
-        error: function (response) {
-            console.log('Hubo un error al enviar el formulario');
-        },
+        error: function (xhr, status, error) {
+            console.log('Status:', status); // Ver el estado (como 500, 404, etc.)
+            console.log('Error:', error); // Mensaje general de error
+            console.log('Response:', xhr.responseText); // Ver el cuerpo completo de la respuesta
+        }
+
     });
 };
 

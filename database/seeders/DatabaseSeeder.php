@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            ConfiguracionesSeeder::class,
             RolesSeeder::class,
             EstadosClienteSeeder::class,
             UsersSeeder::class,
@@ -39,7 +40,6 @@ class DatabaseSeeder extends Seeder
             InfraccionesSeeder::class,
             DaniosPorUsoSeeder::class,
             PuntajesDevolucionSeeder::class,
-            ConfiguracionesSeeder::class,
         ]);
     }
 }

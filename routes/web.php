@@ -51,6 +51,9 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 
 Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/alquilar',  [ReservaController::class, 'mostrarVistaAlquilar'])->name('alquilar.index');// Renderiza la vista 'home.blade.php'
+    Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
+    Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
+    Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
     
     Route::get('/devolver', function () {
         return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
@@ -69,8 +72,6 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 // Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
 
-Route::post('/alquilar/se-encuentra-bici',  [ReservaController::class, 'seEncuentraBici'])->name('alquilar.se-encuentra-bici');
-Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
 
 
 

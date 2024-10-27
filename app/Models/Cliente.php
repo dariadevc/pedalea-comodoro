@@ -24,14 +24,19 @@ class Cliente extends User
         'fecha_nacimiento',
     ];
 
-    public function obtenerReservaActual(): Reserva
+    public function obtenerReservaActivaModificada(): ?Reserva
     {
         return $this->reservaReservo->whereIn('id_estado', [1, 5])->first();
     }
+    
 
     public function pagar($monto) 
     {
-        // FALTA HACER LA LOGICA DE MONTO NEGATIVO
+        /**
+         * TODO
+         * FALTA HACER LA LOGICA DEL MONTO NEGATIVO
+         * 
+         */
         $this->saldo -= $monto;
         $this->save();
         return true;

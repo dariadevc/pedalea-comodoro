@@ -15,32 +15,37 @@
                 <div class="flex flex-col gap-1">
                     <h3 class="font-semibold text-sm text-pc-texto-h border-b-2 border-pc-azul self-start">Estación de
                         Retiro</h3>
-                    <p class="pl-4 text-lg">Av. Tehuelches</p>
+                    <p class="pl-4 text-lg">{{ $reserva['estacion_retiro_nombre'] }}</p>
                 </div>
                 <div class="flex flex-col gap-1">
                     <h3 class="font-semibold text-sm text-pc-texto-h border-b-2 border-pc-azul self-start">Estación de
                         Devolución</h3>
-                    <p class="pl-4 text-lg">Av. Alsina</p>
+                    <p class="pl-4 text-lg">{{ $reserva['estacion_devolucion_nombre'] }}</p>
                 </div>
                 <div class="flex flex-col gap-1">
                     <h3 class="font-semibold text-sm text-pc-texto-h border-b-2 border-pc-azul self-start">Horas de
                         Alquiler</h3>
-                    <p class="pl-4 text-lg">3hs</p>
+                    <p class="pl-4 text-lg">{{ $reserva['tiempo_uso'] }}hs</p>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <h3 class="font-semibold text-sm text-pc-texto-h border-b-2 border-pc-azul self-start">Horario de
+                        Retiro</h3>
+                    <p class="pl-4 text-lg">{{ $reserva['fecha_hora_retiro'] }}hs</p>
                 </div>
                 <div class="flex flex-col gap-1">
                     <h3 class="font-semibold text-sm text-pc-texto-h border-b-2 border-pc-azul self-start">Horario de
                         Devolución</h3>
-                    <p class="pl-4 text-lg">21:00hs</p>
+                    <p class="pl-4 text-lg">{{ $reserva['fecha_hora_devolucion'] }}hs</p>
                 </div>
                 <div class="flex flex-col gap-1">
                     <h3 class="font-semibold text-sm text-pc-texto-h border-b-2 border-pc-azul self-start">Bicicleta
                         Asignada</h3>
-                    <p class="pl-4 text-lg">#016</p>
+                    <p class="pl-4 text-lg">{{ $reserva['bicicleta_patente'] }}</p>
                 </div>
                 <div class="flex flex-col gap-1">
                     <h3 class="font-semibold text-sm text-pc-texto-h border-b-2 border-pc-azul self-start">Monto
                         Restante a Pagar</h3>
-                    <p class="pl-4 text-lg">$2250,00</p>
+                    <p class="pl-4 text-lg">${{ $reserva['monto_restante'] }}</p>
                 </div>
             </div>
         </div>
@@ -52,20 +57,29 @@
                 estación?</p>
         </div>
         <div class="flex gap-6 self-center">
-            <form action="{{ route('alquilar.se-encuentra-bici') }}" method="POST" class="row-auto"
-                id="formularioDisponibilidad">
+            <!-- Formulario para Indicar que hay Bicicleta Disponible -->
+            <form action="{{ route('alquilar.bici-disponible') }}" method="POST" class="row-auto" id="formularioBiciDisponible">
+                @csrf
                 <meta name="csrf-token" content="{{ csrf_token() }}">
-                <div class="flex gap-4 mb-4">
-                    <input type="hidden" name="bicicletaDisponible" id="bicicletaDisponible" value="">
-                    <input type="button" value="Si"
-                        class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer"
-                        onclick="mandarFormularioDisponibilidad('Si')">
-                    <input type="button" value="No"
-                        class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer"
-                        onclick="mandarFormularioDisponibilidad('No')">
-                </div>
+                <input type="hidden" name="bicicletaDisponible" value="Si">
+                <button type="button" 
+                    class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer" onclick="mandarFormularioBiciDisponible()">
+                    Sí
+                </button>
+            </form>
+        
+            <!-- Formulario para Indicar que No hay Bicicleta Disponible -->
+            <form action="{{ route('alquilar.bici-no-disponible') }}" method="POST" class="row-auto" id="formularioBiciNoDisponible">
+                @csrf
+                <meta name="csrf-token" content="{{ csrf_token() }}">
+                <input type="hidden" name="bicicletaNoDisponible" value="No">
+                <button type="button" 
+                    class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer" onclick="mandarFormularioBiciNoDisponible()">
+                    No
+                </button>
             </form>
         </div>
+        
     </div>
 
     {{-- PAGAR ALQUILER --}}
@@ -95,7 +109,8 @@
 @section('scripts')
     @vite('resources/js/alquilar.js')
     <script>
-        var urlAlquilar = "{{ route('alquilar.se-encuentra-bici') }}";
+        var urlBiciDisponible = "{{ route('alquilar.bici-disponible') }}";
+        var urlBiciNoDisponible = "{{ route('alquilar.bici-no-disponible') }}";
         var urlPagar = "{{ route('alquilar.pagar-alquiler') }}";
     </script>
 @endsection

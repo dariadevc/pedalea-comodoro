@@ -15,21 +15,39 @@ class Estacion extends Model
     protected $primaryKey = 'id_estacion';
     public $timestamps = false;
 
-    // Los atributos que pueden modificarse
     protected $fillable = [
         'id_estado',
         'nombre',
         'latitud',
         'longitud',
-        'calificacion', //Se calcula cada vez que se agrega una calificación
+        'calificacion',
     ];
 
-    // Los atributos que no pueden modificarse
     protected $guarded = [
         'id_estacion',
     ];
 
-    // Relación con el estado
+
+
+
+    /**
+     * FUNCIONES DEL MODELO
+     * 
+     */
+    public function getBicicletaDisponible(): ?Bicicleta
+    {
+        return $this->bicicletas()->where('id_estado', 1)
+            ->whereDoesntHave('reservas', function ($query) {
+                $query->whereIn('id_estado', [1, 2, 5, 6]);
+            })->first();
+    }
+
+
+    /**
+     * FUNCIONES QUE RELACIONAN A OTROS MODELOS
+     * 
+     */
+
     public function estado()
     {
         return $this->belongsTo(EstadoEstacion::class, 'id_estado'); //Acá va la clave foránea
@@ -59,11 +77,10 @@ class Estacion extends Model
     public function actualizarPromedio()
     {
         // Calcular el promedio de todas las calificaciones de esta estación
-        $promedio = $this->calificaciones()  // Usar la relación ya existente
+        $promedio = $this->calificaciones()
             ->join('tipos_calificacion', 'calificaciones.id_tipo_calificacion', '=', 'tipos_calificacion.id_tipo_calificacion')
             ->avg('tipos_calificacion.cantidad_estrellas');
 
-        // Actualizar la calificación promedio de la estación
         $this->calificacion = $promedio ?? 0;
         $this->save();
     }

@@ -25,7 +25,7 @@ return new class extends Migration
             $table->foreignId('id_estado')->constrained('estados_reserva', 'id_estado')->onDelete('cascade');
             $table->foreignId('id_cliente_reservo')->constrained('clientes', 'id_usuario')->onDelete('cascade');
             $table->foreignId('id_cliente_devuelve')->nullable()->constrained('clientes', 'id_usuario')->onDelete('cascade');
-            $table->dateTime('fecha_hora_retiro');
+            $table->datetime('fecha_hora_retiro');
             $table->datetime('fecha_hora_devolucion');
             $table->double('monto');
             $table->double('senia');
