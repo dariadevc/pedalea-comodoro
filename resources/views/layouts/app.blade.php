@@ -99,10 +99,12 @@
     </div>
 
     {{-- CONTENIDO PRINCIPAL --}}
-    <main class="flex flex-col mt-14 p-8 gap-8  lg:ml-64 overflow-y-auto">
+    <main id="main" class="flex flex-col mt-14 p-8 gap-8  lg:ml-64 overflow-y-auto">
         @yield('contenido')
     </main>
 
+    @yield('scripts')
+    </script>
 </body>
 
 </html>
