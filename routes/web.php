@@ -48,21 +48,53 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:cliente'])->group(function () {
+    Route::get('/perfil', function () {
+        return view('cliente.partials.inicio');  // Renderiza la vista 'Inicio'
+    })->name('inicio');
+
     Route::get('/alquilar', function () {
-        return view('cliente.alquilar');  // Renderiza la vista 'home.blade.php'
+        return view('cliente.partials.alquilar');  // Renderiza la vista 'Alquilar'
     })->name('alquilar');
 
     Route::get('/devolver', function () {
-        return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
+        return view('cliente.partials.devolver');  // Renderiza la vista 'Devolver'
     })->name('devolver');
 
     Route::get('/reservar', function () {
-        return view('cliente.reservar');  // Renderiza la vista 'home.blade.php'
+        return view('cliente.partials.reservar');  // Renderiza la vista 'Reservar'
     })->name('reservar');
 
-    Route::get('/profile', function () {
-        return view('profile.edit');  // Renderiza la vista 'home.blade.php'
+    Route::get('/perfil', function () {
+        return view('cliente.partials.perfil');  // Renderiza la vista 'Perfil'
     })->name('perfil');
+
+    Route::get('/reserva_actual', function () {
+        return view('cliente.partials.reserva_actual');  // Renderiza la vista 'Reserva Actual'
+    })->name('reserva_actual');
+
+    Route::get('/alquiler_actual', function () {
+        return view('cliente.partials.alquiler_actual');  // Renderiza la vista 'Alquiler Actual'
+    })->name('alquiler_actual');
+
+    Route::get('/movimientos_saldo', function () {
+        return view('cliente.partials.movimientos_saldo');  // Renderiza la vista 'Movimientos del Saldo'
+    })->name('mov_saldo');
+
+    Route::get('/historial_reservas', function () {
+        return view('cliente.partials.historial_reservas');  // Renderiza la vista 'Historial de Reservas'
+    })->name('his_reservas');
+
+    Route::get('/historial_multas', function () {
+        return view('cliente.partials.historial_multas');  // Renderiza la vista 'Historial de Multas'
+    })->name('his_multas');
+
+    Route::get('/historial_suspensiones', function () {
+        return view('cliente.partials.historial_suspensiones');  // Renderiza la vista 'Historial de Suspensiones'
+    })->name('his_suspensiones');
+
+    Route::get('/estaciones', function () {
+        return view('cliente.partials.ver_estaciones');  // Renderiza la vista 'Ver Estaciones'
+    })->name('ver_estaciones');
 });
 
 
