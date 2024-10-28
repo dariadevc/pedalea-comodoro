@@ -8,9 +8,6 @@
 
     <title>@yield('titulo')</title>
 
-    {{-- Iconos UI --}}
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
