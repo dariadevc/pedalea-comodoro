@@ -1,14 +1,14 @@
 <?php
 
-use App\Http\Controllers\AdministrativoController;
-use App\Http\Controllers\BicicletaController;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\EstacionController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\BicicletaController;
+use App\Http\Controllers\AdministrativoController;
+use App\Http\Controllers\ReservaController;
 
 // Vista principal
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -48,26 +48,32 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:cliente'])->group(function () {
-    Route::get('/alquilar', function () {
-        return view('cliente.alquilar');  // Renderiza la vista 'home.blade.php'
-    })->name('alquiler');
-
+    Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index');// Renderiza la vista 'home.blade.php'
+    Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
+    Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
+    Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
+    
     Route::get('/devolver', function () {
         return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
     });
+    
+    Route::get('/reservar', [ReservaController::class, 'indexReserva'])->name('reservar.index');
+    Route::post('/reservar/pasos', [ReservaController::class, 'reservarPasos'])->name('reservar.pasos');
+    Route::post('/estaciones/disponibilidad-horario-retiro', [EstacionController::class, 'disponibilidadHorarioRetiro'])->name('estaciones.disponibilidad-horario-retiro');
+    Route::post('/reservar/crear-reserva', [ReservaController::class, 'crearReserva'])->name('reservar.crearReserva');
+    Route::post('/reservar/datos-correctos', [ReservaController::class, 'reservarDatosCorrectos'])->name('reservar.datos-correctos');
+    Route::post('/reservar/datos-incorrectos', [ReservaController::class, 'reservarDatosIncorrectos'])->name('reservar.datos-incorrectos');
+    Route::post('/reservar/pagar-reserva', [ReservaController::class, 'pagarReserva'])->name('reservar.pagar-reserva');
 
-    Route::get('/reservar', function () {
-        return view('cliente.reservar');  // Renderiza la vista 'home.blade.php'
-    });
 
     Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
-
     Route::post('/cargar-saldo', [ClienteController::class,'storeCargarSaldo'])->name('cargar-saldo.store');
 });
 
 
 // Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
+
 
 
 

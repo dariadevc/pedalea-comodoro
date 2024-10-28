@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Estacion;
 use App\Models\EstadoEstacion;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class EstacionController extends Controller
 {
@@ -72,21 +74,21 @@ class EstacionController extends Controller
 
     public function destroy(Estacion $estacion)
     {
-    $tiene_reservas_con_devolucion = $estacion->reservasDevolucion()->whereIn('id_estado', [1, 2, 5, 6])->exists();
-    $tiene_reservas_con_retiro = $estacion->reservasRetiro()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        $tiene_reservas_con_devolucion = $estacion->reservasDevolucion()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        $tiene_reservas_con_retiro = $estacion->reservasRetiro()->whereIn('id_estado', [1, 2, 5, 6])->exists();
 
 
-    $bicicletas = $estacion->bicicletas; // Obtiene las bicicletas asociadas a la estación
-    $bicicletas_con_reservas = $bicicletas->filter(function ($bicicleta) {
-        return $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
-    });
+        $bicicletas = $estacion->bicicletas; // Obtiene las bicicletas asociadas a la estación
+        $bicicletas_con_reservas = $bicicletas->filter(function ($bicicleta) {
+            return $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        });
 
-    if ($tiene_reservas_con_devolucion || $tiene_reservas_con_retiro || $bicicletas_con_reservas->isNotEmpty()) {
-        return redirect()->back()->with('error', 'No se puede eliminar la estación. Tiene reservas activas o bicicletas asociadas con reservas.');
-    }
+        if ($tiene_reservas_con_devolucion || $tiene_reservas_con_retiro || $bicicletas_con_reservas->isNotEmpty()) {
+            return redirect()->back()->with('error', 'No se puede eliminar la estación. Tiene reservas activas o bicicletas asociadas con reservas.');
+        }
 
-    $estacion->delete();
-    return redirect()->route('estaciones.index')->with('success', 'Estación eliminada correctamente.');
+        $estacion->delete();
+        return redirect()->route('estaciones.index')->with('success', 'Estación eliminada correctamente.');
     }
 
 
@@ -130,5 +132,29 @@ class EstacionController extends Controller
             ->get();
 
         return response()->json($estacionesConBicicletasDisponibles);
+    }
+
+    public function disponibilidadHorarioRetiro(Request $request)
+    {
+        $estaciones = Estacion::where('id_estado', 1)->get();
+        $estaciones_disponibles = [];
+        $estaciones_devolucion = [];
+        $horario_retiro = $request->input('horario_retiro');
+
+        foreach ($estaciones as $estacion) {
+            $estaciones_devolucion[] = [
+                'id_estacion' => $estacion->id_estacion,
+                'nombre' => $estacion->nombre,
+            ];
+            if ($estacion->hayDisponibilidadEnEstaHora($horario_retiro) || $estacion->hayDisponibilidadAhora()) {
+                $estaciones_disponibles[] = [
+                    'id_estacion' => $estacion->id_estacion,
+                    'nombre' => $estacion->nombre,
+                ];
+            }
+        }
+
+
+        return response()->json(['success' => true, 'mensaje' => $request->input('horario_retiro'), 'estaciones_disponibles' => $estaciones_disponibles, 'estaciones_devolucion' => $estaciones_devolucion]);
     }
 }
