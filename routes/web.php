@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClienteController;
@@ -10,7 +9,6 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\ReservaController;
-use App\Models\Reserva;
 
 // Vista principal
 Route::get('/', [LandingController::class, 'index'])->name('landing');
