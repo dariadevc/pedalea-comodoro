@@ -7,7 +7,7 @@
 
     <title>Pedalea Comodoro</title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/layout-app.js'])
 
 </head>
 
@@ -46,7 +46,7 @@
             x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
             x-transition:leave="transition-transform transform duration-500" x-transition:leave-start="translate-x-0"
             x-transition:leave-end="-translate-x-full"
-            class="fixed top-0 left-0 w-64 h-screen bg-gray-50 shadow-sm border-r border-gray-100 lg:translate-x-0 lg:block">
+            class="fixed top-0 left-0 w-64 h-screen bg-gray-50 shadow-sm border-r border-gray-100 lg:translate-x-0 lg:block z-40">
             {{-- CRUZ --}}
             <div class="place-self-end block lg:hidden">
                 <button @click="open = false" class="p-2">
@@ -104,7 +104,6 @@
     </main>
 
     @yield('scripts')
-    </script>
 </body>
 
 </html>

@@ -48,9 +48,12 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:cliente'])->group(function () {
-    Route::get('/perfil', function () {
+    Route::get('/', function () {
+        return view('cliente.cliente');  // Renderiza la vista 'Inicio'
+    })->name('cliente');
+    Route::get('/inicio', function () {
         return view('cliente.partials.inicio');  // Renderiza la vista 'Inicio'
-    })->name('inicio');
+    })->name('inicio_cliente');
 
     Route::get('/alquilar', function () {
         return view('cliente.partials.alquilar');  // Renderiza la vista 'Alquilar'
@@ -95,6 +98,10 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/estaciones', function () {
         return view('cliente.partials.ver_estaciones');  // Renderiza la vista 'Ver Estaciones'
     })->name('ver_estaciones');
+
+    Route::get('/mas', function () {
+        return view('cliente.partials.mas_opciones');  // Renderiza la vista 'Ver Estaciones'
+    })->name('mas');
 });
 
 

@@ -5,8 +5,8 @@ import $ from 'jquery';
 window.Alpine = Alpine;
 Alpine.start();
 
-window.$ = window.jQuery = $;
+window.$ = $;
 
-$(document).ready(function() {
-    console.log('jQuery is working!');
-});
+// $(document).ready(function() {
+//     console.log('jQuery is working!');
+// });
