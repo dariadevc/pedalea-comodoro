@@ -50,6 +50,11 @@ class Cliente extends User
         return $this->estadoCliente->nombre == 'Suspendido';
     }
 
+    public function tengoUnaReserva()
+    {
+        return $this->reservaReservo()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+    }
+
     public function agregarSaldo($monto): void
     {
         $this->saldo += $monto;

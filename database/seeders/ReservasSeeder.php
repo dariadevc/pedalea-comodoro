@@ -333,19 +333,19 @@ class ReservasSeeder extends Seeder
          * UNA RESERVA ACTIVA PARA EL CLIENTE DE PRUEBA
          * Si no quieren la reserva activa comenten esta parte
          */
-        $tiempo_uso = 3;
-        Reserva::create([
-            'id_bicicleta' => 20,
-            'id_estacion_retiro' => 4,
-            'id_estacion_devolucion' => 4,
-            'id_estado' => 1,
-            'id_cliente_reservo' => $clientePrueba->id_usuario,
-            'id_cliente_devuelve' => null,
-            'fecha_hora_retiro' => Carbon::now(),
-            'fecha_hora_devolucion' => Carbon::now()->addHours($tiempo_uso),
-            'monto' => $tarifa->valor * $tiempo_uso,
-            'senia' => ($tarifa->valor * $tiempo_uso) * 0.25,
-            'puntaje_obtenido' => null,
-        ]);
+        // $tiempo_uso = 3;
+        // Reserva::create([
+        //     'id_bicicleta' => 20,
+        //     'id_estacion_retiro' => 4,
+        //     'id_estacion_devolucion' => 4,
+        //     'id_estado' => 1,
+        //     'id_cliente_reservo' => $clientePrueba->id_usuario,
+        //     'id_cliente_devuelve' => null,
+        //     'fecha_hora_retiro' => Carbon::now(),
+        //     'fecha_hora_devolucion' => Carbon::now()->addHours($tiempo_uso),
+        //     'monto' => $tarifa->valor * $tiempo_uso,
+        //     'senia' => ($tarifa->valor * $tiempo_uso) * 0.25,
+        //     'puntaje_obtenido' => null,
+        // ]);
     }
 }

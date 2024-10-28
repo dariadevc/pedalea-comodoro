@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -34,13 +35,55 @@ class Estacion extends Model
      * FUNCIONES DEL MODELO
      * 
      */
-    public function getBicicletaDisponible(): ?Bicicleta
+    public function getBicicletaDisponibleAhora(): ?Bicicleta
     {
         return $this->bicicletas()->where('id_estado', 1)
             ->whereDoesntHave('reservas', function ($query) {
                 $query->whereIn('id_estado', [1, 2, 5, 6]);
             })->first();
     }
+    public function getBicicletaDisponibleEnEstaHora($hora_retiro): ?Bicicleta
+    {
+        $fecha_hora_retiro = Carbon::today()->setTimeFromTimeString($hora_retiro);
+        $fecha_hora_retiro = $fecha_hora_retiro->subMinutes(30);
+
+        $reserva_disponible = $this->reservasDevolucion()
+            ->whereIn('id_estado', [1, 2, 5, 6])
+            ->where('fecha_hora_devolucion', '<=', $fecha_hora_retiro)
+            ->first();
+
+        return $reserva_disponible ? $reserva_disponible->bicicleta : null;
+    }
+
+    public function hayDisponibilidadEnEstaHora($hora_retiro): bool
+    {
+        $fecha_hora_retiro = Carbon::today()->setTimeFromTimeString($hora_retiro);
+        $fecha_hora_retiro = $fecha_hora_retiro->subMinutes(30);
+
+        return $this->reservasDevolucion()
+            ->whereIn('id_estado', [1, 2, 5, 6])
+            ->where('fecha_hora_devolucion', '<=', $fecha_hora_retiro)
+            ->exists();
+    }
+
+    public function hayDisponibilidadAhora(): bool
+    {
+        return $this->bicicletas()->where('id_estado', 1)
+            ->whereDoesntHave('reservas', function ($query) {
+                $query->whereIn('id_estado', [1, 2, 5, 6]);
+            })->exists();
+    }
+
+    // public function dameReservas($hora_retiro)
+    // {
+    //     $fecha_hora_retiro = Carbon::today()->setTimeFromTimeString($hora_retiro);
+    //     $fecha_hora_retiro = $fecha_hora_retiro->subMinutes(30);
+
+    //     return $this->reservasDevolucion()
+    //         ->whereIn('id_estado', [1, 2, 5, 6])
+    //         ->where('fecha_hora_devolucion', '<=', $fecha_hora_retiro)
+    //         ->get();
+    // }
 
 
     /**
