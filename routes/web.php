@@ -47,10 +47,15 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     // Rutas para gestion tarifas
     Route::get('/modificar-tarifa', [AdministrativoController::class, 'editTarifa'])->name('administrativo.editTarifa');
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
+    
+    //Rutas para la gestion de informes:
+    //Multas realizadas
+    Route::get('/multas', [InformeController::class, 'informe_multas'])->name('informes.multas');
+    //Estaciones utilizadas
+    Route::get('/estacionesInforme', [InformeController::class, 'informe_estaciones'])->name('informes.estaciones');
+    //Rutas utilizadas
+    Route::get('/rutasInforme', [InformeController::class, 'informe_rutas'])->name('informes.rutas');
 
-    Route::get('/multas', [InformeController::class, 'multas'])->name('informes.multas');
-
-    Route::get('/estacionesInforme', [InformeController::class, 'estaciones'])->name('informes.estaciones');
 
 });
 
