@@ -55,6 +55,8 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     Route::get('/estacionesInforme', [InformeController::class, 'informe_estaciones'])->name('informes.estaciones');
     //Rutas utilizadas
     Route::get('/rutasInforme', [InformeController::class, 'informe_rutas'])->name('informes.rutas');
+    //Tiempo de alquileres solicitados y horarios con mas demanda:
+    Route::get('/alquiler-tiempo-horario',[InformeController::class, 'informe_tiempoAlquiler_horarioDemanda'])->name('informes.tiempoHorario');
 
 
 });
