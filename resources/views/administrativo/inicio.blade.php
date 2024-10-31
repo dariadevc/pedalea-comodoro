@@ -54,6 +54,14 @@
                 <a href="{{ route('informes.rutas') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Ver informes de rutas utilizadas</a>
             </div>
         </div>
+
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h2 class="text-lg font-semibold">Informe Alquileres</h2>
+            <p class="mt-2">Gestiona los informes de Tiempo/Horario de Alquileres mas utilizados.</p>
+            <div class="mt-4">
+                <a href="{{ route('informes.tiempoHorario') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Ver informes de Alquileres</a>
+            </div>
+        </div>
     </div>
 
 @endsection
