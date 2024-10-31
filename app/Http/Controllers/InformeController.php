@@ -78,6 +78,47 @@ class InformeController extends Controller
         }
         return view('informes.rutasInforme', compact('rutas'));
     }
+
+    public function informe_tiempoAlquiler_horarioDemanda (Request $request)
+    {
+        $fechaInicio = $request->input('fecha_inicio') . ' 00:00:00';
+        $fechaFin = $request->input('fecha_fin') . ' 23:59:59'; 
+        
+        if ($fechaInicio && $fechaFin)
+        {
+            $alquileresTime = DB::table('reservas')
+            ->select(DB::raw('CONCAT(TIMESTAMPDIFF(HOUR, fecha_hora_retiro, fecha_hora_devolucion), " hs ") as tiempo, COUNT(*) cant'))
+            ->whereBetween(DB::raw('DATE(fecha_hora_devolucion)'), [$fechaInicio, $fechaFin])
+            ->groupBy('tiempo')
+            ->orderBy('cant', 'desc')
+            ->where('reservas.id_estado', 3)
+            ->get();
+
+            $totalReservas = DB::table('reservas') //Consulta para contar y despues usarlo en alquileresHor para obtener el %.
+            ->whereBetween(DB::raw('DATE(fecha_hora_retiro)'), [$fechaInicio, $fechaFin]) 
+            ->where('reservas.id_estado',3)
+            ->count();
+
+            $alquileresHor = DB::table('reservas')
+            ->select(DB::raw('CONCAT(HOUR(fecha_hora_retiro), " hs ") as hora, COUNT(*) as cant_horas, ROUND(COUNT(*) / ' . $totalReservas . ' * 100, 2) as porcentaje'))
+            ->whereBetween(DB::raw('DATE(fecha_hora_devolucion)'), [$fechaInicio, $fechaFin])
+            ->groupBy('hora')
+            ->orderBy('cant_horas', 'desc')
+            ->where('reservas.id_estado',3)
+            ->get();
+
+
+        }else {
+
+            $alquileresTimeHor = [];
+            $alquileresTime = [];
+
+        }
+        return view('informes.alquilerInforme', compact('alquileresTime', 'alquileresHor'));
+
+
+    }
+
     
 }
 
