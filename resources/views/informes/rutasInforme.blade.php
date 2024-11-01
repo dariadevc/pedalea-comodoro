@@ -21,16 +21,16 @@
             <table class="min-w-full border-collapse block md:table">
                 <thead class="block md:table-header-group">
                     <tr class="border border-grey-500 md:border-none block md:table-row absolute -top-full md:top-auto -left-full md:left-auto md:relative">
-                        <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Nombres</th>
-                        <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Nro.Rutas</th>
-                        <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Total Utilizadas</th>
+                        <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Estacion Retiro</th>
+                        <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Estacion Devolucion</th>
+                        <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Cantidad de veces utilizadas</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($rutas as $ruta)
                         <tr class="bg-sky-50 border border-grey-500 md:border-none block md:table-row">
-                            <td class="p-2 md:border md:border-black text-left block md:table-cell">{{ $ruta->nombresEST }}</td>
-                            <td class="p-2 md:border md:border-black text-left block md:table-cell">{{ $ruta->rutas }}</td>
+                            <td class="p-2 md:border md:border-black text-left block md:table-cell">{{ $ruta->nombreR}}</td>
+                            <td class="p-2 md:border md:border-black text-left block md:table-cell">{{ $ruta->nombreD }}</td>
                             <td class="p-2 md:border md:border-black text-left block md:table-cell">{{ $ruta->total }}</td>
                         </tr>
                     @endforeach

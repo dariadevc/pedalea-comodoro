@@ -9,7 +9,7 @@ use PHPUnit\Framework\Constraint\Count;
 
 class InformeController extends Controller
 {
-    public function informe_multas(Request $request)
+    public function informeMultas(Request $request)
     {
         $fechaInicio = $request->input('fecha_inicio') . ' 00:00:00';  //Pongo de esta forma la hora para que me tome todo el dia
         $fechaFin = $request->input('fecha_fin') . ' 23:59:59';        //Si no ponia la misma fecha de inicio y de fin y no me filtraba por el cambio de horario
@@ -31,7 +31,7 @@ class InformeController extends Controller
 
 //De la otra forma con la lista y el validatte, tendria que probar con date_format, no con date solo.
 
-    public function informe_estaciones (Request $request)
+    public function informeEstaciones (Request $request)
     {
         $fechaInicio = $request->input('fecha_inicio') . ' 00:00:00';
         $fechaFin = $request->input('fecha_fin') . ' 23:59:59'; 
@@ -54,7 +54,7 @@ class InformeController extends Controller
 
     }
 
-    public function informe_rutas (Request $request)
+    public function informeRutas (Request $request)
     {
         $fechaInicio = $request->input('fecha_inicio') . ' 00:00:00';
         $fechaFin = $request->input('fecha_fin') . ' 23:59:59'; 
@@ -62,7 +62,7 @@ class InformeController extends Controller
         if ($fechaInicio && $fechaFin)
         {
             $rutas = DB::table('reservas')
-            ->select(DB::raw('CONCAT(reservas.id_estacion_retiro, " -> ", reservas.id_estacion_devolucion) as rutas, CONCAT(r.nombre, " -> " ,d.nombre) as nombresEST, COUNT(*) as total'))
+            ->select(DB::raw('CONCAT(reservas.id_estacion_retiro, " -> ", reservas.id_estacion_devolucion) as rutas, r.nombre as nombreR,d.nombre as nombreD , COUNT(*) as total'))
             ->join('estaciones as r', 'reservas.id_estacion_retiro', "=", 'r.id_estacion')
             ->join('estaciones as d', 'reservas.id_estacion_devolucion', "=", 'd.id_estacion')
             ->whereBetween(DB::raw('DATE(fecha_hora_devolucion)'), [$fechaInicio, $fechaFin])
@@ -79,7 +79,7 @@ class InformeController extends Controller
         return view('informes.rutasInforme', compact('rutas'));
     }
 
-    public function informe_tiempoAlquiler_horarioDemanda (Request $request)
+    public function informeTiempoAlquilerHorarioDemanda (Request $request)
     {
         $fechaInicio = $request->input('fecha_inicio') . ' 00:00:00';
         $fechaFin = $request->input('fecha_fin') . ' 23:59:59'; 

@@ -20,7 +20,7 @@
                         <tr  class="border border-grey-500 md:border-none block md:table-row absolute -top-full md:top-auto -left-full md:left-auto  md:relative ">
                             <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Nombre</th>
                             <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Nro.Estacion</th>
-                            <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Estaciones mas utilizadas</th>
+                            <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Cantidad de veces utiliazada</th>
                         </tr>
                     </thead>
                     <tbody>

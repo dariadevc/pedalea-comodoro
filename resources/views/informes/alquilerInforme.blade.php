@@ -23,9 +23,9 @@
                 <table class="min-w-full border-collapse block md:table">
                     <thead class="block md:table-header-group">
                         <tr  class="border border-grey-500 md:border-none block md:table-row absolute -top-full md:top-auto -left-full md:left-auto  md:relative ">
-                            <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Horarios de Alquiler</th>
-                            <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Cantidad de Veces</th>
-                            <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Porcentaje de uso</th>
+                            <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Horarios de alquiler</th>
+                            <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Cantidad de veces utilizada</th>
+                            <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Porcentaje de clientes</th>
 
                         </tr>
                     </thead>
