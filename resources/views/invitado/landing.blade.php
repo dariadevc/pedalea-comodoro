@@ -130,19 +130,19 @@
                     <h3 class="text-slate-50 uppercase font-semibold tracking-widest text-xl">Estadísticas</h3>
                 </div>
                 <div class="text-center">
-                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">20</p>
+                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">{{ $cantidad_estaciones }}</p>
                     <h4 class="text-slate-50">Estaciones</h4>
                 </div>
                 <div class="text-center">
-                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">400</p>
+                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">{{ $cantidad_bicicletas }}</p>
                     <h4 class="text-slate-50">Bicicletas</h4>
                 </div>
                 <div class="text-center">
-                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">500</p>
+                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">{{ $cantidad_clientes }}</p>
                     <h4 class="text-slate-50">Usuarios</h4>
                 </div>
                 <div class="text-center">
-                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">8000</p>
+                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">{{ $cantidad_reservas }}</p>
                     <h4 class="text-slate-50">Viajes</h4>
                 </div>
             </div>
@@ -201,7 +201,7 @@
                     Por una hora de alquiler:
                 </p>
                 <div class="border-2 border-solid border-pc-rojo rounded-xl p-5 mx-12 max-w-96 text-center shadow-md">
-                    <h4 class="font-bold text-3xl p-5">$1000</h4>
+                    <h4 class="font-bold text-3xl p-5">${{ $tarifa }}</h4>
                 </div>
             </div>
         </div>

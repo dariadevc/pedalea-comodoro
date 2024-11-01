@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Bicicleta;
 use App\Models\Cliente;
+use App\Models\Configuracion;
 use App\Models\Estacion;
 use App\Models\EstadoReserva;
 use App\Models\Reserva;
@@ -18,157 +19,333 @@ class ReservasSeeder extends Seeder
     public function run(): void
     {
         $clientes = Cliente::where('id_usuario', '<>', 3)->get();
+        $clientesDevolucion = Cliente::where('id_usuario', '<>', 3)->get();
         $clientePrueba = Cliente::find(3);
-        $bicicletas = Bicicleta::all();
-        $estaciones = Estacion::where('id_estado', 1)->get();
-        $estados_reserva = EstadoReserva::all();
+        $tarifa = Configuracion::where('clave', 'tarifa')->first();
 
-        // Crear reservas
-        $this->crearReservasEspecificas($clientes, $estaciones, $estados_reserva);
-        $this->crearReservasClientePrueba($clientes, $clientePrueba, $bicicletas, $estaciones, $estados_reserva);
-    }
 
-    private function crearReservasEspecificas($clientes, $estaciones, $estados_reserva): void
-    {
-        $reservas = [];
-        $bicicletasOcupadas = [];
+        $fecha_hora_inicio_activa_modificada = Carbon::now();
+        $fecha_hora_fin_activa_modificada = Carbon::now()->addHours(2);
 
-        // Estados de reservas específicos
-        $this->generarReservasPorEstado($reservas, $clientes, $estaciones, $estados_reserva, 'Cancelada', 25, $bicicletasOcupadas);
-        $this->generarReservasPorEstado($reservas, $clientes, $estaciones, $estados_reserva, 'Finalizada', 25, $bicicletasOcupadas);
-        $this->generarReservasPorEstado($reservas, $clientes, $estaciones, $estados_reserva, 'Activa', 10, $bicicletasOcupadas);
-        $this->generarReservasPorEstado($reservas, $clientes, $estaciones, $estados_reserva, 'Alquilada', 15, $bicicletasOcupadas);
-        $this->generarReservasPorEstado($reservas, $clientes, $estaciones, $estados_reserva, 'Modificada', 5, $bicicletasOcupadas);
-        $this->generarReservasPorEstado($reservas, $clientes, $estaciones, $estados_reserva, 'Reasignada', 10, $bicicletasOcupadas);
+        $fecha_hora_inicio_alquilada_reasignada = Carbon::now()->subHours(2);
+        $fecha_hora_fin_alquilada_reasignada = Carbon::now();
 
-        Reserva::insert($reservas);
-    }
+        /**
+         * RESERVAS PARA LA ESTACION 1
+         */
+        $timestampAleatorio = rand($fecha_hora_inicio_activa_modificada->timestamp, $fecha_hora_fin_activa_modificada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 1,
+            'id_estacion_retiro' => 1,
+            'id_estacion_devolucion' => 1,
+            'id_estado' => 1,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => null,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(3),
+            'monto' => $tarifa->valor * 3,
+            'senia' => ($tarifa->valor * 3) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
 
-    private function generarReservasPorEstado(&$reservas, $clientes, $estaciones, $estados_reserva, $estado, $cantidad, &$bicicletasOcupadas)
-    {
-        $estado_reserva = $estados_reserva->where('nombre', $estado)->first();
-        for ($i = 0; $i < $cantidad; $i++) {
+        $timestampAleatorio = rand($fecha_hora_inicio_activa_modificada->timestamp, $fecha_hora_fin_activa_modificada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 2,
+            'id_estacion_retiro' => 1,
+            'id_estacion_devolucion' => 3,
+            'id_estado' => 1,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => null,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(5),
+            'monto' => $tarifa->valor * 5,
+            'senia' => ($tarifa->valor * 5) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
 
+        $timestampAleatorio = rand($fecha_hora_inicio_alquilada_reasignada->timestamp, $fecha_hora_fin_alquilada_reasignada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 3,
+            'id_estacion_retiro' => 2,
+            'id_estacion_devolucion' => 1,
+            'id_estado' => 2,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => null,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(3),
+            'monto' => $tarifa->valor * 3,
+            'senia' => ($tarifa->valor * 3) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
+
+        $timestampAleatorio = rand($fecha_hora_inicio_activa_modificada->timestamp, $fecha_hora_fin_activa_modificada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 4,
+            'id_estacion_retiro' => 1,
+            'id_estacion_devolucion' => 4,
+            'id_estado' => 1,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => null,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(1),
+            'monto' => $tarifa->valor * 1,
+            'senia' => ($tarifa->valor * 1) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
+
+        $timestampAleatorio = rand($fecha_hora_inicio_activa_modificada->timestamp, $fecha_hora_fin_activa_modificada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 5,
+            'id_estacion_retiro' => 1,
+            'id_estacion_devolucion' => 1,
+            'id_estado' => 1,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => null,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(2),
+            'monto' => $tarifa->valor * 2,
+            'senia' => ($tarifa->valor * 2) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
+
+        /**
+         * RESERVAS PARA LA ESTACION 2
+         */
+        $timestampAleatorio = rand($fecha_hora_inicio_activa_modificada->timestamp, $fecha_hora_fin_activa_modificada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 6,
+            'id_estacion_retiro' => 2,
+            'id_estacion_devolucion' => 1,
+            'id_estado' => 1,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => null,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(4),
+            'monto' => $tarifa->valor * 4,
+            'senia' => ($tarifa->valor * 4) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
+
+        $timestampAleatorio = rand($fecha_hora_inicio_alquilada_reasignada->timestamp, $fecha_hora_fin_alquilada_reasignada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 7,
+            'id_estacion_retiro' => 1,
+            'id_estacion_devolucion' => 2,
+            'id_estado' => 6,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => $clientesDevolucion->shift()->id_usuario,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(2),
+            'monto' => $tarifa->valor * 2,
+            'senia' => ($tarifa->valor * 2) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
+
+        $timestampAleatorio = rand($fecha_hora_inicio_activa_modificada->timestamp, $fecha_hora_fin_activa_modificada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 8,
+            'id_estacion_retiro' => 2,
+            'id_estacion_devolucion' => 1,
+            'id_estado' => 5,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => null,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(1),
+            'monto' => $tarifa->valor * 1,
+            'senia' => ($tarifa->valor * 1) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
+
+        /**
+         * RESERVAS PARA LA ESTACION 3
+         */
+
+        $timestampAleatorio = rand($fecha_hora_inicio_activa_modificada->timestamp, $fecha_hora_fin_activa_modificada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 11,
+            'id_estacion_retiro' => 3,
+            'id_estacion_devolucion' => 3,
+            'id_estado' => 1,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => null,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(2),
+            'monto' => $tarifa->valor * 2,
+            'senia' => ($tarifa->valor * 2) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
+
+        $timestampAleatorio = rand($fecha_hora_inicio_alquilada_reasignada->timestamp, $fecha_hora_fin_alquilada_reasignada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 12,
+            'id_estacion_retiro' => 1,
+            'id_estacion_devolucion' => 3,
+            'id_estado' => 2,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => null,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(3),
+            'monto' => $tarifa->valor * 3,
+            'senia' => ($tarifa->valor * 3) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
+
+        $timestampAleatorio = rand($fecha_hora_inicio_activa_modificada->timestamp, $fecha_hora_fin_activa_modificada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 13,
+            'id_estacion_retiro' => 3,
+            'id_estacion_devolucion' => 4,
+            'id_estado' => 5,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => null,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(2),
+            'monto' => $tarifa->valor * 2,
+            'senia' => ($tarifa->valor * 2) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
+
+        $timestampAleatorio = rand($fecha_hora_inicio_alquilada_reasignada->timestamp, $fecha_hora_fin_alquilada_reasignada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 15,
+            'id_estacion_retiro' => 2,
+            'id_estacion_devolucion' => 3,
+            'id_estado' => 6,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => $clientesDevolucion->shift()->id_usuario,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(2),
+            'monto' => $tarifa->valor * 2,
+            'senia' => ($tarifa->valor * 2) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
+
+        /**
+         * RESERVAS PARA LA ESTACION 4
+         */
+
+        $timestampAleatorio = rand($fecha_hora_inicio_activa_modificada->timestamp, $fecha_hora_fin_activa_modificada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 17,
+            'id_estacion_retiro' => 4,
+            'id_estacion_devolucion' => 4,
+            'id_estado' => 5,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => null,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(5),
+            'monto' => $tarifa->valor * 5,
+            'senia' => ($tarifa->valor * 5) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
+
+        $timestampAleatorio = rand($fecha_hora_inicio_alquilada_reasignada->timestamp, $fecha_hora_fin_alquilada_reasignada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        Reserva::create([
+            'id_bicicleta' => 19,
+            'id_estacion_retiro' => 1,
+            'id_estacion_devolucion' => 4,
+            'id_estado' => 2,
+            'id_cliente_reservo' => $clientes->shift()->id_usuario,
+            'id_cliente_devuelve' => null,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours(4),
+            'monto' => $tarifa->valor * 4,
+            'senia' => ($tarifa->valor * 4) * 0.25,
+            'puntaje_obtenido' => null,
+        ]);
+
+
+
+        $fecha_hora_inicio_cancelada_finalizada = Carbon::now()->subMonths(1);
+        $fecha_hora_fin_cancelada_finalizada = Carbon::now()->subDays(1);
+
+        for ($i = 0; $i < 5; $i++) { // Genera 5 reservas para el estado 3
+            $timestampAleatorio = rand($fecha_hora_inicio_cancelada_finalizada->timestamp, $fecha_hora_fin_cancelada_finalizada->timestamp);
+            $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
             $tiempo_uso = rand(1, 6);
 
-            if (in_array($estado_reserva->nombre, ['Activa', 'Modificada'])) {
-                $fechaHoraRetiro = Carbon::now()->addHours(rand(0, 2))->addMinutes(rand(0, 59))->addSeconds(rand(0, 59));
-                $fechaHoraDevolucion = (clone $fechaHoraRetiro)->addHours($tiempo_uso);
-            } elseif (in_array($estado_reserva->nombre, ['Alquilada', 'Reasignada'])) {
-
-                $fechaHoraDevolucion = Carbon::now()->addHours(rand(0, 6))->addMinutes(rand(0, 59))->addSeconds(rand(0, 59));
-                $fechaHoraRetiro = (clone $fechaHoraDevolucion)->subHours($tiempo_uso);
-            } else {
-                $fechaHoraRetiro = Carbon::now()->subYear()->addDays(rand(0, 365))->endOfDay()->subDays(1)->addHours(rand(0, 23))->addMinutes(rand(0, 59));
-                $fechaHoraDevolucion = (clone $fechaHoraRetiro)->addHours($tiempo_uso);
-            }
-
-            $monto = $tiempo_uso * 1000;
-            $senia = $monto * 0.25;
-
-            // Seleccionar estación disponible
-            $estacionRetiro = $estaciones->random();
-            $estacionDevolucion = $estaciones->random();
-
-            // Filtrar bicicletas disponibles en la estación de retiro
-            $bicicletasFiltradas = Bicicleta::where('id_estado', 1)
-                ->where('id_estacion_actual', $estacionRetiro->id_estacion)
-                ->whereNotIn('id_bicicleta', $bicicletasOcupadas)
-                ->get();
-
-            // Asignar una bicicleta disponible o buscar en otras estaciones
-            $bicicletaDisponible = null;
-            if ($bicicletasFiltradas->isNotEmpty()) {
-                $bicicletaDisponible = $bicicletasFiltradas->random();
-            } else {
-                // Si no hay bicicletas disponibles en la estación, buscar en otras estaciones
-                $bicicletaDisponible = Bicicleta::where('id_estado', 1)
-                    ->whereNotIn('id_bicicleta', $bicicletasOcupadas)
-                    ->first(); // Asignar solo una bicicleta de cualquier estación
-            }
-
-            // Marcar la bicicleta como ocupada si el estado de la reserva es activo o similar
-            if ($bicicletaDisponible) {
-                if (in_array($estado_reserva->nombre, ['Activa', 'Alquilada', 'Modificada', 'Reasignada'])) {
-                    $bicicletasOcupadas[] = $bicicletaDisponible->id_bicicleta;
-                }
-            }
-
-            // Puntaje obtenido si la reserva está finalizada
-            $puntaje_obtenido = $estado_reserva->nombre == 'Finalizada' ? rand(-100, 50) : null;
-
-            // ID del cliente que devuelve la bicicleta
-            $id_cliente_devuelve = null;
-            if (in_array($estado_reserva->nombre, ['Finalizada', 'Reasignada'])) {
-                $id_cliente_devuelve = $clientes->random()->id_usuario;
-            }
-
-            // Crear la reserva
-            $reservas[] = [
-                'id_bicicleta' => $bicicletaDisponible->id_bicicleta,
-                'id_estacion_retiro' => $estacionRetiro->id_estacion,
-                'id_estacion_devolucion' => $estacionDevolucion->id_estacion,
-                'id_estado' => $estado_reserva->id_estado,
+            Reserva::create([
+                'id_bicicleta' => rand(1, 20), // Asumiendo que tienes bicicletas numeradas del 1 al 20
+                'id_estacion_retiro' => rand(1, 4), // Asumiendo que tienes 4 estaciones
+                'id_estacion_devolucion' => rand(1, 4), // También las estaciones para la devolución
+                'id_estado' => 3,
                 'id_cliente_reservo' => $clientes->random()->id_usuario,
-                'id_cliente_devuelve' => $id_cliente_devuelve,
-                'fecha_hora_retiro' => $fechaHoraRetiro,
-                'fecha_hora_devolucion' => $fechaHoraDevolucion,
-                'monto' => $monto,
-                'senia' => $senia,
-                'puntaje_obtenido' => $puntaje_obtenido,
-            ];
+                'id_cliente_devuelve' => null,
+                'fecha_hora_retiro' => $fechaHoraAleatoria,
+                'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours($tiempo_uso),
+                'monto' => $tarifa->valor * $tiempo_uso,
+                'senia' => ($tarifa->valor * $tiempo_uso) * 0.25,
+                'puntaje_obtenido' => rand(1, 100),
+            ]);
         }
-    }
-
-    private function crearReservasClientePrueba($clientes, $clientePrueba, $bicicletas, $estaciones, $estados_reserva): void
-    {
-        $reservas = [];
-        $fechaInicio = Carbon::now()->subYear();
-
-        $estados = ['Cancelada', 'Finalizada'];
-        
-        // Crear 25 reservas canceladas o modificadas para el cliente de prueba
-        for ($i = 0; $i < 20; $i++) {
-            // Generar fecha aleatoria
-            $fechaHoraRetiro = Carbon::createFromTimestamp(rand($fechaInicio->timestamp, Carbon::now()->timestamp))
-                ->setTime(rand(0, 23), rand(0, 59));
+        for ($i = 0; $i < 5; $i++) {
+            $timestampAleatorio = rand($fecha_hora_inicio_cancelada_finalizada->timestamp, $fecha_hora_fin_cancelada_finalizada->timestamp);
+            $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
             $tiempo_uso = rand(1, 6);
-            $fechaHoraDevolucion = (clone $fechaHoraRetiro)->addHours($tiempo_uso);
-
-            $monto = $tiempo_uso * 1000;
-            $senia = $monto * 0.25;
-
-
-            // Seleccionar estado de reserva
-            $estado_reserva = $estados_reserva->where('nombre', $estados[rand(0, 1)])->first();
-
-            // Seleccionar bicicleta y estaciones
-            $bicicleta = $bicicletas->random();
-            $estacionRetiro = $estaciones->random();
-            $estacionDevolucion = $estaciones->random();
-
-            // Puntaje obtenido si la reserva está finalizada
-            $puntaje_obtenido = $estado_reserva->nombre == 'Finalizada' ? rand(-100, 50) : null;
-
-            $id_cliente_devuelve = rand(0, 1) ? $clientes->random()->id_usuario : null;
-
-
-            $reservas[] = [
-                'id_bicicleta' => $bicicleta->id_bicicleta,
-                'id_estacion_retiro' => $estacionRetiro->id_estacion,
-                'id_estacion_devolucion' => $estacionDevolucion->id_estacion,
-                'id_estado' => $estado_reserva->id_estado,
-                'id_cliente_reservo' => $clientePrueba->id_usuario,
-                'id_cliente_devuelve' => $id_cliente_devuelve,
-                'fecha_hora_retiro' => $fechaHoraRetiro,
-                'fecha_hora_devolucion' => $fechaHoraDevolucion,
-                'monto' => $monto,
-                'senia' => $senia,
-                'puntaje_obtenido' => $puntaje_obtenido,
-            ];
+            Reserva::create([
+                'id_bicicleta' => rand(1, 20),
+                'id_estacion_retiro' => rand(1, 4),
+                'id_estacion_devolucion' => rand(1, 4),
+                'id_estado' => 3,
+                'id_cliente_reservo' => $clientes->random()->id_usuario,
+                'id_cliente_devuelve' => $clientes->random()->id_usuario,
+                'fecha_hora_retiro' => $fechaHoraAleatoria,
+                'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours($tiempo_uso),
+                'monto' => $tarifa->valor * $tiempo_uso,
+                'senia' => ($tarifa->valor * $tiempo_uso) * 0.25,
+                'puntaje_obtenido' => rand(1, 100),
+            ]);
+        }
+        for ($i = 0; $i < 10; $i++) {
+            $timestampAleatorio = rand($fecha_hora_inicio_cancelada_finalizada->timestamp, $fecha_hora_fin_cancelada_finalizada->timestamp);
+            $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+            $tiempo_uso = rand(1, 6);
+            Reserva::create([
+                'id_bicicleta' => rand(1, 20),
+                'id_estacion_retiro' => rand(1, 4),
+                'id_estacion_devolucion' => rand(1, 4),
+                'id_estado' => 4,
+                'id_cliente_reservo' => $clientes->random()->id_usuario,
+                'id_cliente_devuelve' => null,
+                'fecha_hora_retiro' => $fechaHoraAleatoria,
+                'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours($tiempo_uso),
+                'monto' => $tarifa->valor * $tiempo_uso,
+                'senia' => ($tarifa->valor * $tiempo_uso) * 0.25,
+                'puntaje_obtenido' => null,
+            ]);
         }
 
-        // Insertar reservas en la base de datos
-        Reserva::insert($reservas);
+        /**
+         * UNA RESERVA ACTIVA PARA EL CLIENTE DE PRUEBA
+         * Si no quieren la reserva activa comenten esta parte
+         */
+        // $tiempo_uso = 3;
+        // Reserva::create([
+        //     'id_bicicleta' => 20,
+        //     'id_estacion_retiro' => 4,
+        //     'id_estacion_devolucion' => 4,
+        //     'id_estado' => 1,
+        //     'id_cliente_reservo' => $clientePrueba->id_usuario,
+        //     'id_cliente_devuelve' => null,
+        //     'fecha_hora_retiro' => Carbon::now(),
+        //     'fecha_hora_devolucion' => Carbon::now()->addHours($tiempo_uso),
+        //     'monto' => $tarifa->valor * $tiempo_uso,
+        //     'senia' => ($tarifa->valor * $tiempo_uso) * 0.25,
+        //     'puntaje_obtenido' => null,
+        // ]);
     }
 }

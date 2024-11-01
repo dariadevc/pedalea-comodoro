@@ -22,46 +22,42 @@ class UsersSeeder extends Seeder
     public function run(): void
     {
         $roles = Role::all(); // 1 = admin, 2 = inspector, 3 = cliente
-        $estados = EstadoCliente::all(); // 1 = activo, 2 = suspendido
+        $estados_cliente = EstadoCliente::all(); // 1 = activo, 2 = suspendido
         
         $this->crearUsuarioAdministrativo($roles[0]);
         $this->crearUsuarioInspector($roles[1]);
-        $this->crearUsuarioCliente($roles[2], $estados[0]);
+        $this->crearUsuarioCliente($roles[2], $estados_cliente[0]);
         
-        for ($i = 0; $i < 50; $i++) {
-            
-            $rol = $roles->random();
+
+        for ($i = 0; $i < 30; $i++) {
+            $rol = $roles[2];
             $usuario = User::factory()->create();
             $usuario->assignRole($rol);
-
-            switch ($rol->name) {
-                case 'cliente':
-                    $estado = $estados->random();
-                    Cliente::create([
-                        'fecha_nacimiento' => Carbon::now()->subYears(rand(18, 50))->format('Y-m-d'),
-                        'id_usuario' => $usuario->id_usuario,
-                        'id_estado_cliente' => $estado->id_estado,
-                        'puntaje' => rand(-200, 1000),
-                        'saldo' => rand(0, 10000) / 100,
-                    ]);
-                    break;
-
-                case 'inspector':
-                    Inspector::create([
-                        'id_usuario' => $usuario->id_usuario,
-                    ]);
-                    break;
-
-                case 'administrativo':
-                    Administrativo::create([
-                        'id_usuario' => $usuario->id_usuario,
-                    ]);
-                    break;
-
-                default:
-                    break;
-            }
-        };
+            $estado_cliente = $estados_cliente[0];
+            Cliente::create([
+                'fecha_nacimiento' => Carbon::now()->subYears(rand(18, 50))->format('Y-m-d'),
+                'id_usuario' => $usuario->id_usuario,
+                'id_estado_cliente' => $estado_cliente->id_estado,
+                'puntaje' => rand(-200, 1000),
+                'saldo' => rand(0, 10000) / 100,
+            ]);
+        }
+        for ($i = 0; $i < 5; $i++) {
+            $rol = $roles[1];
+            $usuario = User::factory()->create();
+            $usuario->assignRole($rol);
+            Inspector::create([
+                'id_usuario' => $usuario->id_usuario,
+            ]);
+        }
+        for ($i = 0; $i < 5; $i++) {
+            $rol = $roles[0];
+            $usuario = User::factory()->create();
+            $usuario->assignRole($rol);
+            Administrativo::create([
+                'id_usuario' => $usuario->id_usuario,
+            ]);
+        }
     }
 
     private function crearUsuarioCliente($rol, $estado_cliente) 
