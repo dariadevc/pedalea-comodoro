@@ -110,7 +110,7 @@
 
             <div class="mt-5 flex justify-between items-center gap-10 border-t border-pc-rojo py-4">
                 <p class="text-sm text-pc-texto-p">¿Ya tenes una cuenta?</p>
-                <a href="{{ route('iniciar-sesion') }} ">
+                <a href="{{ route('iniciar_sesion') }} ">
                     <x-btn-rojo-blanco class="text-xs">{{ 'Iniciá Sesión' }}</x-btn-rojo-blanco>
                 </a>
             </div>

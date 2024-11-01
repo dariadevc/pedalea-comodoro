@@ -28,9 +28,9 @@ class Cliente extends User
     {
         return $this->reservaReservo->whereIn('id_estado', [1, 5])->first();
     }
-    
 
-    public function pagar($monto) 
+
+    public function pagar($monto)
     {
         /**
          * TODO
@@ -60,8 +60,8 @@ class Cliente extends User
         $this->saldo += $monto;
         $this->save();
     }
-    
-    
+
+
 
 
     /**
@@ -94,11 +94,11 @@ class Cliente extends User
         return $this->hasMany(Reserva::class, 'id_cliente_reservo', 'id_usuario');
     }
 
-    public function reservaDevuelve()//Cliente que puede devolver si se reasigna la devolucion
+    public function reservaDevuelve() //Cliente que puede devolver si se reasigna la devolucion
     {
         return $this->hasMany(Reserva::class, 'id_cliente_devuelve', 'id_usuario');
     }
-    
+
     public function infracciones()
     {
         return $this->hasMany(Infraccion::class, 'id_usuario_cliente', 'id_usuario');

@@ -47,30 +47,37 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
 });
 
+//* CLIENTE
 Route::middleware(['auth', 'role:cliente'])->group(function () {
-    Route::get('/', function () {
-        return view('cliente.cliente');  // Renderiza la vista 'Inicio'
-    })->name('cliente');
-    Route::get('/inicio', function () {
-        return view('cliente.partials.inicio');  // Renderiza la vista 'Inicio'
-    })->name('inicio_cliente');
+    Route::get('/inicio_cliente', [ClienteController::class, 'indexInicio'])->name('inicio_cliente');
+    // Route::get('/inicio_cliente', function () {
+    //     return view('cliente.partials.inicio');  // Renderiza la vista 'Inicio'
+    // })->name('inicio_cliente');
 
     Route::get('/alquilar', function () {
         return view('cliente.partials.alquilar');  // Renderiza la vista 'Alquilar'
     })->name('alquilar');
 
-    Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index');// Renderiza la vista 'home.blade.php'
-    Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
-    Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
-    Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
-    
+    //TODO: Conectar alquiler a la vista actualizada del cliente
+    // Alquilar que viene de lo de maxi, el controlador le devuelve las vistas que tiene que mostrar...
+    // Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index');
+    // Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
+    // Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
+    // Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
+
     Route::get('/devolver', function () {
         return view('cliente.partials.devolver');  // Renderiza la vista 'Devolver'
     })->name('devolver');
 
-    Route::get('/reservar', function () {
-        return view('cliente.partials.reservar');  // Renderiza la vista 'Reservar'
-    })->name('reservar');
+
+    // TODO: Intentar que funcione todo con una única vista reservar, así podemos agrgear alguna trnasición cuando se agranda el contenedor de la vista
+    Route::get('/reservar', [ReservaController::class, 'indexReserva'])->name('reservar');
+    Route::post('/reservar/pasos', [ReservaController::class, 'reservarPasos'])->name('reservar.pasos');
+    Route::post('/estaciones/disponibilidad-horario-retiro', [EstacionController::class, 'disponibilidadHorarioRetiro'])->name('estaciones.disponibilidad-horario-retiro');
+    Route::post('/reservar/crear-reserva', [ReservaController::class, 'crearReserva'])->name('reservar.crearReserva');
+    Route::post('/reservar/datos-correctos', [ReservaController::class, 'reservarDatosCorrectos'])->name('reservar.datos-correctos');
+    Route::post('/reservar/datos-incorrectos', [ReservaController::class, 'reservarDatosIncorrectos'])->name('reservar.datos-incorrectos');
+    Route::post('/reservar/pagar-reserva', [ReservaController::class, 'pagarReserva'])->name('reservar.pagar-reserva');
 
     Route::get('/perfil', function () {
         return view('cliente.partials.perfil');  // Renderiza la vista 'Perfil'
@@ -107,20 +114,10 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/mas', function () {
         return view('cliente.partials.mas_opciones');  // Renderiza la vista 'Ver Estaciones'
     })->name('mas');
-        return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
-    });
-    
-    Route::get('/reservar', [ReservaController::class, 'indexReserva'])->name('reservar.index');
-    Route::post('/reservar/pasos', [ReservaController::class, 'reservarPasos'])->name('reservar.pasos');
-    Route::post('/estaciones/disponibilidad-horario-retiro', [EstacionController::class, 'disponibilidadHorarioRetiro'])->name('estaciones.disponibilidad-horario-retiro');
-    Route::post('/reservar/crear-reserva', [ReservaController::class, 'crearReserva'])->name('reservar.crearReserva');
-    Route::post('/reservar/datos-correctos', [ReservaController::class, 'reservarDatosCorrectos'])->name('reservar.datos-correctos');
-    Route::post('/reservar/datos-incorrectos', [ReservaController::class, 'reservarDatosIncorrectos'])->name('reservar.datos-incorrectos');
-    Route::post('/reservar/pagar-reserva', [ReservaController::class, 'pagarReserva'])->name('reservar.pagar-reserva');
 
-
+    // Cargar Saldo que viene de lo de maxi, el controlador trae la vista...
     Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
-    Route::post('/cargar-saldo', [ClienteController::class,'storeCargarSaldo'])->name('cargar-saldo.store');
+    Route::post('/cargar-saldo', [ClienteController::class, 'storeCargarSaldo'])->name('cargar-saldo.store');
 });
 
 

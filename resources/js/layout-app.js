@@ -23,3 +23,25 @@ $(document).ready(function() {
         });
     });
 });
+
+// function cargarPartial(url) {
+//     $.ajax({
+//         url: url,
+//         method: 'GET',
+//         success: function(data) {
+//             $('#main').html(data);
+//         },
+//         error: function(xhr) {
+//             alert('Error: ' + xhr.responseText);
+//         }
+//     });
+// }
+
+// $(document).ready(function() {
+//     $('.nav-link').on('click', function(e) {
+//         e.preventDefault(); // Evita que el enlace recargue la página
+
+//         var url = $(this).data('url'); // Obtiene la URL del atributo data-url
+//         cargarPartial(url); // Llama a la función para cargar el partial
+//     });
+// });

@@ -13,7 +13,7 @@
         <div class="flex justify-end items-center text-nowrap gap-6">
             <ul class="hidden sm:flex flex-1 justify-end items-center gap-10 text-slate-50 uppercase text-sm font-semibold">
                 @if (!Auth::user())
-                    <a href="{{ route('iniciar-sesion') }}"
+                    <a href="{{ route('iniciar_sesion') }}"
                         class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50">Iniciar
                         Sesión</a>
                 @endif
@@ -61,7 +61,7 @@
                             <!-- BOTÓN -->
                             {{-- ? ¿No queda centrado o es mi imaginación? --}}
                             @if (!Auth::user())
-                                <a href="{{ route('iniciar-sesion') }}"
+                                <a href="{{ route('iniciar_sesion') }}"
                                     class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 mt-5 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50 sm:hidden">Iniciar
                                     Sesión</a>
                             @endif
@@ -108,7 +108,7 @@
                             <x-btn-azul-blanco>{{ 'Registrarse' }}</x-btn-azul-blanco>
                         </a>
 
-                        <a href="{{ route('iniciar-sesion') }}">
+                        <a href="{{ route('iniciar_sesion') }}">
                             <x-btn-rojo-blanco>{{ 'Iniciar Sesión' }}</x-btn-rojo-blanco>
                         </a>
                     @endif

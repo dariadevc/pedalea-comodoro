@@ -23,7 +23,7 @@
 
                 {{-- FORMULARIO --}}
                 {{-- TODO: Agregar mensajes de error y demás (guiarse con el login que está en auth) --}}
-                <form method="POST" action="{{ route('iniciar-sesion') }}" class="flex flex-col gap-4">
+                <form method="POST" action="{{ route('iniciar_sesion') }}" class="flex flex-col gap-4">
                     @csrf
 
                     {{-- EMAIL --}}
