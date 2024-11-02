@@ -103,4 +103,13 @@ class Cliente extends User
     {
         return $this->hasMany(Infraccion::class, 'id_usuario_cliente', 'id_usuario');
     }
+
+    public function tieneReserva($id_cliente_reservo)
+    {
+        $existeReserva = Reserva::where('id_cliente_reservo', $id_cliente_reservo)
+                                ->where('id_estado', '1')
+                                ->exists();
+    
+        return $existeReserva;
+    }
 }

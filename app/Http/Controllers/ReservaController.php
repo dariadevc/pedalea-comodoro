@@ -191,5 +191,5 @@ class ReservaController extends Controller
         } else {
             return response()->json(['success' => false, 'mensaje' => 'No se pudo realizar la reserva.']);
         }
-    }
+    }    
 }

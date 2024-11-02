@@ -30,6 +30,8 @@
     {{-- TARJETA RESERVA/ALQUILER ACTUAL --}}
     {{-- * La información de esta tarjeta se actualiza, si no tiene reserva lo va a mandar a reservar, si tiene reserva en curso muestra algunos datos y te manda a consultar reserva, si tiene alquiler en curso muestra algunos datos y te manda a consultar alquiler * --}}
     {{-- TODO: Actualizar la tarjeta si el usuario tiene alguna reserva o alquiler en curso, reserva = rojo, alquiler = azul --}}
+   
+    @if(!$tieneReserva)
     <div class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full h-40 p-4 shadow-md rounded-xl flex flex-col">
         <h2 class="text-sm text-left uppercase font-semibold text-slate-50 tracking-wider border-b-2 border-slate-50">
             Reserva
@@ -39,7 +41,23 @@
             <a href="reservar.html" class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Reservar tu
                 bicicleta</a>
         </button>
+
+
     </div>
+    @else
+    <div class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full h-40 p-4 shadow-md rounded-xl flex flex-col">
+        <h2 class="text-sm text-left uppercase font-semibold text-slate-50 tracking-wider border-b-2 border-slate-50">
+            Reserva
+        </h2>
+        <p class="mt-4 text-left text-slate-50">Devuelve la bicicleta</p>
+        <button class="mt-6 text-center">
+            <a href="devolver" class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Devolver</a>
+        </button>
+
+    </div>
+    @endif
+
+
     {{-- OTRAS OPCIONES --}}
     {{-- TODO: Conectar los botones a las vistas correspondientes --}}
     <div class="grid grid-cols-2 gap-6">
@@ -98,5 +116,6 @@
             </svg>
             <h3 class="text-center">Consultar Suspensiones</h3>
         </div>
+
     </div>
 @endsection
