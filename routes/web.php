@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DevolverController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClienteController;
@@ -53,8 +54,8 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
     Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
     
-    Route::get('/devolver', function () {
-        return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
+    Route::group(['middleware' => ['auth']], function () {
+        Route::get('/devolver', [DevolverController::class, 'mostrarVista'])->name('devolver');
     });
     
     Route::get('/reservar', [ReservaController::class, 'indexReserva'])->name('reservar.index');
