@@ -16,9 +16,9 @@ class ClienteController extends Controller
         $cliente = $usuario->obtenerCliente();
 
         if (!$cliente->estoySuspendido()) {
-            return view('cliente.partials.cargar_saldo')->render();
+            return view('cliente.cargar_saldo')->render();
         } else {
-            return redirect()->route('cliente.inicio')
+            return redirect()->route('inicio')
                 ->with('error', 'Su cuenta se encuentra suspendida.');
         }
     }

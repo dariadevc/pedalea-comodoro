@@ -49,13 +49,10 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 
 //* CLIENTE
 Route::middleware(['auth', 'role:cliente'])->group(function () {
-    Route::get('/inicio_cliente', [ClienteController::class, 'indexInicio'])->name('inicio_cliente');
-    // Route::get('/inicio_cliente', function () {
-    //     return view('cliente.partials.inicio');  // Renderiza la vista 'Inicio'
-    // })->name('inicio_cliente');
+    // Route::get('/inicio_cliente', [ClienteController::class, 'indexInicio'])->name('inicio_cliente');
 
     Route::get('/alquilar', function () {
-        return view('cliente.partials.alquilar');  // Renderiza la vista 'Alquilar'
+        return view('cliente.alquilar');  // Renderiza la vista 'Alquilar'
     })->name('alquilar');
 
     //TODO: Conectar alquiler a la vista actualizada del cliente
@@ -66,7 +63,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     // Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
 
     Route::get('/devolver', function () {
-        return view('cliente.partials.devolver');  // Renderiza la vista 'Devolver'
+        return view('cliente.devolver');  // Renderiza la vista 'Devolver'
     })->name('devolver');
 
 
@@ -80,39 +77,39 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::post('/reservar/pagar-reserva', [ReservaController::class, 'pagarReserva'])->name('reservar.pagar-reserva');
 
     Route::get('/perfil', function () {
-        return view('cliente.partials.perfil');  // Renderiza la vista 'Perfil'
+        return view('cliente.perfil');  // Renderiza la vista 'Perfil'
     })->name('perfil');
 
     Route::get('/reserva_actual', function () {
-        return view('cliente.partials.reserva_actual');  // Renderiza la vista 'Reserva Actual'
+        return view('cliente.reserva_actual');  // Renderiza la vista 'Reserva Actual'
     })->name('reserva_actual');
 
     Route::get('/alquiler_actual', function () {
-        return view('cliente.partials.alquiler_actual');  // Renderiza la vista 'Alquiler Actual'
+        return view('cliente.alquiler_actual');  // Renderiza la vista 'Alquiler Actual'
     })->name('alquiler_actual');
 
     Route::get('/movimientos_saldo', function () {
-        return view('cliente.partials.movimientos_saldo');  // Renderiza la vista 'Movimientos del Saldo'
+        return view('cliente.movimientos_saldo');  // Renderiza la vista 'Movimientos del Saldo'
     })->name('mov_saldo');
 
     Route::get('/historial_reservas', function () {
-        return view('cliente.partials.historial_reservas');  // Renderiza la vista 'Historial de Reservas'
+        return view('cliente.historial_reservas');  // Renderiza la vista 'Historial de Reservas'
     })->name('his_reservas');
 
     Route::get('/historial_multas', function () {
-        return view('cliente.partials.historial_multas');  // Renderiza la vista 'Historial de Multas'
+        return view('cliente.historial_multas');  // Renderiza la vista 'Historial de Multas'
     })->name('his_multas');
 
     Route::get('/historial_suspensiones', function () {
-        return view('cliente.partials.historial_suspensiones');  // Renderiza la vista 'Historial de Suspensiones'
+        return view('cliente.historial_suspensiones');  // Renderiza la vista 'Historial de Suspensiones'
     })->name('his_suspensiones');
 
     Route::get('/estaciones', function () {
-        return view('cliente.partials.ver_estaciones');  // Renderiza la vista 'Ver Estaciones'
+        return view('cliente.ver_estaciones');  // Renderiza la vista 'Ver Estaciones'
     })->name('ver_estaciones');
 
     Route::get('/mas', function () {
-        return view('cliente.partials.mas_opciones');  // Renderiza la vista 'Ver Estaciones'
+        return view('cliente.mas_opciones');  // Renderiza la vista 'Ver Estaciones'
     })->name('mas');
 
     // Cargar Saldo que viene de lo de maxi, el controlador trae la vista...

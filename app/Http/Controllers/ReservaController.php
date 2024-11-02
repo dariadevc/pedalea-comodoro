@@ -105,9 +105,9 @@ class ReservaController extends Controller
         // }
 
         if (!($cliente->tengoUnaReserva())) {
-            return view('cliente.partials.reservar')->render();
+            return view('cliente.reservar')->render();
         } else {
-            return redirect()->route('cliente.inicio')
+            return redirect()->route('inicio')
                 ->with('error', 'Su cuenta se encuentra suspendida.');
         }
 
