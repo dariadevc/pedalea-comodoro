@@ -61,6 +61,11 @@ class Cliente extends User
         $this->save();
     }
     
+    public function descontarPuntos($puntos): void
+    {
+        $this->puntaje -= $puntos;
+        $this->save();
+    }
     
 
 

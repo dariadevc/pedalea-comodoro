@@ -273,61 +273,29 @@ class ReservasSeeder extends Seeder
         $fecha_hora_inicio_cancelada_finalizada = Carbon::now()->subMonths(1);
         $fecha_hora_fin_cancelada_finalizada = Carbon::now()->subDays(1);
 
-        for ($i = 0; $i < 5; $i++) { // Genera 5 reservas para el estado 3
-            $timestampAleatorio = rand($fecha_hora_inicio_cancelada_finalizada->timestamp, $fecha_hora_fin_cancelada_finalizada->timestamp);
-            $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        for ($i = 0; $i < 5; $i++) { // Genera 5 reservas para el estado 3 (finalizada) sin cliente de devolución
             $tiempo_uso = rand(1, 6);
+            $id_cliente_reservo = $clientes->random()->id_usuario;
+            $puntaje_obtenido = rand(-100, 10);
+            $this->crearReservasCanceladasFinalizadas(3, $id_cliente_reservo, null, $fecha_hora_inicio_cancelada_finalizada, $fecha_hora_fin_cancelada_finalizada, $tiempo_uso, $puntaje_obtenido, $tarifa);
+        }
 
-            Reserva::create([
-                'id_bicicleta' => rand(1, 20), // Asumiendo que tienes bicicletas numeradas del 1 al 20
-                'id_estacion_retiro' => rand(1, 4), // Asumiendo que tienes 4 estaciones
-                'id_estacion_devolucion' => rand(1, 4), // También las estaciones para la devolución
-                'id_estado' => 3,
-                'id_cliente_reservo' => $clientes->random()->id_usuario,
-                'id_cliente_devuelve' => null,
-                'fecha_hora_retiro' => $fechaHoraAleatoria,
-                'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours($tiempo_uso),
-                'monto' => $tarifa->valor * $tiempo_uso,
-                'senia' => ($tarifa->valor * $tiempo_uso) * 0.25,
-                'puntaje_obtenido' => rand(1, 100),
-            ]);
-        }
-        for ($i = 0; $i < 5; $i++) {
-            $timestampAleatorio = rand($fecha_hora_inicio_cancelada_finalizada->timestamp, $fecha_hora_fin_cancelada_finalizada->timestamp);
-            $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+        for ($i = 0; $i < 5; $i++) { // Genera 5 reservas para el estado 3 (finalizada) con cliente de devolución
+
             $tiempo_uso = rand(1, 6);
-            Reserva::create([
-                'id_bicicleta' => rand(1, 20),
-                'id_estacion_retiro' => rand(1, 4),
-                'id_estacion_devolucion' => rand(1, 4),
-                'id_estado' => 3,
-                'id_cliente_reservo' => $clientes->random()->id_usuario,
-                'id_cliente_devuelve' => $clientes->random()->id_usuario,
-                'fecha_hora_retiro' => $fechaHoraAleatoria,
-                'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours($tiempo_uso),
-                'monto' => $tarifa->valor * $tiempo_uso,
-                'senia' => ($tarifa->valor * $tiempo_uso) * 0.25,
-                'puntaje_obtenido' => rand(1, 100),
-            ]);
+            $id_cliente_reservo = $clientes->random()->id_usuario;
+            $id_cliente_devuelve = $clientes->random()->id_usuario;
+            $puntaje_obtenido = rand(-100, 10);
+            $this->crearReservasCanceladasFinalizadas(3, $id_cliente_reservo, $id_cliente_devuelve, $fecha_hora_inicio_cancelada_finalizada, $fecha_hora_fin_cancelada_finalizada, $tiempo_uso, $puntaje_obtenido, $tarifa);
         }
-        for ($i = 0; $i < 10; $i++) {
-            $timestampAleatorio = rand($fecha_hora_inicio_cancelada_finalizada->timestamp, $fecha_hora_fin_cancelada_finalizada->timestamp);
-            $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+
+        for ($i = 0; $i < 10; $i++) { // Genera 10 reservas para el estado 4 (cancelada)
             $tiempo_uso = rand(1, 6);
-            Reserva::create([
-                'id_bicicleta' => rand(1, 20),
-                'id_estacion_retiro' => rand(1, 4),
-                'id_estacion_devolucion' => rand(1, 4),
-                'id_estado' => 4,
-                'id_cliente_reservo' => $clientes->random()->id_usuario,
-                'id_cliente_devuelve' => null,
-                'fecha_hora_retiro' => $fechaHoraAleatoria,
-                'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours($tiempo_uso),
-                'monto' => $tarifa->valor * $tiempo_uso,
-                'senia' => ($tarifa->valor * $tiempo_uso) * 0.25,
-                'puntaje_obtenido' => null,
-            ]);
+            $id_cliente_reservo = $clientes->random()->id_usuario;
+            $this->crearReservasCanceladasFinalizadas(4, $id_cliente_reservo, null, $fecha_hora_inicio_cancelada_finalizada, $fecha_hora_fin_cancelada_finalizada, $tiempo_uso, null, $tarifa);
         }
+
+        $this->crearReservasCanceladasFinalizadasClientePrueba($clientePrueba, $clientesDevolucion, $tarifa);
 
         /**
          * UNA RESERVA ACTIVA PARA EL CLIENTE DE PRUEBA
@@ -347,5 +315,171 @@ class ReservasSeeder extends Seeder
         //     'senia' => ($tarifa->valor * $tiempo_uso) * 0.25,
         //     'puntaje_obtenido' => null,
         // ]);
+    }
+
+
+    
+
+    private function crearReservasCanceladasFinalizadas(
+        $id_estado,
+        $id_cliente_reservo,
+        $id_cliente_devuelve,
+        $fecha_hora_inicio_cancelada_finalizada,
+        $fecha_hora_fin_cancelada_finalizada,
+        $tiempo_uso,
+        $puntaje_obtenido,
+        $tarifa,
+    ): void {
+        $timestampAleatorio = rand($fecha_hora_inicio_cancelada_finalizada->timestamp, $fecha_hora_fin_cancelada_finalizada->timestamp);
+        $fechaHoraAleatoria = Carbon::createFromTimestamp($timestampAleatorio, 'America/Argentina/Buenos_Aires');
+
+        Reserva::create([
+            'id_bicicleta' => rand(1, 20),
+            'id_estacion_retiro' => rand(1, 4),
+            'id_estacion_devolucion' => rand(1, 4),
+            'id_estado' => $id_estado,
+            'id_cliente_reservo' => $id_cliente_reservo,
+            'id_cliente_devuelve' => $id_cliente_devuelve,
+            'fecha_hora_retiro' => $fechaHoraAleatoria,
+            'fecha_hora_devolucion' => (clone $fechaHoraAleatoria)->addHours($tiempo_uso),
+            'monto' => $tarifa->valor * $tiempo_uso,
+            'senia' => ($tarifa->valor * $tiempo_uso) * 0.25,
+            'puntaje_obtenido' => $puntaje_obtenido,
+        ]);
+    }
+
+    private function crearReservasCanceladasFinalizadasConDatos(
+        $id_estado,
+        $clientePrueba,
+        $id_cliente_devuelve,
+        $fecha_hora_retiro,
+        $fecha_hora_devolucion,
+        $tiempo_uso,
+        $puntaje_obtenido,
+        $tarifa,
+    ): void 
+    {
+        $id_cliente_reservo = $clientePrueba->id_usuario;
+        Reserva::create([
+            'id_bicicleta' => rand(1, 20),
+            'id_estacion_retiro' => rand(1, 4),
+            'id_estacion_devolucion' => rand(1, 4),
+            'id_estado' => $id_estado,
+            'id_cliente_reservo' => $id_cliente_reservo,
+            'id_cliente_devuelve' => $id_cliente_devuelve,
+            'fecha_hora_retiro' => $fecha_hora_retiro,
+            'fecha_hora_devolucion' => $fecha_hora_devolucion,
+            'monto' => $tarifa->valor * $tiempo_uso,
+            'senia' => ($tarifa->valor * $tiempo_uso) * 0.25,
+            'puntaje_obtenido' => $puntaje_obtenido,
+        ]);
+        // $clientePrueba
+
+
+    }
+
+    private function crearReservasCanceladasFinalizadasClientePrueba($clientePrueba, $clientes, $tarifa) 
+    {
+        $lista_datos_canceladas = [
+            [            
+            '2024-10-10 13:05:00',
+            '2024-10-11 13:05:00',
+            '2024-10-12 13:05:00',
+            '2024-10-13 13:05:00',
+            '2024-10-15 13:05:00',
+        ], [
+            '2024-10-10 14:05:00',
+            '2024-10-11 15:05:00',
+            '2024-10-12 16:05:00',
+            '2024-10-13 17:05:00',
+            '2024-10-15 18:05:00',
+        ], [
+            1,
+            2,
+            3,
+            4,
+            5,
+        ],
+        ];
+
+        $lista_datos_finalizadas_sin_cliente_devolucion = [
+            [            
+            '2024-10-16 13:05:00',
+            '2024-10-17 13:05:00',
+            '2024-10-18 13:05:00',
+            '2024-10-19 13:05:00',
+            '2024-10-20 13:05:00',
+        ], [
+            '2024-10-16 14:05:00',
+            '2024-10-17 15:05:00',
+            '2024-10-18 16:05:00',
+            '2024-10-19 17:05:00',
+            '2024-10-20 18:05:00',
+        ], [
+            1,
+            2,
+            3,
+            4,
+            5,
+        ], [
+            5,
+            -40, // Devolucion dentro de termino pero con daños recuperables
+            -5, // Devolucion fuera de termino sin daños
+            5,
+            -60, // Devolucion fuera de termino pero con daños recuperables
+        ],
+        ];
+
+        $lista_datos_finalizadas_con_cliente_devolucion = [
+            [            
+            '2024-10-21 13:05:00',
+            '2024-10-22 13:05:00',
+            '2024-10-23 13:05:00',
+            '2024-10-24 13:05:00',
+            '2024-10-25 13:05:00',
+        ], [
+            '2024-10-21 14:05:00',
+            '2024-10-22 15:05:00',
+            '2024-10-23 16:05:00',
+            '2024-10-24 17:05:00',
+            '2024-10-25 18:05:00',
+        ], [
+            1,
+            2,
+            3,
+            4,
+            5,
+        ], [
+            5,
+            5,
+            5,
+            5,
+            -5, // Devolucion fuera de termino pero con daños recuperables
+        ],
+        ];
+
+        for( $i = 0; $i < 5; $i++) { // Crear 5 reservas canceladas para el cliente de prueba
+            $fecha_hora_retiro = $lista_datos_canceladas[0][$i];
+            $fecha_hora_devolucion = $lista_datos_canceladas[1][$i];
+            $tiempo_uso = $lista_datos_canceladas[2][$i];
+            $this->crearReservasCanceladasFinalizadasConDatos(4, $clientePrueba, null, $fecha_hora_retiro, $fecha_hora_devolucion, $tiempo_uso, null, $tarifa);
+        }
+
+        for( $i = 0; $i < 5; $i++) { // Crear 5 reservas finalizadas sin cliente de devolución para el cliente de prueba
+            $fecha_hora_retiro = $lista_datos_finalizadas_sin_cliente_devolucion[0][$i];
+            $fecha_hora_devolucion = $lista_datos_finalizadas_sin_cliente_devolucion[1][$i];
+            $tiempo_uso = $lista_datos_finalizadas_sin_cliente_devolucion[2][$i];
+            $puntaje_obtenido = $lista_datos_finalizadas_sin_cliente_devolucion[3][$i];
+            $this->crearReservasCanceladasFinalizadasConDatos(3, $clientePrueba, null, $fecha_hora_retiro, $fecha_hora_devolucion, $tiempo_uso, $puntaje_obtenido, $tarifa);
+        }
+
+        for( $i = 0; $i < 5; $i++) { // Crear 5 reservas finalizadas con cliente de devolución para el cliente de prueba
+            $id_cliente_devuelve = $clientes->random()->id_usuario;
+            $fecha_hora_retiro = $lista_datos_finalizadas_con_cliente_devolucion[0][$i];
+            $fecha_hora_devolucion = $lista_datos_finalizadas_con_cliente_devolucion[1][$i];
+            $tiempo_uso = $lista_datos_finalizadas_con_cliente_devolucion[2][$i];
+            $puntaje_obtenido = $lista_datos_finalizadas_con_cliente_devolucion[3][$i];
+            $this->crearReservasCanceladasFinalizadasConDatos(3, $clientePrueba, $id_cliente_devuelve, $fecha_hora_retiro, $fecha_hora_devolucion, $tiempo_uso, $puntaje_obtenido, $tarifa);
+        }
     }
 }

@@ -13,6 +13,11 @@ class PuntajesDevolucionSeeder extends Seeder
      */
     public function run(): void
     {
+        // entre 15:00:00 y 15:00:00 del mismo dia
+        // entre 15:00:00 y 03:00:00 la 2da
+        // entre 15:00:00 y 15:00:00 del otro dia el 3ro
+        // entre 15:00:00 y 999999 horas mas
+
         PuntajeDevolucion::insert([
             [
                 'tope_horario_entrega' => 0,

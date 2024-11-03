@@ -42,6 +42,7 @@ class Estacion extends Model
                 $query->whereIn('id_estado', [1, 2, 5, 6]);
             })->first();
     }
+    
     public function getBicicletaDisponibleEnEstaHora($hora_retiro): ?Bicicleta
     {
         $fecha_hora_retiro = Carbon::today()->setTimeFromTimeString($hora_retiro);
