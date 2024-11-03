@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app-blade')
 
 @section('content')
     <h1 class="text-2xl font-bold mb-6 text-white">Lista de Bicicletas</h1>

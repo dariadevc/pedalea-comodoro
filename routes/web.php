@@ -51,16 +51,16 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 Route::middleware(['auth', 'role:cliente'])->group(function () {
     // Route::get('/inicio_cliente', [ClienteController::class, 'indexInicio'])->name('inicio_cliente');
 
-    Route::get('/alquilar', function () {
-        return view('cliente.alquilar');  // Renderiza la vista 'Alquilar'
-    })->name('alquilar');
+    // Route::get('/alquilar', function () {
+    //     return view('cliente.alquilar');  // Renderiza la vista 'Alquilar'
+    // })->name('alquilar');
 
     //TODO: Conectar alquiler a la vista actualizada del cliente
     // Alquilar que viene de lo de maxi, el controlador le devuelve las vistas que tiene que mostrar...
-    // Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index');
-    // Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
-    // Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
-    // Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
+    Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index');
+    Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
+    Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
+    Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
 
     Route::get('/devolver', function () {
         return view('cliente.devolver');  // Renderiza la vista 'Devolver'
@@ -104,7 +104,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
         return view('cliente.historial_suspensiones');  // Renderiza la vista 'Historial de Suspensiones'
     })->name('his_suspensiones');
 
-    Route::get('/estaciones', function () {
+    Route::get('/estaciones-cliente', function () {
         return view('cliente.ver_estaciones');  // Renderiza la vista 'Ver Estaciones'
     })->name('ver_estaciones');
 
