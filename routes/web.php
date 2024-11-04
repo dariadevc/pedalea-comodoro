@@ -80,5 +80,10 @@ Route::post('/evaluar-puntaje', [DevolverController::class, 'evaluarPuntaje'])->
 
 
 
+Route::post('/evaluar-puntaje2', [DevolverController::class, 'evaluarPuntaje'])->name('evaluar.puntaje');
+
+
+
+
 
 require __DIR__ . '/auth.php';
