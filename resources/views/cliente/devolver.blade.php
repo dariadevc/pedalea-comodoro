@@ -46,6 +46,25 @@
 
 <script>
 
+function enviarCalificacion(url, metodo, datos) {
+    $.ajax({
+        url: url,
+        method: metodo,
+        data: datos,
+        success: function(response) {
+            $('#valorSeleccionado').text(response.mensaje);
+            document.getElementById('divFormDanios').innerHTML = '';
+            console.log(response.message);
+        },
+        error: function(xhr) {
+            console.log("error");
+            let errors = xhr.responseJSON.errors;
+            let mensaje = errors ? Object.values(errors).join('. ') : "Ocurrió un error al guardar la calificación.";
+            $('#valorSeleccionado').text(mensaje);
+        }
+    });
+}
+
     function mostrarSeleccion() {
     const seleccionados = [];
     $('input[name="elementos[]"]:checked').each(function() {
@@ -59,29 +78,14 @@
         event.preventDefault(); // Prevenir el envío tradicional del formulario
 
         // Enviar datos con AJAX
-            $.ajax({
-                url: "{{ route('evaluar.puntaje') }}",
-                method: "POST",
-                data: {
-                    danios: seleccionados,
-                    _token: "{{ csrf_token() }}"
-                },
-                success: function(response) {
-                    $('#valorSeleccionado').text(response.mensaje);
-                  //  $('#formDanios')[0].reset(); // Limpiar el formulario
-                    document.getElementById('divFormDanios').innerHTML = '';
-
-                    console.log(response.message);
-
-
-                },
-                error: function(xhr) {
-                    console.log("error");
-                    let errors = xhr.responseJSON.errors;
-                    let mensaje = errors ? Object.values(errors).join('. ') : "Ocurrió un error al guardar la calificación.";
-                    $('#valorSeleccionado').text(mensaje);
-                }
-            });
+        enviarCalificacion(
+        "{{ route('evaluar.puntaje') }}",
+        "POST",
+        {
+        danios: seleccionados,
+        _token: "{{ csrf_token() }}"
+        }
+        );
 
 }
 
@@ -402,7 +406,17 @@
                     $('#formCalif')[0].reset(); // Limpiar el formulario
                     $('#calificacion .estrella').removeClass('seleccionada'); // Limpiar selección
                     document.getElementById('formContainer').innerHTML = ''; // Limpiar el contenedor del formulario
-                    //calificarDevolución();
+                    let seleccionados = ['1', '1'];
+
+                    enviarCalificacion(
+        "{{ route('evaluar.puntaje') }}",
+        "POST",
+        {
+        danios: seleccionados,
+        _token: "{{ csrf_token() }}"
+        }
+        );
+
 
                 },
                 error: function(xhr) {
