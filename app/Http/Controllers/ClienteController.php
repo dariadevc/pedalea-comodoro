@@ -35,7 +35,7 @@ class ClienteController extends Controller
         if (rand(0, 1)) {
             $monto = floatval($request->monto);
             $cliente->agregarSaldo($monto);
-            
+
             return redirect()->route('inicio')
                 ->with('success', 'Se ha cargado satisfactoriamente su saldo.');
         } else {
@@ -43,5 +43,27 @@ class ClienteController extends Controller
                 ->with('error', 'Ha ocurrido un error al procesar su pago.')
                 ->withInput();
         }
+    }
+
+    public function restarPuntos()
+    {
+        return view('cliente.restar_puntos');
+    }
+
+    public function storeRestarPuntos(Request $request)
+    {
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+        $cliente->actualizarPuntaje($request->puntos);
+        return redirect()->route('restar-puntos')->with('success', 'Puntos restados correctamente ' . $request->puntos);
+    }
+
+    public function restablecer_multas_hechas()
+    {
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+        $cliente->reiniciarMultasSuspensionHechasPorDia();
+        return redirect()->route('restar-puntos')->with('success', 'Multas restablecidas por dia');
+
     }
 }

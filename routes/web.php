@@ -48,15 +48,15 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:cliente'])->group(function () {
-    Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index');// Renderiza la vista 'home.blade.php'
+    Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index'); // Renderiza la vista 'home.blade.php'
     Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
     Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
     Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
-    
+
     Route::get('/devolver', function () {
         return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
     });
-    
+
     Route::get('/reservar', [ReservaController::class, 'indexReserva'])->name('reservar.index');
     Route::post('/reservar/pasos', [ReservaController::class, 'reservarPasos'])->name('reservar.pasos');
     Route::post('/estaciones/disponibilidad-horario-retiro', [EstacionController::class, 'disponibilidadHorarioRetiro'])->name('estaciones.disponibilidad-horario-retiro');
@@ -67,13 +67,15 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
 
     Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
-    Route::post('/cargar-saldo', [ClienteController::class,'storeCargarSaldo'])->name('cargar-saldo.store');
+    Route::post('/cargar-saldo', [ClienteController::class, 'storeCargarSaldo'])->name('cargar-saldo.store');
+    Route::get('/restar-puntos', [ClienteController::class, 'restarPuntos'])->name('restar-puntos');
+    Route::post('/restar-puntos', [ClienteController::class, 'storeRestarPuntos'])->name('restar-puntos.store');
+    Route::post('/restablecer-multas-hechas', [ClienteController::class, 'restablecer_multas_hechas'])->name('restablecer-multas-hechas');
 });
 
 
 // Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
-
 
 
 

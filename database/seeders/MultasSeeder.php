@@ -16,7 +16,7 @@ class MultasSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->crearMultasClientePrueba();
+        // $this->crearMultasClientePrueba();
         Multa::factory(50)->create();
     }
 

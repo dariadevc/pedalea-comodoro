@@ -18,13 +18,23 @@ class ClientesRangosPuntosSeeder extends Seeder
 
         foreach ($id_clientes as $id_cliente) {
             foreach ($id_rangos_puntos as $id_rango_puntos) {
-                $clientes_rangos_puntos[] = [
-                    'id_usuario' => $id_cliente,
-                    'id_rango_puntos' => $id_rango_puntos,
-                    'multa_hecha_por_dia' => false,
-                    'suspension_hecha_por_dia' => false,
-                    'cantidad_veces' => 0,
-                ];
+                if ($id_rango_puntos == 3) {
+                    $clientes_rangos_puntos[] = [
+                        'id_usuario' => $id_cliente,
+                        'id_rango_puntos' => $id_rango_puntos,
+                        'multa_hecha_por_dia' => false,
+                        'suspension_hecha_por_dia' => false,
+                        'cantidad_veces' => 3,
+                    ];
+                } else {
+                    $clientes_rangos_puntos[] = [
+                        'id_usuario' => $id_cliente,
+                        'id_rango_puntos' => $id_rango_puntos,
+                        'multa_hecha_por_dia' => false,
+                        'suspension_hecha_por_dia' => false,
+                        'cantidad_veces' => 0,
+                    ];
+                }
             }
         }
 

@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Log;
+use Laravel\Telescope\Telescope;
 
 class ClienteRangoPuntos extends Pivot
 {
@@ -30,27 +32,74 @@ class ClienteRangoPuntos extends Pivot
         $objetos[] = $this->rangoPuntos();
         return $objetos;
     }
-    
-    // foreach($cliente->rangosPuntos as $rangoPunto) {
-    //     dump($rangoPunto->pivot);
-    // }
-    // die();
 
-    public function evaluarCorrespondeMultaSuspension($puntaje)
+    public function evaluarCorrespondeMulta($puntaje)
     {
-        if ($this->puntaje->dentroDelRango($puntaje)) {
-
+        if ($this->rangoPuntos->dentroDelRango($puntaje)) {
+            if (!$this->multa_hecha_por_dia) {
+                return true;
+            }
+            return false;
         }
+        return false;
+    }
+
+    public function evaluarCorrespondeSuspension($puntaje)
+    {
+        if ($this->rangoPuntos->dentroDelRango($puntaje)) {
+            Log::info('cantidad de veces:', $this->cantidad_veces , $this->rangoPuntos->id_rango_puntos );
+            Telescope::recordDump( $this->cantidad_veces , $this->rangoPuntos->id_rango_puntos );
+            Telescope::recordDump( dump($this->cantidad_veces , $this->rangoPuntos->id_rango_puntos) );
+            if ($this->rangoPuntos->id_rango_puntos == 2 && $this->cantidad_veces > 3) {
+                return false;
+            }
+            if ($this->suspension_hecha_por_dia) {
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 
     public function generarMulta()
     {
-
+        $this->activarMultaHechaPorDia();
+        $this->actualizarVecesEnRango();
+        $monto_multa = $this->rangoPuntos->getMontoMulta();
+        $monto_multa = $this->calcularMontoMulta($monto_multa);
+        $multa = Multa::crearMulta($this->cliente->id_usuario, $monto_multa);
+        $multa->generarDescripcion($this->cliente->puntaje);
+        $multa->guardarMultaCreada();
+        
+        $this->save();
     }
 
-    public function haGeneradoUnaMulta()
+    public function actualizarVecesEnRango()
     {
+        $this->cantidad_veces += 1;
+    }
+    
+    public function calcularMontoMulta($monto_multa)
+    {
+        return $monto_multa * $this->cantidad_veces;
+    }
 
+
+    public function activarMultaHechaPorDia()
+    {
+        $this->multa_hecha_por_dia = true;
+    }
+    public function desactivarMultaHechaPorDia()
+    {
+        $this->multa_hecha_por_dia = false;
+    }
+    public function activarSuspensionHechaPorDia()
+    {
+        $this->suspension_hecha_por_dia = true;
+    }
+    public function desactivarSuspensionHechaPorDia()
+    {
+        $this->suspension_hecha_por_dia = false;
     }
 
     public function cliente()

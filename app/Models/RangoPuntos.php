@@ -25,6 +25,22 @@ class RangoPuntos extends Model
         'id_rango_puntos',
     ];
 
+    public function dentroDelRango($puntaje)
+    {
+        if ($this->rango_minimo >= $puntaje && $this->rango_maximo <= $puntaje) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getMontoMulta()
+    {
+        return $this->monto_multa;
+    }
+
+
+
+
     public function clientes()
     {
         return $this->belongsToMany(Cliente::class, 'clientes_rangos_puntos', 'id_rango_puntos', 'id_usuario')

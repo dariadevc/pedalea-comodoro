@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
-class Cliente extends User
+class Cliente extends Model
 {
 
     use HasFactory;
@@ -28,9 +28,9 @@ class Cliente extends User
     {
         return $this->reservaReservo->whereIn('id_estado', [1, 5])->first();
     }
-    
 
-    public function pagar($monto) 
+
+    public function pagar($monto)
     {
         /**
          * TODO
@@ -60,13 +60,56 @@ class Cliente extends User
         $this->saldo += $monto;
         $this->save();
     }
-    
+
+    public function actualizarPuntaje($puntos)
+    {
+        if ($puntos > 0) {
+            $this->agregarPuntos($puntos);
+        } else {
+            $this->descontarPuntos($puntos);
+        }
+
+    }
+
     public function descontarPuntos($puntos): void
     {
-        $this->puntaje -= $puntos;
+        $this->puntaje += $puntos;
+        $this->save();
+        $rangos_puntos = $this->rangosPuntos;
+        $multa_suspension_generada = false;
+        foreach ($rangos_puntos as $rango_puntos) {
+            if ($rango_puntos->pivot->evaluarCorrespondeMulta($this->puntaje)) {
+                $rango_puntos->pivot->generarMulta();
+                $multa_suspension_generada = true;
+            }
+            // if ($rango_puntos->pivot->evaluarCorrespondeSuspension($this->puntaje)) {
+            //     $rango_puntos->pivot->activarSuspensionHechaPorDia();
+            //     $multa_suspension_generada = true;
+            // }
+            if ($multa_suspension_generada) {
+                break;
+            }
+        }
+    }
+
+    public function agregarPuntos($puntos): void
+    {
+        $this->puntaje += $puntos;
         $this->save();
     }
-    
+
+    public function reiniciarMultasSuspensionHechasPorDia()
+    {
+        foreach ($this->rangosPuntos as $rango_puntos) {
+
+            if ($rango_puntos->pivot) {
+                $rango_puntos->pivot->desactivarMultaHechaPorDia();
+                $rango_puntos->pivot->desactivarSuspensionHechaPorDia();
+                $rango_puntos->pivot->save();
+            }
+        }
+    }
+
 
 
     /**
@@ -99,13 +142,18 @@ class Cliente extends User
         return $this->hasMany(Reserva::class, 'id_cliente_reservo', 'id_usuario');
     }
 
-    public function reservaDevuelve()//Cliente que puede devolver si se reasigna la devolucion
+    public function reservaDevuelve() //Cliente que puede devolver si se reasigna la devolucion
     {
         return $this->hasMany(Reserva::class, 'id_cliente_devuelve', 'id_usuario');
     }
-    
+
     public function infracciones()
     {
         return $this->hasMany(Infraccion::class, 'id_usuario_cliente', 'id_usuario');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'id_usuario', 'id_usuario');
     }
 }

@@ -463,6 +463,7 @@ class ReservasSeeder extends Seeder
             $fecha_hora_devolucion = $lista_datos_canceladas[1][$i];
             $tiempo_uso = $lista_datos_canceladas[2][$i];
             $this->crearReservasCanceladasFinalizadasConDatos(4, $clientePrueba, null, $fecha_hora_retiro, $fecha_hora_devolucion, $tiempo_uso, null, $tarifa);
+            
         }
 
         for( $i = 0; $i < 5; $i++) { // Crear 5 reservas finalizadas sin cliente de devolución para el cliente de prueba
@@ -471,6 +472,9 @@ class ReservasSeeder extends Seeder
             $tiempo_uso = $lista_datos_finalizadas_sin_cliente_devolucion[2][$i];
             $puntaje_obtenido = $lista_datos_finalizadas_sin_cliente_devolucion[3][$i];
             $this->crearReservasCanceladasFinalizadasConDatos(3, $clientePrueba, null, $fecha_hora_retiro, $fecha_hora_devolucion, $tiempo_uso, $puntaje_obtenido, $tarifa);
+            // dump($puntaje_obtenido);
+            // $clientePrueba->actualizarPuntaje($puntaje_obtenido);
+            // $clientePrueba->reiniciarMultasSuspensionHechasPorDia();
         }
 
         for( $i = 0; $i < 5; $i++) { // Crear 5 reservas finalizadas con cliente de devolución para el cliente de prueba
@@ -480,6 +484,8 @@ class ReservasSeeder extends Seeder
             $tiempo_uso = $lista_datos_finalizadas_con_cliente_devolucion[2][$i];
             $puntaje_obtenido = $lista_datos_finalizadas_con_cliente_devolucion[3][$i];
             $this->crearReservasCanceladasFinalizadasConDatos(3, $clientePrueba, $id_cliente_devuelve, $fecha_hora_retiro, $fecha_hora_devolucion, $tiempo_uso, $puntaje_obtenido, $tarifa);
+            // $clientePrueba->actualizarPuntaje($puntaje_obtenido);
+            // $clientePrueba->reiniciarMultasSuspensionHechasPorDia();
         }
     }
 }

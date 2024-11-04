@@ -21,4 +21,9 @@ class Inspector extends User
     {
         return $this->hasMany(Infraccion::class, 'id_usuario_inspector', 'id_usuario');
     }
+
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'id_usuario', 'id_usuario');
+    }
 }
