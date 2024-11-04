@@ -1,7 +1,5 @@
 @extends('layouts.cliente')
 
-@section('titulo', 'Pedalea Comodoro | Alquilar')
-
 @section('nombre_seccion', 'Alquilar')
 
 @section('contenido')

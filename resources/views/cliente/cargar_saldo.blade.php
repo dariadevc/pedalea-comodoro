@@ -1,8 +1,6 @@
 @extends('layouts.cliente')
 
-@section('titulo', 'Pedalea Comodoro | Cargar Saldo')
-
-@section('nombre_seccion', 'Cargar Saldo')
+@section('nombre_seccion', 'Reservar')
 
 @section('contenido')
     <div
@@ -27,7 +25,9 @@
                 @endif
                 <div class="flex flex-col gap-2">
                     <label for="monto">Monto</label>
-                    <x-text-input id='monto' type="number" step="0.01" min="0" max="99999.99" value="{{ old('monto') }}" placeholder="1500.00" name="monto" required autofocus class="mt-8" />
+                    <x-text-input id='monto' type="number" step="0.01" min="0" max="99999.99"
+                        value="{{ old('monto') }}" placeholder="1500.00" name="monto" required autofocus
+                        class="mt-8" />
                     @error('monto')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
@@ -35,8 +35,13 @@
 
                 <x-btn-rojo-blanco type="submit">{{ 'Cargar' }}</x-btn-rojo-blanco>
             </form>
-
-
-
         </div>
-    @endsection
+    </div>
+@endsection
+
+@section('scripts')
+    @vite('resources/js/reservar.js')
+    <script>
+        var urlPasos = "{{ route('reservar.pasos') }}"
+    </script>
+@endsection
