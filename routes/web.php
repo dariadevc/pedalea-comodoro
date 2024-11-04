@@ -53,11 +53,10 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
     Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
     Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
-    
-    Route::group(['middleware' => ['auth']], function () {
-        Route::get('/devolver', [DevolverController::class, 'mostrarVista'])->name('devolver');
-    });
-    
+        
+    Route::get('/devolver', [DevolverController::class, 'mostrarVista'])->middleware('auth')->name('devolver');
+
+
     Route::get('/reservar', [ReservaController::class, 'indexReserva'])->name('reservar.index');
     Route::post('/reservar/pasos', [ReservaController::class, 'reservarPasos'])->name('reservar.pasos');
     Route::post('/estaciones/disponibilidad-horario-retiro', [EstacionController::class, 'disponibilidadHorarioRetiro'])->name('estaciones.disponibilidad-horario-retiro');
@@ -75,6 +74,8 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 // Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
 
+Route::post('/guardar-calif', [DevolverController::class, 'guardarCalif'])->name('guardar.calif');
+Route::post('/evaluar-puntaje', [DevolverController::class, 'evaluarPuntaje'])->name('evaluar.puntaje');
 
 
 

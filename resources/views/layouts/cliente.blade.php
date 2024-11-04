@@ -50,6 +50,8 @@
         @yield('contenido')
     </main>
     @yield('scripts') {{-- Aquí se cargarán los scripts específicos de cada vista --}}
+
+    @vite('resources/js/app.js') <!-- Para Laravel 9 o superior con Vite -->
 </body>
 
 </html>

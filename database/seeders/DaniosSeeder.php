@@ -14,6 +14,7 @@ class DaniosSeeder extends Seeder
     {
         $id_tipos_danio = TipoDanio::pluck('id_tipo_danio')->toArray();
 
+        //1 -> Recuperable.          2->NO recuperable.
         $danios = [
             ['descripcion' => 'Cadena rota o floja', 'id_tipo_danio' => $id_tipos_danio[0]],
             ['descripcion' => 'Neumatico desinflado', 'id_tipo_danio' => $id_tipos_danio[0]],

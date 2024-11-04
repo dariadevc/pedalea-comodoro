@@ -107,7 +107,7 @@ class Cliente extends User
     public function tieneReserva($id_cliente_reservo)
     {
         $existeReserva = Reserva::where('id_cliente_reservo', $id_cliente_reservo)
-                                ->where('id_estado', '1')
+                                ->where('id_estado', '2')
                                 ->exists();
     
         return $existeReserva;

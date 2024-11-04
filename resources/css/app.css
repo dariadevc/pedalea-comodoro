@@ -8,3 +8,14 @@
 .btn {
     @apply shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase;
 }
+
+
+.estrella {
+    font-size: 2rem;
+    cursor: pointer;
+    color: gray; /* Color por defecto */
+}
+
+.estrella.seleccionada {
+    color: gold; /* Color dorado para la estrella seleccionada */
+}
