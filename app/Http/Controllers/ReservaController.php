@@ -36,6 +36,26 @@ class ReservaController extends Controller
         return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
     }
 
+    public function indexAlquilerActual()
+    {
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+
+        if ($cliente->estoySuspendido()) {
+            return redirect()->route('inicio')
+                ->with('error', 'Su cuenta se encuentra suspendida.');
+        }
+
+        $reserva = $cliente->obtenerReservaAlquiladaReasignada();
+
+        if ($reserva->estoyAlquilada()) {
+            $reserva = $reserva->formatearDatosActiva();
+            return view('cliente.alquiler_actual', compact('reserva'));
+        }
+
+        return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
+    }
+
     public function bicicletaDisponible(Request $request)
     {
         $usuario = Auth::user();
@@ -112,6 +132,26 @@ class ReservaController extends Controller
         }
 
         return redirect()->back()->with('error', 'Hay una reserva actualmente activa, no puedes reservar.');
+    }
+
+    public function indexReservaActual()
+    {
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+
+        if ($cliente->estoySuspendido()) {
+            return redirect()->route('inicio')
+                ->with('error', 'Su cuenta se encuentra suspendida.');
+        }
+
+        $reserva = $cliente->obtenerReservaActivaModificada();
+
+        if ($reserva) {
+            $reserva = $reserva->formatearDatosActiva();
+            return view('cliente.reserva_actual', compact('reserva'));
+        }
+
+        return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
     }
 
     public function crearReserva(Request $request)
