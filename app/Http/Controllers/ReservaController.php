@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reserva;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+
 
 use function Pest\Laravel\json;
 
@@ -98,8 +100,15 @@ class ReservaController extends Controller
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
+        // if (!($cliente->tengoUnaReserva())) {
+        //     return view('cliente.reservar');
+        // }
+
         if (!($cliente->tengoUnaReserva())) {
-            return view('cliente.reservar');
+            return view('cliente.reservar')->render();
+        } else {
+            return redirect()->route('inicio')
+                ->with('error', 'Su cuenta se encuentra suspendida.');
         }
 
         return redirect()->back()->with('error', 'Hay una reserva actualmente activa, no puedes reservar.');
