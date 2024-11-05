@@ -8,3 +8,19 @@
 .btn {
     @apply shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase;
 }
+
+
+/*Agrege esta clase aca para usarla en las view de los informes
+pero directamente lo puedo incluir en el codigo de la view.*/
+    .title-section {
+        background: linear-gradient(to right, #00bcd4, #4caf50);
+        padding: 10px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+
+
+

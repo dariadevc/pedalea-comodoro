@@ -19,24 +19,23 @@ class BicicletasSeeder extends Seeder
         $estaciones = Estacion::where('id_estado', 1)->get();
         $estados_bicicleta = EstadoBicicleta::all();
         
-        for ($i = 0; $i < 85; $i++) {
-            $id_estacion = $estaciones->random()->id_estacion;
-            $id_estado_bicicleta = $estados_bicicleta[0]->id_estado;
-            Bicicleta::create([
-                'id_estacion_actual' => $id_estacion,
-                'id_estado' => $id_estado_bicicleta,
-            ]);
-            
+        foreach ($estaciones as $estacion) {
+            $id_estacion = $estacion->id_estacion;
+            for ($j = 0; $j < 5; $j++) {
+                $id_estado_bicicleta = $estados_bicicleta[0]->id_estado;
+                Bicicleta::create([
+                    'id_estacion_actual' => $id_estacion,
+                    'id_estado' => $id_estado_bicicleta,
+                ]);
+            }
         }
 
         for ($i = 0; $i < 15; $i++) {
-            $id_estacion = $estaciones->random()->id_estacion;
             $id_estado_bicicleta = $estados_bicicleta[1]->id_estado;
             Bicicleta::create([
                 'id_estacion_actual' => null,
                 'id_estado' => $id_estado_bicicleta,
             ]);
-            
         }
     }
 

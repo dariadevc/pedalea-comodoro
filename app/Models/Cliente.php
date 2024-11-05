@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+
 class Cliente extends User
 {
 
@@ -23,6 +24,49 @@ class Cliente extends User
         'fecha_nacimiento',
     ];
 
+    public function obtenerReservaActivaModificada(): ?Reserva
+    {
+        return $this->reservaReservo->whereIn('id_estado', [1, 5])->first();
+    }
+
+
+    public function pagar($monto)
+    {
+        /**
+         * TODO
+         * FALTA HACER LA LOGICA DEL MONTO NEGATIVO
+         * 
+         */
+        $this->saldo -= $monto;
+        $this->save();
+        return true;
+    }
+
+    /**
+     * ACA VAN FUNCIONES DEL MODELO
+     */
+    public function estoySuspendido(): bool
+    {
+        return $this->estadoCliente->nombre == 'Suspendido';
+    }
+
+    public function tengoUnaReserva()
+    {
+        return $this->reservaReservo()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+    }
+
+    public function agregarSaldo($monto): void
+    {
+        $this->saldo += $monto;
+        $this->save();
+    }
+
+
+
+
+    /**
+     * ACA VAN FUNCIONES QUE RELACIONAN A OTROS MODELOS
+     */
     public function estadoCliente()
     {
         return $this->belongsTo(EstadoCliente::class, 'id_estado_cliente');
@@ -50,11 +94,11 @@ class Cliente extends User
         return $this->hasMany(Reserva::class, 'id_cliente_reservo', 'id_usuario');
     }
 
-    public function reservaDevuelve()//Cliente que puede devolver si se reasigna la devolucion
+    public function reservaDevuelve() //Cliente que puede devolver si se reasigna la devolucion
     {
         return $this->hasMany(Reserva::class, 'id_cliente_devuelve', 'id_usuario');
     }
-    
+
     public function infracciones()
     {
         return $this->hasMany(Infraccion::class, 'id_usuario_cliente', 'id_usuario');

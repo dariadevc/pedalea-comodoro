@@ -2,6 +2,17 @@
 
 @section('titulo', 'Pedalea Comodoro | Iniciar Sesión')
 
+@section('header')
+    <div class="container flex flex-1 justify-center items-center">
+        <a href="{{ route('landing') }}" class="px-2">
+            <div class="py-1 flex items-center gap-4 text-slate-50 uppercase text-sm font-semibold">
+                <img src="{{ asset('img/bicicleta_blanca.png') }}" alt="" class="h-14">
+                <h2 class="">Pedalea Comodoro</h2>
+            </div>
+        </a>
+    </div>
+@endsection
+
 @section('contenido')
     <section id="iniciarSesion" class="relative flex flex-col items-center justify-center px-10 my-12 h-auto">
         <div
@@ -12,7 +23,7 @@
 
                 {{-- FORMULARIO --}}
                 {{-- TODO: Agregar mensajes de error y demás (guiarse con el login que está en auth) --}}
-                <form method="POST" action="{{ route('iniciar-sesion') }}" class="flex flex-col gap-4">
+                <form method="POST" action="{{ route('iniciar_sesion') }}" class="flex flex-col gap-4">
                     @csrf
 
                     {{-- EMAIL --}}
@@ -38,7 +49,8 @@
 
                 {{-- TODO: Agregar enlace con vista de recuperar contraseña --}}
                 <div class="mt-5 border-b border-pc-azul py-4">
-                    <a href="" class="text-pc-texto-p text-sm hover:text-pc-naranja">¿Olvidaste tu contraseña?</a>
+                    <a href="{{ route('password.request') }}"
+                        class="text-pc-texto-p text-sm hover:text-pc-naranja">¿Olvidaste tu contraseña?</a>
                 </div>
 
                 <div class="mt-3 flex justify-between items-center gap-3">

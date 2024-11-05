@@ -1,27 +1,50 @@
 @extends('layouts.cliente')
 
-@section('titulo', 'Pedalea Comodoro | Inicio')
-
 @section('nombre_seccion', 'Inicio')
 
 @section('contenido')
-    {{-- BIENVENIDA --}}
-    <div class="flex flex-col items-center gap-1">
-        <!-- CAMBIAR LOGO POR LA VERSIÓN FINAL -->
-        <img src="img/bicicleta.png" alt="" class="h-14 w-14">
-        <p class="text-xl font-semibold text-pc-texto-h">¡Hola, <span class="font-bold text-pc-rojo"> {{ Auth::user()->nombre }}</span>!</p>
-    </div>
-    {{-- TARJETA RESERVA/ALQUILER ACTUAL --}}
-    {{-- * La información de esta tarjeta se actualiza, si no tiene reserva lo va a mandar a reservar, si tiene reserva en curso muestra algunos datos y te manda a consultar reserva, si tiene alquiler en curso muestra algunos datos y te manda a consultar alquiler * --}}
-    {{-- TODO: Actualizar la tarjeta si el usuario tiene alguna reserva o alquiler en curso, reserva = rojo, alquiler = azul --}}
-    <div class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full h-40 p-4 shadow-md rounded-xl flex flex-col">
-        <h2 class="text-sm text-left uppercase font-semibold text-slate-50 tracking-wider border-b-2 border-slate-50">Reserva
-        </h2>
-        <p class="mt-4 text-left text-slate-50">No te olvides de...</p>
-        <button class="mt-6 text-center">
-            <a href="reservar.html" class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Reservar tu
-                bicicleta</a>
-        </button>
+    {{-- TODO: Agregar nombre, saldo, puntaje, datos importantes --}}
+    <div class="flex flex-col md:flex-row gap-6">
+        <div class="flex flex-col justify-center items-center gap-4 md:w-1/2 xl:flex-row">
+            {{-- BIENVENIDA --}}
+            <div class="flex flex-col md:flex-row items-center gap-1 md:gap-4">
+                <!-- CAMBIAR LOGO POR LA VERSIÓN FINAL -->
+                <img src="img/bicicleta.png" alt="" class="h-14 w-14">
+                <p class="text-xl font-semibold text-pc-texto-h">¡Hola, <span class="font-extrabold text-2xl text-pc-rojo">
+                        {{ Auth::user()->nombre }} {{ Auth::user()->apellido }}</span>!</p>
+            </div>
+
+            <div class="flex gap-4 w-full">
+                {{-- SALDO DISPONIBLE --}}
+                <div class="bg-gray-50 rounded-xl p-4 w-1/2 shadow-md">
+                    <h2 class="text-sm text-left tracking-wider">Saldo
+                        Disponible</h2>
+                    <p class="text-2xl font-bold">$4000.00</p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-4 w-1/2 shadow-md">
+                    <h2 class="text-sm text-left tracking-wider">Puntaje</h2>
+                    <p class="text-2xl font-bold">0 <span class="text-sm">pts</span></p>
+                </div>
+            </div>
+        </div>
+
+
+        {{-- TARJETA RESERVA/ALQUILER ACTUAL --}}
+        {{-- * La información de esta tarjeta se actualiza, si no tiene reserva lo va a mandar a reservar, si tiene reserva en curso muestra algunos datos y te manda a consultar reserva, si tiene alquiler en curso muestra algunos datos y te manda a consultar alquiler * --}}
+
+        {{-- TODO: Actualizar la tarjeta si el usuario tiene alguna reserva o alquiler en curso, reserva = rojo, alquiler = azul --}}
+        <div
+            class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full md:md:w-1/2 h-40 p-4 shadow-md rounded-xl flex flex-col">
+            <h2 class="text-sm text-left uppercase font-semibold text-slate-50 tracking-wider border-b-2 border-slate-50">
+                Reserva
+            </h2>
+            <p class="mt-4 text-left text-slate-50">No te olvides de...</p>
+            <button class="mt-6 text-center">
+                <a href="{{ route('reservar') }}"
+                    class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Reservar tu
+                    bicicleta</a>
+            </button>
+        </div>
     </div>
     {{-- OTRAS OPCIONES --}}
     {{-- TODO: Conectar los botones a las vistas correspondientes --}}

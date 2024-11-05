@@ -2,6 +2,87 @@
 
 @section('titulo', 'Pedalea Comodoro')
 
+@section('header')
+    <div class="container flex flex-1 justify-between items-center">
+        <a href="{{ route('landing') }}" class="px-2">
+            <div class="py-1 flex items-center gap-4 text-slate-50 uppercase text-sm font-semibold">
+                <img src="{{ asset('img/bicicleta_blanca.png') }}" alt="" class="h-14">
+                <h2 class="">Pedalea Comodoro</h2>
+            </div>
+        </a>
+        <div class="flex justify-end items-center text-nowrap gap-6">
+            <ul class="hidden sm:flex flex-1 justify-end items-center gap-10 text-slate-50 uppercase text-sm font-semibold">
+                @if (!Auth::user())
+                    <a href="{{ route('iniciar_sesion') }}"
+                        class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50">Iniciar
+                        Sesión</a>
+                @endif
+
+                {{-- Si inició sesión le va a permitir cerrar sesión --}}
+                @if (Auth::user())
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover:outline-slate-50">
+                            {{ __('Log Out') }}
+                        </button>
+                    </form>
+                @endif
+
+            </ul>
+            <div class="flex flex-1 justify-end">
+                <div x-data="{ open: false }">
+                    <button @click="open = ! open">
+                        <x-icon-hmenu-claro height="30px" width="30px" />
+                    </button>
+                    <nav x-show=open @click.away="open = false" class="absolute top-full left-0 w-full bg-pc-rojo py-4">
+                        <ul
+                            class="flex flex-col justify-end items-center gap-1 text-slate-50 uppercase text-sm font-semibold text-center">
+                            <li>
+                                <a href="#introduccion" @click="open = false"
+                                    class="block w-full py-2 px-8 m-2 hover:border-b-2 hover:border-white">Inicio</a>
+                            </li>
+                            <li>
+                                <a href="#estadisticas" @click="open = false"
+                                    class="block w-full py-2 px-8 m-2 hover:border-b-2 hover:border-white">Estadísticas</a>
+                            </li>
+                            <li>
+                                <a href="#como-funciona" @click="open = false"
+                                    class="block w-full py-2 px-8 m-2 hover:border-b-2 hover:border-white">¿Cómo
+                                    funciona?</a>
+                            </li>
+                            <li>
+                                <a href="#tarifa" @click="open = false"
+                                    class="block w-full py-2 px-8 m-2 hover:border-b-2 hover:border-white">Tarifa</a>
+                            </li>
+                            <li><a href="#mapa" @click="open = false"
+                                    class="block w-full py-2 px-8 m-2 hover:border-b-2 hover:border-white">Estaciones</a>
+                            </li>
+                            <!-- BOTÓN -->
+                            {{-- ? ¿No queda centrado o es mi imaginación? --}}
+                            @if (!Auth::user())
+                                <a href="{{ route('iniciar_sesion') }}"
+                                    class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 mt-5 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50 sm:hidden">Iniciar
+                                    Sesión</a>
+                            @endif
+
+                            {{-- Si inicio sesión le va a permitir cerrar sesión --}}
+                            @if (Auth::user())
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit"
+                                        class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 mt-5 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover:outline-slate-50 sm:hidden">
+                                        {{ __('Log Out') }}
+                                    </button>
+                                </form>
+                            @endif
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
 
 {{-- TODO: Agregar sección para acceder al manual de usuario --}}
 @section('contenido')
@@ -27,7 +108,7 @@
                             <x-btn-azul-blanco>{{ 'Registrarse' }}</x-btn-azul-blanco>
                         </a>
 
-                        <a href="{{ route('iniciar-sesion') }}">
+                        <a href="{{ route('iniciar_sesion') }}">
                             <x-btn-rojo-blanco>{{ 'Iniciar Sesión' }}</x-btn-rojo-blanco>
                         </a>
                     @endif
@@ -49,19 +130,19 @@
                     <h3 class="text-slate-50 uppercase font-semibold tracking-widest text-xl">Estadísticas</h3>
                 </div>
                 <div class="text-center">
-                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">20</p>
+                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">{{ $cantidad_estaciones }}</p>
                     <h4 class="text-slate-50">Estaciones</h4>
                 </div>
                 <div class="text-center">
-                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">400</p>
+                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">{{ $cantidad_bicicletas }}</p>
                     <h4 class="text-slate-50">Bicicletas</h4>
                 </div>
                 <div class="text-center">
-                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">500</p>
+                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">{{ $cantidad_clientes }}</p>
                     <h4 class="text-slate-50">Usuarios</h4>
                 </div>
                 <div class="text-center">
-                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">8000</p>
+                    <p class="text-slate-50 text-3xl sm:text-4xl font-semibold">{{ $cantidad_reservas }}</p>
                     <h4 class="text-slate-50">Viajes</h4>
                 </div>
             </div>
@@ -120,29 +201,13 @@
                     Por una hora de alquiler:
                 </p>
                 <div class="border-2 border-solid border-pc-rojo rounded-xl p-5 mx-12 max-w-96 text-center shadow-md">
-                    <h4 class="font-bold text-3xl p-5">$1000</h4>
+                    <h4 class="font-bold text-3xl p-5">${{ $tarifa }}</h4>
                 </div>
             </div>
         </div>
     </section>
 
     {{-- TODO: Agregar mapa real! --}}
-    {{-- <!-- MAPA INTERACTIVO  -->
-    <section id="seccion-mapa" class="relative scroll-mt-28">
-        <div class="container my-12 mt-20">
-            <!-- CONTENIDO -->
-            <div class="text-center my-12">
-                <h2 class="text-pc-texto-h font-bold text-3xl sm:text-4xl capitalize my-6">Estaciones en la ciudad</h2>
-                <p class="text-pc-texto-p">En este mapa interactivo podes encontrar todas las estaciones que se encuentran
-                    en la ciudad de Comodoro Rivadavia.</p>
-                <p class="text-pc-texto-p">Podes hacer click en cada punto del mapa para acceder a la información disponible
-                    de cada estación.</p>
-            </div>
-            <div class="flex justify-center flex-1 mb-0 z-10" id="mapa">
-                <img src="{{ asset('img/mapa_comodoro.jpg') }}" alt="" class="">
-            </div>
-        </div>
-    </section> --}}
     <!-- MAPA INTERACTIVO  -->
     <section id="seccion-mapa" class="relative scroll-mt-28">
         <div class="container my-12 mt-20">
@@ -151,11 +216,12 @@
                 <h2 class="text-pc-texto-h font-bold text-3xl sm:text-4xl capitalize my-6">Estaciones en la ciudad</h2>
                 <p class="text-pc-texto-p">En este mapa interactivo podes encontrar todas las estaciones que se encuentran
                     en la ciudad de Comodoro Rivadavia.</p>
-                <p class="text-pc-texto-p">Podes hacer click en cada punto del mapa para acceder a la información disponible
+                <p class="text-pc-texto-p">Podes hacer click en cada punto del mapa para acceder a la información
+                    disponible
                     de cada estación.</p>
             </div>
             <!-- Contenedor para el mapa interactivo -->
-            <div class="flex justify-center flex-1 mb-0 z-10" id="mapa" style="width: 100%; height: 500px;"></div>
+            <div class="flex justify-center flex-1 mb-0 z-0" id="mapa" style="width: 100%; height: 500px;"></div>
         </div>
     </section>
 @endsection
@@ -166,4 +232,21 @@
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 
     <script src="{{ asset('js/mapa.js') }}"></script>
+
+
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                // Desplazamiento suave
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 @endsection
