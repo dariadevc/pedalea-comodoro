@@ -20,8 +20,9 @@
         <input type="hidden" name="nuevoHorarioRetiro" value="{{ $nuevoHoraRetiro }}">
         <button type="submit" class="bg-lime-500 hover:bg-lime-700 text-white font-bold py-2 px-4 rounded">Modificar Reserva</button>
     </form>
-    <form method="POST" action="{{ route('reservas.rechazarModificacion', $reserva->id_reserva) }}">
+    <form method="POST" action="{{ route('reservas.rechazarModificacion')}}">
         @csrf
+        <input type="hidden" name="id_reserva" value="{{ $reserva->id_reserva }}">
         <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Rechazar Reserva</button>
     </form>
     </div>
