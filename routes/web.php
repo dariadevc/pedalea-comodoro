@@ -51,9 +51,9 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 Route::middleware(['auth', 'role:cliente'])->group(function () {
     // Route::get('/inicio_cliente', [ClienteController::class, 'indexInicio'])->name('inicio_cliente');
 
-    Route::get('/alquilar', function () {
-        return view('cliente.alquilar');  // Renderiza la vista 'Alquilar'
-    })->name('alquilar');
+    // Route::get('/alquilar', function () {
+    //     return view('cliente.alquilar');  // Renderiza la vista 'Alquilar'
+    // })->name('alquilar');
 
     // Alquilar que viene de lo de maxi, el controlador le devuelve las vistas que tiene que mostrar...
     Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index');
@@ -98,7 +98,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
         return view('cliente.historial_suspensiones');  // Renderiza la vista 'Historial de Suspensiones'
     })->name('his_suspensiones');
 
-    Route::get('/estaciones', function () {
+    Route::get('/estaciones-cliente', function () {
         return view('cliente.ver_estaciones');  // Renderiza la vista 'Ver Estaciones'
     })->name('ver_estaciones');
 
