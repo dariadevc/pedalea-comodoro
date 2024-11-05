@@ -9,6 +9,13 @@ use PHPUnit\Framework\Constraint\Count;
 
 class InformeController extends Controller
 {
+
+
+    public function informeMenu(Request $request){
+
+        return view('informes.menuInformes');
+    }
+
     public function informeMultas(Request $request)
     {
         $fechaInicio = $request->input('fecha_inicio') . ' 00:00:00';  //Pongo de esta forma la hora para que me tome todo el dia
