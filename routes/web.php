@@ -9,6 +9,7 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\ReservaController;
+use Illuminate\Support\Facades\Log;
 
 // Vista principal
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -76,8 +77,6 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
 // Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
-
-
 
 
 

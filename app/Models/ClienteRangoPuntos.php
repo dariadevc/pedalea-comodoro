@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Log;
 use Laravel\Telescope\Telescope;
+use phpDocumentor\Reflection\Types\Self_;
 
 class ClienteRangoPuntos extends Pivot
 {
@@ -14,8 +15,10 @@ class ClienteRangoPuntos extends Pivot
     use HasFactory;
 
     protected $table = 'clientes_rangos_puntos';
-    // protected $primaryKey = ['id_cliente', 'id_rango_puntos'];
+    // protected $primaryKey = ['id_usuario', 'id_rango_puntos'];
     public $timestamps = false;
+    public $incrementing = false;
+
 
     protected $fillable = [
         'id_usuario',
@@ -33,9 +36,9 @@ class ClienteRangoPuntos extends Pivot
         return $objetos;
     }
 
-    public function evaluarCorrespondeMulta($puntaje)
+    public function evaluarCorrespondeMulta($puntaje, $rango_puntos)
     {
-        if ($this->rangoPuntos->dentroDelRango($puntaje)) {
+        if ($rango_puntos->dentroDelRango($puntaje)) {
             if (!$this->multa_hecha_por_dia) {
                 return true;
             }
@@ -44,16 +47,10 @@ class ClienteRangoPuntos extends Pivot
         return false;
     }
 
-    public function evaluarCorrespondeSuspension($puntaje)
+    public function evaluarCorrespondeSuspension($puntaje, $rango_puntos)
     {
-        if ($this->rangoPuntos->dentroDelRango($puntaje)) {
-            Log::info('cantidad de veces:', $this->cantidad_veces , $this->rangoPuntos->id_rango_puntos );
-            Telescope::recordDump( $this->cantidad_veces , $this->rangoPuntos->id_rango_puntos );
-            Telescope::recordDump( dump($this->cantidad_veces , $this->rangoPuntos->id_rango_puntos) );
-            if ($this->rangoPuntos->id_rango_puntos == 2 && $this->cantidad_veces > 3) {
-                return false;
-            }
-            if ($this->suspension_hecha_por_dia) {
+        if ($rango_puntos->dentroDelRango($puntaje)) {
+            if (!$this->suspension_hecha_por_dia && $rango_puntos->tiempo_suspension_dias != null) {
                 return true;
             }
             return false;
@@ -61,29 +58,51 @@ class ClienteRangoPuntos extends Pivot
         return false;
     }
 
-    public function generarMulta()
+    public function generarMulta($rango_puntos, $cliente)
     {
         $this->activarMultaHechaPorDia();
         $this->actualizarVecesEnRango();
-        $monto_multa = $this->rangoPuntos->getMontoMulta();
+        $monto_multa = $rango_puntos->getMontoMulta();
         $monto_multa = $this->calcularMontoMulta($monto_multa);
-        $multa = Multa::crearMulta($this->cliente->id_usuario, $monto_multa);
-        $multa->generarDescripcion($this->cliente->puntaje);
+        $multa = Multa::crearMulta($cliente->id_usuario, $monto_multa);
+        $multa->generarDescripcion($cliente->puntaje);
         $multa->guardarMultaCreada();
+
+        $this->guardarClienteRangoPuntos($this);
+    }
+
+    public function generarSuspension($rango_puntos, $cliente)
+    {
+        $this->activarSuspensionHechaPorDia();
         
-        $this->save();
+        $suspension = Suspension::crearSuspension($cliente->id_usuario, $rango_puntos->tiempo_suspension_dias);
+        $suspension->generarDescripcion($cliente->puntaje);
+        $suspension->guardarSuspensionCreada();
+
+        $this->guardarClienteRangoPuntos($this);
     }
 
     public function actualizarVecesEnRango()
     {
         $this->cantidad_veces += 1;
     }
-    
+
     public function calcularMontoMulta($monto_multa)
     {
         return $monto_multa * $this->cantidad_veces;
     }
 
+
+    private function guardarClienteRangoPuntos($cliente_rango_puntos)
+    {
+        ClienteRangoPuntos::where('id_usuario', $cliente_rango_puntos->id_usuario)
+            ->where('id_rango_puntos', $cliente_rango_puntos->id_rango_puntos)
+            ->update([
+                'multa_hecha_por_dia' => $cliente_rango_puntos->multa_hecha_por_dia,
+                'suspension_hecha_por_dia' => $cliente_rango_puntos->suspension_hecha_por_dia,
+                'cantidad_veces' => $cliente_rango_puntos->cantidad_veces,
+            ]);
+    }
 
     public function activarMultaHechaPorDia()
     {

@@ -19,7 +19,8 @@ class EstadoCliente extends Model
         'nombre',
     ];
 
-    public function clientes(){
+    public function clientes()
+    {
         return $this->hasMany(Cliente::class, 'id_estado_cliente', 'id_estado');
     }
 

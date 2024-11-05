@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use PhpParser\Node\Expr\FuncCall;
 
 class Cliente extends Model
 {
@@ -68,28 +69,33 @@ class Cliente extends Model
         } else {
             $this->descontarPuntos($puntos);
         }
-
     }
 
     public function descontarPuntos($puntos): void
     {
         $this->puntaje += $puntos;
         $this->save();
-        $rangos_puntos = $this->rangosPuntos;
-        $multa_suspension_generada = false;
-        foreach ($rangos_puntos as $rango_puntos) {
-            if ($rango_puntos->pivot->evaluarCorrespondeMulta($this->puntaje)) {
-                $rango_puntos->pivot->generarMulta();
-                $multa_suspension_generada = true;
-            }
-            // if ($rango_puntos->pivot->evaluarCorrespondeSuspension($this->puntaje)) {
-            //     $rango_puntos->pivot->activarSuspensionHechaPorDia();
-            //     $multa_suspension_generada = true;
-            // }
-            if ($multa_suspension_generada) {
-                break;
+        $rango_puntos = RangoPuntos::where('rango_minimo', '>=', $this->puntaje)
+            ->where('rango_maximo', '<=', $this->puntaje)
+            ->first();
+        $cliente_rango_puntos = ClienteRangoPuntos::where('id_rango_puntos', $rango_puntos->id_rango_puntos)->where('id_usuario', $this->id_usuario)->first();
+        if ($cliente_rango_puntos->id_rango_puntos == 2 && $cliente_rango_puntos->cantidad_veces >= 3) {
+            if (!$cliente_rango_puntos->multa_hecha_por_dia) {
+                $rango_puntos = RangoPuntos::where('rango_minimo', '>=', $this->puntaje)
+                ->where('rango_maximo', '<=', $this->puntaje)
+                ->where('id_rango_puntos', '!=', $cliente_rango_puntos->id_rango_puntos)
+                ->first();
+                $cliente_rango_puntos = ClienteRangoPuntos::where('id_rango_puntos', $rango_puntos->id_rango_puntos)->where('id_usuario', $this->id_usuario)->first();
             }
         }
+        if ($cliente_rango_puntos->evaluarCorrespondeMulta($this->puntaje, $rango_puntos)) {
+            $cliente_rango_puntos->generarMulta($rango_puntos, $this);
+        }
+        if ($cliente_rango_puntos->evaluarCorrespondeSuspension($this->puntaje, $rango_puntos)) {
+            $cliente_rango_puntos->generarSuspension($rango_puntos, $this);
+        }
+
+
     }
 
     public function agregarPuntos($puntos): void
@@ -110,14 +116,19 @@ class Cliente extends Model
         }
     }
 
-
+    public function cambiarEstado($nombre_estado)
+    {
+        $estado = EstadoCliente::where('nombre', $nombre_estado)->first();
+        $this->id_estado_cliente = $estado->id_estado;
+        $this->save();
+    }
 
     /**
      * ACA VAN FUNCIONES QUE RELACIONAN A OTROS MODELOS
      */
     public function estadoCliente()
     {
-        return $this->belongsTo(EstadoCliente::class, 'id_estado_cliente');
+        return $this->belongsTo(EstadoCliente::class, 'id_estado_cliente', 'id_estado');
     }
 
     public function rangosPuntos()
@@ -135,6 +146,11 @@ class Cliente extends Model
     public function multas()
     {
         return $this->hasMany(Multa::class, 'id_usuario', 'id_usuario');
+    }
+
+    public function suspensiones()
+    {
+        return $this->hasMany(Suspension::class, 'id_usuario', 'id_usuario');
     }
 
     public function reservaReservo()  //Cliente que realizo la reserva

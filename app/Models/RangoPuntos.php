@@ -27,10 +27,7 @@ class RangoPuntos extends Model
 
     public function dentroDelRango($puntaje)
     {
-        if ($this->rango_minimo >= $puntaje && $this->rango_maximo <= $puntaje) {
-            return true;
-        }
-        return false;
+        return ($this->rango_minimo >= $puntaje && $puntaje >= $this->rango_maximo);
     }
 
     public function getMontoMulta()
