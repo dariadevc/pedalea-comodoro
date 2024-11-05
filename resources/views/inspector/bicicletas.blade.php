@@ -1,40 +1,40 @@
 @extends('layouts.inspector')
-
 @section('titulo', 'Dehabilitar Bicicletas')
-
-@section('nombre_seccion', 'Inicio')
-
-@section('content')
-    <div>
-        <h1 class="text-2xl font-bold mb-6 text-white">Lista de Bicicletas del Inspector</h1>
-        <button >
-
-        </button>
-    </div>
-
-    @if (session('success'))
-        <div class="alert alert-success mb-4 text-white">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if (session('error'))
-        <div class="alert alert-danger text-white">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <form action="{{ route('bicicletas.deshabilitar') }}" method="POST" class="bg-white p-6 rounded-lg shadow-md" enctype="multipart/form-data">
+@section('nombre_seccion', 'Bicicletas')
+@section('contenido')
+    <h1 class="text-lg text-left uppercase font-semibold text-slate-700 tracking-wider border-b-2 border-slate-700">
+        Deshabilitar una bicicleta
+    </h1>
+    <form action="{{ route('bicicletas.deshabilitar') }}" method="POST"
+        class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full h-70 p-4 shadow-md rounded-xl flex flex-col items-center"
+        enctype="multipart/form-data">
         @csrf
-        <div class="mb-4">
-            <label for="patente" class="block text-lg font-semibold mb-2 text-gray-700">Ingrese la patente de la bicicleta</label>
+        <div class="mb-4 w-full">
+            <label for="patente" class="mt-4 text-left text-slate-50 border-b-2 border-slate-50">Ingrese la patente de la
+                bicicleta</label>
+            <br>
             <input type="text" name="patente" id="patente"
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full mt-4 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 bg-gray-50 border-b-2 text-pc-texto-p"
                 placeholder="Ej: A05" required>
         </div>
-
-        <button type="submit"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Deshabilitar Bicicleta
-        </button>
+        @if (session('success'))
+            <div class="alert alert-success mb-4 text-white">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger text-white">
+                {{ session('error') }}
+            </div>
+        @endif
+        <div class="mt-6 flex space-x-4">
+            <button type="submit" class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">
+                Deshabilitar Bicicleta
+            </button>
+            <button type="button" onclick="window.location.href='{{ route('inspector.inicio') }}';"
+                class="py-2 px-4 rounded-full font-semibold bg-gray-50 shadow-sm">
+                Volver al inicio
+            </button>
+        </div>
     </form>
 @endsection

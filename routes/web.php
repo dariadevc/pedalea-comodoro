@@ -54,6 +54,7 @@ Route::middleware(['auth', 'role:inspector'])->group(function () {
     Route::get('/infraccion', [InfraccionController::class, 'index'])->name('inspector.infraccion');
     Route::post('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
     Route::put('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
+    Route::get('/inspector', function () {return view('inspector.inicio');})->name('inspector.inicio');
 });
 
 Route::middleware(['auth', 'role:cliente'])->group(function () {
