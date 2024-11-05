@@ -49,6 +49,9 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
     
     //Rutas para la gestion de informes:
+    
+    //Ruta para el menu de informes:
+    Route::get('/menuInformes',[InformeController::class,'informeMenu'])->name('informes.menu');
     //Multas realizadas
     Route::get('/multas', [InformeController::class, 'informeMultas'])->name('informes.multas');
     //Estaciones utilizadas
