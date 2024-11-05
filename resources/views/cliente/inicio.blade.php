@@ -11,8 +11,7 @@ inicio
             <div class="flex flex-col md:flex-row items-center gap-1 md:gap-4">
                 <!-- CAMBIAR LOGO POR LA VERSIÓN FINAL -->
                 <img src="img/bicicleta.png" alt="" class="h-14 w-14">
-                <p class="text-xl font-semibold text-pc-texto-h">¡Hola, <span class="font-extrabold text-2xl text-pc-rojo">
-                        {{ Auth::user()->nombre }} {{ Auth::user()->apellido }}</span>!</p>
+                <p class="text-xl font-semibold text-pc-texto-h">¡Hola, <span class="font-extrabold text-2xl text-pc-rojo">{{ $datos['nombre']." ".$datos['apellido'] }}</span>!</p>
             </div>
 
             <div class="flex gap-4 w-full">
@@ -20,11 +19,11 @@ inicio
                 <div class="bg-gray-50 rounded-xl p-4 w-1/2 shadow-md">
                     <h2 class="text-sm text-left tracking-wider">Saldo
                         Disponible</h2>
-                    <p class="text-2xl font-bold">$4000.00</p>
+                    <p class="text-2xl font-bold">${{ $datos['saldo'] }}</p>
                 </div>
                 <div class="bg-gray-50 rounded-xl p-4 w-1/2 shadow-md">
                     <h2 class="text-sm text-left tracking-wider">Puntaje</h2>
-                    <p class="text-2xl font-bold">0 <span class="text-sm">pts</span></p>
+                    <p class="text-2xl font-bold">{{ $datos['puntaje'] }} <span class="text-sm">pts</span></p>
                 </div>
             </div>
         </div>
