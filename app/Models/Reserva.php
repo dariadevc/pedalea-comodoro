@@ -191,8 +191,30 @@ class Reserva extends Model
             'monto_senia' => $this->senia,
         ];
     }
+    
+    //Modificar Reserva:
+    public static function obtenerNuevaEstacionYBicicleta($estacionId)
+    {
+        $estacionesCercanas = [
+            1 => [3],
+            2 => [1],
+            3 => [5, 4],
+            4 => [5, 1],
+            5 => [4, 1],
+        ];
 
-
+        foreach ($estacionesCercanas[$estacionId] as $estacionCercanaId) {
+            $bicicletaDisponible = Bicicleta::where('id_estacion_actual', $estacionCercanaId)
+                                            ->first();
+            if ($bicicletaDisponible) {
+                return [
+                    'nuevaEstacionId' => $estacionCercanaId,
+                    'bicicleta' => $bicicletaDisponible,
+                ];
+            }
+        }
+        return null;
+    }
     /**
      * ACCESORES
      */
