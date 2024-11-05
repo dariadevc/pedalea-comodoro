@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Estacion;
+use App\Models\Bicicleta;
 use App\Models\Reserva;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -25,12 +27,12 @@ class ReservaController extends Controller
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
         $reserva = $cliente->obtenerReservaActivaModificada();
-
+    
         if ($reserva) {
             $reserva = $reserva->formatearDatosActiva();
             return view('cliente.alquilar', compact('reserva'));
         }
-
+    
         return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
     }
 
@@ -48,25 +50,42 @@ class ReservaController extends Controller
         return response()->json(['success' => true]);
     }
 
-
     public function bicicletaNoDisponible(Request $request)
-    {
-        $usuario = Auth::user();
-        $reserva_actual = $usuario->obtenerCliente()->obtenerReservaActivaModificada();
+{
+    $usuario = Auth::user();
+    $cliente = $usuario->obtenerCliente();
+    // Verificación de existencia de reserva
+    $tieneReserva = $cliente->tengoUnaReserva();
 
-        $estacion_retiro = $reserva_actual->estacionRetiro;
-        $nueva_bicicleta = $estacion_retiro->getBicicletaDisponibleAhora();
-        if ($nueva_bicicleta) {
-            $reserva_actual->asignarNuevaBicicleta($nueva_bicicleta);
-            return response()->json(['success' => true, 'mensaje' => 'Se le asigno una nueva bicicleta de la estación']);
-        }
-        /**
-         * FALTA REALIZAR LA LOGICA DE QUE SI NO HAY BICICLETAS DISPONIBLES
-         * PREGUNTAR SI QUIERE QUE SE LE MODIFIQUE
-         */
-        return response()->json(['success' => false, 'mensaje' => 'No hay bicicletas disponibles en esta estación.']);
+    if (!$tieneReserva) {
+        return response()->json(['success' => false, 'mensaje' => 'El cliente no tiene ninguna reserva activa.']);
+    }
+    $reserva_actual = $cliente->obtenerReservaActivaModificada();
+
+    if (!$reserva_actual || !isset($reserva_actual->id_reserva)) {
+      
+        return response()->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
     }
 
+    $estacion_retiro = $reserva_actual->estacionRetiro;
+    $bicicleta_asignada = $reserva_actual->bicicleta;
+
+    if (is_null($bicicleta_asignada->id_estacion_actual && $reserva_actual->id_estacion_retiro != $bicicleta_asignada->id_estacion_actual)) {
+        session(['id_reserva' => $reserva_actual->id_reserva]);
+        return response()->json(['success' => false, 'mensaje' => 'La bicicleta no está disponible en la estación.', 'redirectUrl' => route('reservas.modificar')]);
+    }
+    $nueva_bicicleta = $estacion_retiro->bicicletas()->whereNull('id_estacion_actual')->first();
+
+    if ($nueva_bicicleta) {
+        $reserva_actual->asignarNuevaBicicleta($nueva_bicicleta);
+        session(['id_reserva' => $reserva_actual->id_reserva]);
+        return response()->json(['success' => true, 'mensaje' => 'Se le asignó una nueva bicicleta de la estación']);
+    }
+
+    session(['id_reserva' => $reserva_actual->id_reserva]);
+    return response()->json(['success' => false, 'mensaje' => 'No hay bicicletas disponibles en esta estación.', 'redirectUrl' => route('reservas.modificar')]);
+}
+    
     public function pagarAlquiler(Request $request)
     {
         $inputPagar = $request->input('pagar');
@@ -192,4 +211,72 @@ class ReservaController extends Controller
             return response()->json(['success' => false, 'mensaje' => 'No se pudo realizar la reserva.']);
         }
     }
+
+     //////////////////
+    //Modificar Reserva
+    //////////////////
+    public function modificarReservaC(Request $request)
+    {
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+        $reserva_id = session('id_reserva');
+    
+        if (!$reserva_id) {
+            return response()->json(['success' => false, 'mensaje' => 'No se ha encontrado la reserva en la sesión.']);
+        }
+    
+        $reserva = Reserva::find($reserva_id);
+    
+        if (!$reserva) {
+            return response()->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
+        }
+    
+        $nuevaEstacionYBicicleta = Reserva::obtenerNuevaEstacionYBicicleta($reserva->id_estacion_retiro);
+    
+        if (!$nuevaEstacionYBicicleta) {
+            return response()->json(['success' => false, 'mensaje' => 'No hay bicicletas disponibles en las estaciones cercanas.']);
+        }
+        $nuevaEstacion = Estacion::find($nuevaEstacionYBicicleta['nuevaEstacionId']);
+        $nuevaBicicleta = $nuevaEstacionYBicicleta['bicicleta'];
+        $nuevoHoraRetiro = $reserva->fecha_hora_retiro->addMinutes(15);
+
+        return view('cliente.ModificarReserva', compact('reserva', 'nuevaEstacion', 'nuevaBicicleta', 'nuevoHoraRetiro'));
+    }
+    
+    public function confirmarModificacionReserva(Request $request)
+    {
+        $request->validate([
+            'id_reserva' => 'required|integer',
+            'id_bicicleta' => 'required|integer',
+            'id_estacion_retiro' => 'required|integer',
+            'nuevoHorarioRetiro' => 'required|date',
+        ]);
+    
+        $reserva = Reserva::find($request->id_reserva);
+    
+        if (!$reserva) {
+            return response()->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
+        }
+        //Actuzalimos los datos y los guardamos en la BD
+        $reserva->id_bicicleta = $request->id_bicicleta;
+        $reserva->id_estacion_retiro = $request->id_estacion_retiro;
+        $reserva->id_estado = 5;
+        $reserva->fecha_hora_retiro = $request->nuevoHorarioRetiro;
+        $reserva->save();
+    
+        return response()->json(['success' => true, 'mensaje' => 'Reserva modificada correctamente.']);
+    }
+    
+    public function rechazarModificacion(Request $request, Reserva $reserva)
+    {
+        $cliente = $reserva->cliente;
+        $cliente->saldo += $reserva->senia;
+        $cliente->save();
+    
+        $reserva->delete();
+    
+        return redirect()->route('inicio')->with('success', 'Reserva cancelada y saldo devuelto exitosamente');
+    }
+    
+    
 }
