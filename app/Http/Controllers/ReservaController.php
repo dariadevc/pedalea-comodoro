@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use app\Models\Cliente;
 use App\Models\Estacion;
 use App\Models\Bicicleta;
 use App\Models\Reserva;
@@ -266,17 +267,50 @@ class ReservaController extends Controller
     
         return response()->json(['success' => true, 'mensaje' => 'Reserva modificada correctamente.']);
     }
-    
+
     public function rechazarModificacion(Request $request, Reserva $reserva)
     {
-        $cliente = $reserva->cliente;
-        $cliente->saldo += $reserva->senia;
-        $cliente->save();
-    
-        $reserva->delete();
-    
-        return redirect()->route('inicio')->with('success', 'Reserva cancelada y saldo devuelto exitosamente');
+        $request->validate([
+            'id_reserva' => 'required|integer|exists:reservas,id_reserva', 
+        ]);
+
+        $idReserva = $request->input('id_reserva');
+        $reserva = Reserva::find($idReserva);
+
+        if (!$reserva) {
+            return response()->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
+        }
+
+        if (is_null($reserva->senia)) {
+            return response()->json(['success' => false, 'mensaje' => 'El campo senia es null.']);
+        }
+
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+
+        if (!$cliente) {
+            return response()->json(['success' => false, 'mensaje' => 'Cliente no encontrado.']);
+        }
+
+   
+        $saldoAnterior = $cliente->saldo;
+        $senia = $reserva->senia; 
+        $cliente->saldo += $senia;
+
+        if ($cliente->save()) {
+            Log::info('Saldo devuelto al cliente', ['saldo' => $cliente->saldo]);
+        } else {
+            Log::error('Error al guardar el saldo del cliente');
+        }
+
+        $reserva->id_estado = 4;  
+        
+        if ($reserva->save()) {
+            Log::info('Reserva cancelada con éxito');
+        } else {
+            Log::error('Error al guardar el estado de la reserva');
+        }
+
+        return response()->json(['success' => true, 'mensaje' => 'Reserva cancelada y saldo devuelto exitosamente.']);
     }
-    
-    
 }
