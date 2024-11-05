@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\EstacionController;
 use App\Http\Controllers\InicioController;
+use App\Http\Controllers\InformeController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\AdministrativoController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\ReservaController;
 
 // Vista principal
 Route::get('/', [LandingController::class, 'index'])->name('landing');
+
 
 // NO ELIMINAR, cuando hagamos la parte del perfil nos puede ayudar
 // Route::middleware('auth')->group(function () {
@@ -45,6 +47,18 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     // Rutas para gestion tarifas
     Route::get('/modificar-tarifa', [AdministrativoController::class, 'editTarifa'])->name('administrativo.editTarifa');
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
+    
+    //Rutas para la gestion de informes:
+    //Multas realizadas
+    Route::get('/multas', [InformeController::class, 'informeMultas'])->name('informes.multas');
+    //Estaciones utilizadas
+    Route::get('/estacionesInforme', [InformeController::class, 'informeEstaciones'])->name('informes.estaciones');
+    //Rutas utilizadas
+    Route::get('/rutasInforme', [InformeController::class, 'informeRutas'])->name('informes.rutas');
+    //Tiempo de alquileres solicitados y horarios con mas demanda:
+    Route::get('/alquiler-tiempo-horario',[InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
+
+
 });
 
 //* CLIENTE
@@ -120,10 +134,6 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
 // Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
-
-
-
-
 
 
 require __DIR__ . '/auth.php';
