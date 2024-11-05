@@ -52,7 +52,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
     Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
     Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
-    
+
     Route::get('/devolver', function () {
         return view('cliente.devolver');  // Renderiza la vista 'home.blade.php'
     });
@@ -68,7 +68,15 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
     Route::post('/cargar-saldo', [ClienteController::class,'storeCargarSaldo'])->name('cargar-saldo.store');
+
+    //Modificar Reserva:
+    Route::get('/modificar-reserva', [ReservaController::class, 'modificarReservaC'])->name('reservas.modificar');
+    Route::post('/confirmar-modificacion', [ReservaController::class, 'confirmarModificacionReserva'])->name('reservar.confirmarModificacion');
+    Route::post('/rechazar-modificacion', [ReservaController::class, 'rechazarModificacion'])->name('reservas.rechazarModificacion');
+        
 });
+        
+
 
 
 // Ruta para obtener estaciones
