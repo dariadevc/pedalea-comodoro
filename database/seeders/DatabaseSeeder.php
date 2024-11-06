@@ -15,11 +15,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            ConfiguracionesSeeder::class,
             RolesSeeder::class,
             EstadosClienteSeeder::class,
             UsersSeeder::class,
             RangosPuntosSeeder::class,
-            HistorialesSaldoSeeder::class,
             EstadosMultaSeeder::class,
             MultasSeeder::class,
             EstadosSuspensionSeeder::class,
@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             HistorialesDanioSeeder::class,
             EstadosReservaSeeder::class,
             ReservasSeeder::class,
+            HistorialesSaldoSeeder::class,
             InfraccionesSeeder::class,
             DaniosPorUsoSeeder::class,
             PuntajesDevolucionSeeder::class,

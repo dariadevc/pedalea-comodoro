@@ -4,15 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class Bicicleta extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'bicicletas';
     protected $primaryKey = 'id_bicicleta';
     public $timestamps = false;
+
 
     // bicicleta
 
@@ -28,27 +31,46 @@ class Bicicleta extends Model
         'id_bicicleta',
     ];
 
-    // Relación con el estado
+
+    /**
+     * FUNCIONES DEL MODELO
+     */
+
+    public function estoyEnUnaReserva(): bool
+    {
+        return $this->reservas()->whereIn('id_estado', [2, 6])->exists();
+    }
+
+    public function getReservaActual(): Reserva
+    {
+        return $this->reservas()->whereIn('id_estado', [2, 6])->first();
+    }
+
+
+
+
+    /**
+     * FUNCIONES QUE RELACIONAN OTROS MODELOS
+     */
+
     public function estado()
     {
-        return $this->belongsTo(EstadoBicicleta::class, 'id_estado');
+        return $this->belongsTo(EstadoBicicleta::class, 'id_estado', 'id_estado');
     }
 
-    //Relación con la estación actual
     public function estacionActual()
     {
-        return $this->belongsTo(Estacion::class, 'id_estacion_actual');
+        return $this->belongsTo(Estacion::class, 'id_estacion_actual', 'id_estacion');
     }
 
-    //Relación con la entidad débil historial_danio
     public function historialesDanios()
     {
         return $this->hasMany(HistorialDanio::class, 'id_bicicleta', 'id_bicicleta');
     }
 
-    public function reserva()
+    public function reservas()
     {
-        return $this->hasMany(Reserva::class, 'id_bicicleta');
+        return $this->hasMany(Reserva::class, 'id_bicicleta' , 'id_bicicleta');
     }
 
 

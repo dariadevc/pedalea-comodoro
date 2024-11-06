@@ -21,9 +21,10 @@ return new class extends Migration
             $table->id('id_estacion');
             $table->foreignId('id_estado')->constrained('estados_estacion', 'id_estado')->onDelete('cascade');
             $table->string('nombre');
-            $table->decimal('latitud', 10, 8);
-            $table->decimal('longitud', 11, 8);
+            $table->decimal('latitud', 16, 14);
+            $table->decimal('longitud', 17, 14);
             $table->decimal('calificacion', 4, 2);
+            $table->softDeletes(); // Agrega esta línea para habilitar soft deletes
         });
     }
 

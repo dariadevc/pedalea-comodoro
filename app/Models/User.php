@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,12 +26,12 @@ class User extends Authenticatable
 
 
     protected $fillable = [
-        'id_rol',
+        'dni',
         'nombre',
         'apellido',
         'email',
         'numero_telefono',
-        'contrasenia',
+        'password',
     ];
 
     protected $guarded = [
@@ -42,7 +44,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'contraseña',
+        'password',
         'remember_token',
     ];
 
@@ -55,7 +57,35 @@ class User extends Authenticatable
     {
         return [
             // 'email_verified_at' => 'datetime',
-            'contraseña' => 'hashed',
+            'password' => 'hashed',
         ];
+    }
+
+    public function obtenerCliente(): ?Cliente
+    {
+        return Cliente::where('id_usuario', $this->id_usuario)->first();
+    }
+
+    public function cliente()
+    {
+        return $this->hasOne(Cliente::class, 'id_usuario', 'id_usuario');
+    }
+    public function administrativo()
+    {
+        return $this->hasOne(Administrativo::class, 'id_usuario', 'id_usuario');
+    }
+    public function inspector()
+    {
+        return $this->hasOne(Inspector::class, 'id_usuario', 'id_usuario');
+    }
+
+    public static function obtenerUsuarioPorDni($dni)
+    {
+        return self::where('dni', $dni)->first();
+    }
+
+    public static function obtenerUsuarioPorId($id)
+    {
+        return self::where('id_usuario', $id)->first();
     }
 }

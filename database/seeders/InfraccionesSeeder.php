@@ -21,7 +21,7 @@ class InfraccionesSeeder extends Seeder
         $reservas = Reserva::where('id_cliente_reservo', '<>', 3)->get();
 
 
-        $this->crearReservasClientePrueba($inspectores);
+        $this->crearInfraccionesClientePrueba($inspectores);
         foreach ($reservas as $reserva) {
             if (rand(0, 1)) {
                 $id_inspector = $inspectores->random()->id_usuario;
@@ -39,21 +39,37 @@ class InfraccionesSeeder extends Seeder
         }
     }
 
-    private function crearReservasClientePrueba($inspectores) : void
+    private function crearInfraccionesClientePrueba($inspectores): void
     {
-        $reservas_cliente_pueba = Reserva::where('id_cliente_reservo', 3)->where('id_estado', 3)->take(2)->get();
+        $reservas[] = Reserva::where('id_reserva', 37)->first();
+        $reservas[] = Reserva::where('id_reserva', 38)->first();
         $infracciones = [];
-        foreach ($reservas_cliente_pueba as $reserva) {
+        $motivos = [
+            'Se le realizo una infracción por dañar la bicicleta.',
+            'Se le realizo una infracción por estar haciendo maniobras peligrosas en la calle.',
+        ];
+        $puntos = [
+            -25,
+            -20,
+        ];
+        $fechas = [
+            '2024-10-22 14:46:31',
+            '2024-10-23 15:29:50',
+        ];
+        for ($i = 0; $i < 2; $i++) {
             $id_usuario_inspector = $inspectores->random()->id_usuario;
-            $id_usuario_cliente = $reserva->clienteReservo->id_usuario;
-            $fecha_hora = Carbon::parse($reserva->fecha_hora_retiro)->addMinutes(rand(10, 30));
+            $id_usuario_cliente = $reservas[$i]->id_cliente_reservo;
+            $id_reserva = $reservas[$i]->id_reserva;
+            $motivo = $motivos[$i];
+            $cantidad_puntos = $puntos[$i];
+            $fecha_hora = Carbon::parse($fechas[$i]);
             $infracciones[] = [
                 'id_usuario_inspector' => $id_usuario_inspector,
-                'id_reserva' => $reserva->id_reserva,
+                'id_reserva' => $id_reserva,
                 'id_usuario_cliente' => $id_usuario_cliente,
-                'cantidad_puntos' => rand(-100, -10),
+                'cantidad_puntos' => $cantidad_puntos,
                 'fecha_hora' => $fecha_hora,
-                'motivo' => 'Mal uso de la bicicleta',
+                'motivo' => $motivo,
             ];
         }
         Infraccion::insert($infracciones);
