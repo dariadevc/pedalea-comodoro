@@ -69,6 +69,13 @@ class ReservaController extends Controller
     }
 
     $estacion_retiro = $reserva_actual->estacionRetiro;
+    $nueva_bicicleta = $estacion_retiro->getBicicletaDisponibleAhora();
+    if ($nueva_bicicleta) {
+        $reserva_actual->asignarNuevaBicicleta($nueva_bicicleta);
+        return response()->json(['success' => true, 'mensaje' => 'Se le asigno una nueva bicicleta de la estación']);
+    }
+
+    $estacion_retiro = $reserva_actual->estacionRetiro;
     $bicicleta_asignada = $reserva_actual->bicicleta;
 
     if (is_null($bicicleta_asignada->id_estacion_actual && $reserva_actual->id_estacion_retiro != $bicicleta_asignada->id_estacion_actual)) {
