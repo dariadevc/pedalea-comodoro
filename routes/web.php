@@ -76,6 +76,7 @@ Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])-
 
 Route::post('/guardar-calif', [DevolverController::class, 'guardarCalif'])->name('guardar.calif');
 Route::post('/evaluar-puntaje', [DevolverController::class, 'evaluarPuntaje'])->name('evaluar.puntaje');
+Route::post('/guardar-danios', [DevolverController::class, 'guardarDanios'])->name('guardar.danios');
 
 
 

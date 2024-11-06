@@ -50,6 +50,16 @@ class DevolverController extends Controller
 
     }
 
+    public function guardarDetalles($hora_devolucion,$fecha_hora_devolucion, $puntaje, $puntaje_cliente,$danios){
+
+        session()->put('detalles', [
+            'hora_devolucion' => $hora_devolucion,
+            'hora_devolucion_real' => $fecha_hora_devolucion,
+            'puntaje_obtenido' => $puntaje,
+            'puntaje_actualizado' => $puntaje_cliente,
+            'danios' => $danios,
+        ]);
+    }
     public function guardarCalif(Request $request){
     
     try {
@@ -77,6 +87,12 @@ class DevolverController extends Controller
 
 
     }   
+    public function guardarDanios(Request $request){
+        $danios=$request->danios;
+        session()->put('danios', $danios);
+
+        return response()->json(['success' => true]);
+    }
 
 
     
@@ -86,24 +102,35 @@ class DevolverController extends Controller
         }
     }
 
+
+    //Si has seleccionado daños, te evalúo tu puntaje como usuario.
+    //El problema es que ahora necesito evaluar tu puntaje cuando NO has hecho danios a la bicicleta.
     public function evaluarPuntaje (Request $request){
     try {
 
+        //Evalúo cuando debo evaluar danios y tiempos de entrega.
+        if (session()->has('danios')) {
+
+        $danios = session('danios');
+        
         //retiro_o_devolucion
         $id_cliente = auth()->id(); // O puedes usar auth()->user()->id;
 
-        $danios=$request->danios;
         
         // Filtrar las reservas del cliente con id_estado = '2'
         $reserva = Reserva::where('id_cliente_reservo', $id_cliente)
             ->where('id_estado', '2')
             ->first(); // Obtiene la primera reserva que cumpla con los criterios
+        
+        $hora_devolucion = $reserva->hora_devolucion;
+
+
+
 
         // Verificar si se encontró una reserva
         if ($reserva) {
             // Almacenar la fecha_hora_devolución en una variable
             $fecha_hora_devolucion = Carbon::parse($reserva->fecha_hora_devolucion); // Convierte la fecha_hora_devolucion a un objeto Carbon
-
 
         } else {
 
@@ -140,32 +167,44 @@ class DevolverController extends Controller
             $cliente->puntaje += -40; 
             // Guardar los cambios en la base de datos
             $cliente->save();
-
+            $puntaje= -40;
             }else{
                 $cliente->puntaje += -40*3; 
                 // Guardar los cambios en la base de datos
                 $cliente->save();
+                $puntaje= -40*3;
             }
 
             $this->evaluarMulta($puntaje);
+            $puntaje_cliente= $cliente->puntaje;
+            session()->forget('danios');  // Elimina la clave 'clave' de la sesión
 
-            
-        return response()->json(['success' => true, 'message' => "entre en el primer condicional"]);
+            $this->guardarDetalles($hora_devolucion,$fecha_hora_devolucion,$puntaje,$puntaje_cliente,$danios);
+
+        return response()->json(['success' => true, 'message' => "entre en el 1er condicional  "."puntaje añadido al cliente:".$puntaje]);
 
         }else if( $fecha_hora_actual->isAfter($fecha_hora_devolucion) && $fecha_hora_actual->isBefore($fecha_hora_devolucion_mas_doce)){
             if(!$NoRecuperable){ //daños recuperables
                 $cliente->puntaje += -60; 
                 // Guardar los cambios en la base de datos
                 $cliente->save();
-    
+                $puntaje= -60;
+
             }else{ //Daños no recuperables
                 $cliente->puntaje += -60*3; 
                 // Guardar los cambios en la base de datos
                 $cliente->save();
+                $puntaje= -60*3;
+
             }  
             $this->evaluarMulta($puntaje);
-          
-            return response()->json(['success' => true, 'message' => "entre en el 2do condicional"]);
+            $puntaje_cliente= $cliente->puntaje;
+            session()->forget('danios');  // Elimina la clave 'clave' de la sesión
+
+           // $this->guardarDetalles($hora_devolucion,$fecha_hora_devolucion,$puntaje,$puntaje_cliente,$danios);
+
+
+            return response()->json(['success' => true, 'message' => "entre en el 2do condicional  "."  puntaje añadido al cliente:".$puntaje]);
 
         }else if( $fecha_hora_actual->isAfter($fecha_hora_devolucion_mas_doce) && $fecha_hora_actual->isBefore($fecha_hora_devolucion_mas_veinticuatro)){
             
@@ -173,22 +212,159 @@ class DevolverController extends Controller
                 $cliente->puntaje += -90; 
                 // Guardar los cambios en la base de datos
                 $cliente->save();
+                $puntaje= -90;
+
     
             }else{ //Daños no recuperables
                 $cliente->puntaje += -90*3; 
                 // Guardar los cambios en la base de datos
                 $cliente->save();
+                $puntaje= -90*3;
+
             }
             
             $this->evaluarMulta($puntaje);
+            $puntaje_cliente= $cliente->puntaje;
+            session()->forget('danios');  // Elimina la clave 'clave' de la sesión
 
-            return response()->json(['success' => true, 'message' => "entre en el tercer condicional"]);
+          //  $this->guardarDetalles($hora_devolucion,$fecha_hora_devolucion,$puntaje,$puntaje_cliente,$danios);
+
+            return response()->json(['success' => true, 'message' => "entre en el 3er condicional  "."puntaje añadido al cliente  :".$puntaje]);
 
         }else{ //si me atrasé fecha_hora_devolución + 99999999999999 horas
-            return response()->json(['success' => true, 'message' => $fecha_hora_devolucion]);
+            if(!$NoRecuperable){ //daños recuperables
+                $cliente->puntaje += -1000; 
+                // Guardar los cambios en la base de datos
+                $cliente->save();
+                $puntaje= -1000;
+
+    
+            }else{ //Daños no recuperables
+                $cliente->puntaje += -1000; 
+                // Guardar los cambios en la base de datos
+                $cliente->save();
+                $puntaje= -1000;
+
+            }
+
+
+            $this->evaluarMulta($puntaje);
+            $puntaje_cliente= $cliente->puntaje;
+            session()->forget('danios');  // Elimina la clave 'clave' de la sesión
+
+           // $this->guardarDetalles($hora_devolucion,$fecha_hora_devolucion,$puntaje,$puntaje_cliente,$danios);
+
+
+            return response()->json(['success' => true, 'message' =>"entre en el 4to condicional:  "."puntaje añadido al cliente:".$puntaje]);
 
         }
 
+   
+   
+   
+    }else{  //evalúo tu puntaje cuando no le has hecho danios a la bicicleta.
+        
+        //retiro_o_devolucion
+        $id_cliente = auth()->id(); // O puedes usar auth()->user()->id;
+
+        
+        // Filtrar las reservas del cliente con id_estado = '2'
+        $reserva = Reserva::where('id_cliente_reservo', $id_cliente)
+            ->where('id_estado', '2')
+            ->first(); // Obtiene la primera reserva que cumpla con los criterios
+
+        $hora_devolucion = $reserva->hora_devolucion;
+
+        // Verificar si se encontró una reserva
+        if ($reserva) {
+            // Almacenar la fecha_hora_devolución en una variable
+            $fecha_hora_devolucion = Carbon::parse($reserva->fecha_hora_devolucion); // Convierte la fecha_hora_devolucion a un objeto Carbon
+
+
+        } else {
+
+        }
+
+        $fecha_hora_actual = Carbon::now(); // Devuelve la fecha y hora actual en formato Carbon
+
+        //reglas de negocio.
+
+        // Sumar 10 minutos. Es el tiempo de tolerancia en la devolución
+        $nueva_fecha_hora_devolucion = $fecha_hora_devolucion->copy()->addMinutes(10); // Usamos copy() para no modificar el original
+        $fecha_hora_devolucion_mas_doce = $fecha_hora_devolucion->copy()->addHours(12); // Usamos copy() para no modificar el original
+        $fecha_hora_devolucion_mas_veinticuatro = $fecha_hora_devolucion->copy()->addHours(24); // Usamos copy() para no modificar el original
+
+        $cliente = Cliente::find($id_cliente); // Ajusta el nombre del modelo según tu estructura
+        $puntaje = $cliente->puntaje; // Ajusta el nombre de la columna si es necesario
+
+
+
+        //entrega en tiempo y forma.
+        if($fecha_hora_actual->isBefore($nueva_fecha_hora_devolucion)){ //fecha_hora_Devolucion es el tiempo máximo de alquiler
+                $cliente->puntaje += 5; 
+                // Guardar los cambios en la base de datos
+                $cliente->save();
+                $puntaje=5;
+            $this->evaluarMulta($puntaje);
+            $puntaje_cliente= $cliente->puntaje;
+            session()->forget('danios');  // Elimina la clave 'clave' de la sesión
+
+         //   $this->guardarDetalles($hora_devolucion,$fecha_hora_devolucion,$puntaje,$puntaje_cliente,$danios);
+
+
+            
+        return response()->json(['success' => true, 'message' => "entre en el 1er condicional"."puntaje añadido al cliente:  ".$puntaje]);
+
+        }else if( $fecha_hora_actual->isAfter($fecha_hora_devolucion) && $fecha_hora_actual->isBefore($fecha_hora_devolucion_mas_doce)){
+                $cliente->puntaje += -5; 
+                // Guardar los cambios en la base de datos
+                $cliente->save();
+
+                $puntaje=-5;
+                $this->evaluarMulta($puntaje);
+                $puntaje_cliente= $cliente->puntaje;
+                session()->forget('danios');  // Elimina la clave 'clave' de la sesión
+    
+              //  $this->guardarDetalles($hora_devolucion,$fecha_hora_devolucion,$puntaje,$puntaje_cliente,$danios);
+    
+    
+            return response()->json(['success' => true, 'message' => "entre en el 3er condicional"."puntaje añadido al cliente:  ".$puntaje]);
+
+        }else if( $fecha_hora_actual->isAfter($fecha_hora_devolucion_mas_doce) && $fecha_hora_actual->isBefore($fecha_hora_devolucion_mas_veinticuatro)){
+            
+                $cliente->puntaje += -50; 
+                // Guardar los cambios en la base de datos
+                $cliente->save();
+                $puntaje=-50;;
+
+                $this->evaluarMulta($puntaje);
+                $puntaje_cliente= $cliente->puntaje;
+                session()->forget('danios');  // Elimina la clave 'clave' de la sesión
+    
+              //  $this->guardarDetalles($hora_devolucion,$fecha_hora_devolucion,$puntaje,$puntaje_cliente,$danios);
+    
+            return response()->json(['success' => true, 'message' => "entre en el 4to condicional"."puntaje añadido al cliente:  ".$puntaje]);
+
+        }else{ //si me atrasé fecha_hora_devolución + 99999999999999 horas
+    
+            $cliente->puntaje += -1000; 
+            // Guardar los cambios en la base de datos
+            $cliente->save();
+            $puntaje=-1000;
+        
+            $this->evaluarMulta($puntaje);
+            $puntaje_cliente= $cliente->puntaje;
+            session()->forget('danios');  // Elimina la clave 'clave' de la sesión
+
+         //   $this->guardarDetalles($hora_devolucion,$fecha_hora_devolucion,$puntaje,$puntaje_cliente,$danios);
+           
+            return response()->json(['success' => true, 'message' => '99999999999999']);
+
+        }
+    }
+   
+   
+   
     } catch (\Exception $e) {
         // Registrar el error
         \Log::error('Error al guardar la calificación: ' . $e->getMessage());
