@@ -30,6 +30,11 @@ class Cliente extends Model
         return $this->reservaReservo->whereIn('id_estado', [1, 5])->first();
     }
 
+    public function obtenerReservaAlquiladaReasignada(): ?Reserva
+    {
+        return $this->reservaReservo->whereIn('id_estado', [2, 6])->first();
+    }
+
 
     public function pagar($monto)
     {

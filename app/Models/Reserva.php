@@ -47,8 +47,16 @@ class Reserva extends Model
      * 
      */
 
+    public function estoyReservada()
+    {
+        return in_array($this->id_estado, [1, 5]); //Estado = Alquilada o Modificada
+    }
+    public function estoyAlquilada()
+    {
+        return in_array($this->id_estado, [2, 6]); //Estado = Alquilada o Reasignada
+    }
 
-    public static function crearReserva($horario_retiro, $tiempo_uso, $id_estacion_devolucion, $id_estacion_retiro, $id_cliente_reservo) 
+    public static function crearReserva($horario_retiro, $tiempo_uso, $id_estacion_devolucion, $id_estacion_retiro, $id_cliente_reservo)
     {
         $tiempo_uso = (int) $tiempo_uso;
         $id_estacion_devolucion = (int) $id_estacion_devolucion;
@@ -79,7 +87,7 @@ class Reserva extends Model
         $nueva_reserva->monto = $monto;
         $nueva_reserva->senia = $senia;
         $nueva_reserva->puntaje_obtenido = null;
-        
+
         return $nueva_reserva;
     }
 
@@ -100,7 +108,7 @@ class Reserva extends Model
 
             // Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
             $this->save();
-            
+
             return true;
         } else {
             return false;
@@ -124,7 +132,7 @@ class Reserva extends Model
 
             // Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
             $this->save();
-            
+
             return true;
         } else {
             return false;
@@ -147,16 +155,16 @@ class Reserva extends Model
     public function cerrarAlquiler(): void
     {
         $this->cambiarEstado('Finalizada');
-        
+
         /**
          * TODO
          * FALTA REALIZAR LA LOGICA DE CERRAR EL ALQUILER Y DESCONTAR PUNTOS
          * 
          */
-        
+
         $this->save();
     }
-    
+
     public function calcularMontoRestante(): float
     {
         return $this->monto - $this->senia;
