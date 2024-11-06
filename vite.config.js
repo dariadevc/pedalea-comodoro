@@ -16,6 +16,7 @@ export default defineConfig({
                 'resources/js/layout-app.js',
                 'resources/js/alquilar.js',
                 'resources/js/reservar.js',
+                'resources/js/reasignar_devolucion.js',
             ],
             refresh: true,
         }),
