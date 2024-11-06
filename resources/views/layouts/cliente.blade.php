@@ -48,7 +48,7 @@
             class="fixed top-0 left-0 w-64 h-screen bg-gray-50 shadow-sm border-r border-gray-100 lg:translate-x-0 lg:block z-40">
             {{-- CRUZ --}}
             <div class="place-self-end block lg:hidden">
-                <button @click="open = false" class="p-2">
+                <button @click="open = !open" class="p-2">
                     <x-icon-cruz-oscura height="20px" width="20px" />
                 </button>
             </div>

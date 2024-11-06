@@ -11,7 +11,7 @@ class CleanAndListRoutes extends Command
      *
      * @var string
      */
-    protected $signature = 'clean:routes';
+    protected $signature = 'clean:laravel';
 
     /**
      * The console command description.
