@@ -7,7 +7,7 @@
     <input id="dni" type="number" placeholder="DNI"
         class="mb-2 border-gray-400 p-2 rounded-xl border w-full shadow-sm">
     <div id="dni_error" class="bg-pc-rojo text-white rounded-md p-2 text-start text-sm hidden mb-2">
-        <p>El DNI debe tener 8 dígitos.</p>
+        <p>El DNI debe tener 8 dígitos y estar entre 20000000 y 99999999.</p>
     </div>
     <button id="buscar_usuario"
         class="shadow-sm py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50 text-center">Buscar</button>

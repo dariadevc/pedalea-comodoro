@@ -66,6 +66,19 @@ class User extends Authenticatable
         return Cliente::where('id_usuario', $this->id_usuario)->first();
     }
 
+    public function cliente()
+    {
+        return $this->hasOne(Cliente::class, 'id_usuario', 'id_usuario');
+    }
+    public function administrativo()
+    {
+        return $this->hasOne(Administrativo::class, 'id_usuario', 'id_usuario');
+    }
+    public function inspector()
+    {
+        return $this->hasOne(Inspector::class, 'id_usuario', 'id_usuario');
+    }
+
     public static function obtenerUsuarioPorDni($dni)
     {
         return self::where('dni', $dni)->first();

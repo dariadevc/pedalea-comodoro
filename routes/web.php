@@ -10,6 +10,7 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\ReservaController;
+use Illuminate\Support\Facades\Log;
 
 // Vista principal
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -64,14 +65,7 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 
 //* CLIENTE
 Route::middleware(['auth', 'role:cliente'])->group(function () {
-    // Route::get('/inicio_cliente', [ClienteController::class, 'indexInicio'])->name('inicio_cliente');
-
-    // Route::get('/alquilar', function () {
-    //     return view('cliente.alquilar');  // Renderiza la vista 'Alquilar'
-    // })->name('alquilar');
-
-    // Alquilar que viene de lo de maxi, el controlador le devuelve las vistas que tiene que mostrar...
-    Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index');
+    Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index'); // Renderiza la vista 'home.blade.php'
     Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
     Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
     Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
@@ -129,6 +123,9 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     // Cargar Saldo que viene de lo de maxi, el controlador trae la vista...
     Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
     Route::post('/cargar-saldo', [ClienteController::class, 'storeCargarSaldo'])->name('cargar-saldo.store');
+    Route::get('/restar-puntos', [ClienteController::class, 'restarPuntos'])->name('restar-puntos');
+    Route::post('/restar-puntos', [ClienteController::class, 'storeRestarPuntos'])->name('restar-puntos.store');
+    Route::post('/restablecer-multas-hechas', [ClienteController::class, 'restablecer_multas_hechas'])->name('restablecer-multas-hechas');
     //Modificar Reserva:
     Route::get('/modificar-reserva', [ReservaController::class, 'modificarReservaC'])->name('reservas.modificar');
     Route::post('/confirmar-modificacion', [ReservaController::class, 'confirmarModificacionReserva'])->name('reservar.confirmarModificacion');
@@ -140,6 +137,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
 // Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
+
 
 
 require __DIR__ . '/auth.php';

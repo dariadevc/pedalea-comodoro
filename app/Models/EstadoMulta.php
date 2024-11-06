@@ -17,15 +17,8 @@ class EstadoMulta extends Model
     protected $fillable = [
         'nombre',
     ];
-    //No se pueden modificar:
-    protected $guarded = [
-        'id_estado_multa',
 
-    ];
-
-
-    //La rela 1aM 
-    public function multa()
+    public function multas()
     {
         return $this->hasMany(Multa::class, 'id_estado', 'id_estado');
     }

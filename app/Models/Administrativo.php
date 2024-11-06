@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Administrativo extends User
+class Administrativo extends Model
 {
 
     use HasFactory;
@@ -17,5 +17,10 @@ class Administrativo extends User
     protected $fillable = [
         'id_usuario',
     ];
+
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'id_usuario', 'id_usuario');
+    }
 
 }

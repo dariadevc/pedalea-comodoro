@@ -181,7 +181,7 @@ class Reserva extends Model
 
     public function calcularMontoRestante(): float
     {
-        return $this->monto - $this->seña;
+        return $this->monto - $this->senia;
     }
 
     public function calcularTiempoUso(): int
