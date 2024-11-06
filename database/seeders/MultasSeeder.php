@@ -28,7 +28,9 @@ class MultasSeeder extends Seeder
         $fecha_hora_multa_1 = Carbon::parse('2024-10-17 15:00:43');
         $fecha_hora_multa_2 = Carbon::parse('2024-10-18 15:49:55');
         $fecha_hora_multa_3 = Carbon::parse('2024-10-20 18:10:00');
-        $fecha_hora_multa_4 = Carbon::parse('2024-10-20 18:10:00');
+        $fecha_hora_multa_5 = Carbon::parse('2024-10-22 14:46:41');
+        $fecha_hora_multa_6 = Carbon::parse('2024-10-23 15:30:00');
+        $fecha_hora_multa_4 = Carbon::parse('2024-10-25 18:10:00');
 
         $multas = [
             [
@@ -50,14 +52,28 @@ class MultasSeeder extends Seeder
                 'id_estado' => $estados_multa[0]->id_estado,
                 'fecha_hora' => $fecha_hora_multa_3,
                 'monto' => 300,
-                'descripcion' => 'Multa generada por puntaje negativo acumulado: -40',
+                'descripcion' => 'Multa generada por puntaje negativo acumulado: -95',
+            ],
+            [
+                'id_usuario' => $cliente_prueba->id_usuario,
+                'id_estado' => $estados_multa[0]->id_estado,
+                'fecha_hora' => $fecha_hora_multa_5,
+                'monto' => 500,
+                'descripcion' => 'Multa generada por puntaje negativo acumulado: -115',
+            ],
+            [
+                'id_usuario' => $cliente_prueba->id_usuario,
+                'id_estado' => $estados_multa[0]->id_estado,
+                'fecha_hora' => $fecha_hora_multa_6,
+                'monto' => 600,
+                'descripcion' => 'Multa generada por puntaje negativo acumulado: -130',
             ],
             [
                 'id_usuario' => $cliente_prueba->id_usuario,
                 'id_estado' => $estados_multa[0]->id_estado,
                 'fecha_hora' => $fecha_hora_multa_4,
-                'monto' => 400,
-                'descripcion' => 'Multa generada por puntaje negativo acumulado: -95',
+                'monto' => 700,
+                'descripcion' => 'Multa generada por puntaje negativo acumulado: -125',
             ],
         ];
         Multa::insert($multas);

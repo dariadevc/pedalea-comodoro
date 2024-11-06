@@ -54,7 +54,7 @@ class HistorialesSaldoSeeder extends Seeder
             Carbon::parse('2024-10-22 19:06:14'),
             Carbon::parse('2024-10-23 21:05:00'),
         ];
-        $montos = [10000.00, 10000.00, 100.00, 200,00, 7500.00];
+        $montos = [10000.00, 10000.00, -100.00, -200.00, 3500.00];
         $motivos = ['Cargar saldo', 'Cargar saldo', 'Pagar una multa', 'Pagar una multa', 'Cargar saldo'];
 
         $reservas = $cliente->reservaReservo()->whereIn('id_estado', [3, 4])->get();
@@ -70,6 +70,7 @@ class HistorialesSaldoSeeder extends Seeder
                 if ($fechas_horas[0]->lessThan($fecha_hora_historial_saldo_senia)) {
                     $fecha_hora = array_shift($fechas_horas);
                     $monto = array_shift($montos);
+
                     $motivo = array_shift($motivos);
                     $cliente->historialesSaldo()->create([
                         'motivo' => $motivo,
@@ -98,12 +99,15 @@ class HistorialesSaldoSeeder extends Seeder
                     $timestamp_aleatorio = mt_rand($timestamp_inicio, $timestamp_fin);
                     $fecha_hora_historial_saldo_monto = Carbon::createFromTimestamp($timestamp_aleatorio)->setTimezone('America/Argentina/Buenos_Aires');
                 }
+                $monto = $reserva->calcularMontoRestante() * -1;
                 $cliente->historialesSaldo()->create([
                     'motivo' => 'Pagar un alquiler',
-                    'monto' => $reserva->calcularMontoRestante() * -1,
+                    'monto' => $monto,
                     'fecha_hora' => $fecha_hora_historial_saldo_monto,
                 ]);
             }
         }
+        $cliente->saldo = 4450.00;
+        $cliente->save();
     }
 }

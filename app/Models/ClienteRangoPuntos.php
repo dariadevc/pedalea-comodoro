@@ -93,14 +93,14 @@ class ClienteRangoPuntos extends Pivot
     }
 
 
-    private function guardarClienteRangoPuntos($cliente_rango_puntos)
+    public function guardarClienteRangoPuntos()
     {
-        ClienteRangoPuntos::where('id_usuario', $cliente_rango_puntos->id_usuario)
-            ->where('id_rango_puntos', $cliente_rango_puntos->id_rango_puntos)
+        ClienteRangoPuntos::where('id_usuario', $this->id_usuario)
+            ->where('id_rango_puntos', $this->id_rango_puntos)
             ->update([
-                'multa_hecha_por_dia' => $cliente_rango_puntos->multa_hecha_por_dia,
-                'suspension_hecha_por_dia' => $cliente_rango_puntos->suspension_hecha_por_dia,
-                'cantidad_veces' => $cliente_rango_puntos->cantidad_veces,
+                'multa_hecha_por_dia' => $this->multa_hecha_por_dia,
+                'suspension_hecha_por_dia' => $this->suspension_hecha_por_dia,
+                'cantidad_veces' => $this->cantidad_veces,
             ]);
     }
 

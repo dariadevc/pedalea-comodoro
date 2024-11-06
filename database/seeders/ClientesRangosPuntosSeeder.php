@@ -39,5 +39,9 @@ class ClientesRangosPuntosSeeder extends Seeder
         }
 
         ClienteRangoPuntos::insert($clientes_rangos_puntos);
+
+        $cliente_rangos_puntos_cliente_prueba = ClienteRangoPuntos::where('id_usuario', 3)->where('id_rango_puntos', 1)->first();
+        $cliente_rangos_puntos_cliente_prueba->cantidad_veces = 6;
+        $cliente_rangos_puntos_cliente_prueba->guardarClienteRangoPuntos();
     }
 }

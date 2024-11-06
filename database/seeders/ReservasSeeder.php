@@ -461,6 +461,7 @@ class ReservasSeeder extends Seeder
             $fecha_hora_devolucion = $lista_datos_canceladas[1][$i];
             $tiempo_uso = $lista_datos_canceladas[2][$i];
             $this->crearReservasCanceladasFinalizadasConDatos(4, $clientePrueba, null, $fecha_hora_retiro, $fecha_hora_devolucion, $tiempo_uso, null, $tarifa);
+
             
         }
 
@@ -482,6 +483,11 @@ class ReservasSeeder extends Seeder
             $this->crearReservasCanceladasFinalizadasConDatos(3, $clientePrueba, $id_cliente_devuelve, $fecha_hora_retiro, $fecha_hora_devolucion, $tiempo_uso, $puntaje_obtenido, $tarifa);
 
         }
+
+        // -125 puntos tiene el cliente de prueba
+        $clientePrueba->puntaje = -125;
+        $clientePrueba->save();
+
 
     }
 }
