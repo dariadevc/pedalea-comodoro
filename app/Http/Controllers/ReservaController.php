@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reserva;
+use App\Models\Cliente;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+use Illuminate\Validation\ValidationException;
 
 
 use function Pest\Laravel\json;
@@ -31,26 +33,6 @@ class ReservaController extends Controller
         if ($reserva) {
             $reserva = $reserva->formatearDatosActiva();
             return view('cliente.alquilar', compact('reserva'));
-        }
-
-        return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
-    }
-
-    public function indexAlquilerActual()
-    {
-        $usuario = Auth::user();
-        $cliente = $usuario->obtenerCliente();
-
-        if ($cliente->estoySuspendido()) {
-            return redirect()->route('inicio')
-                ->with('error', 'Su cuenta se encuentra suspendida.');
-        }
-
-        $reserva = $cliente->obtenerReservaAlquiladaReasignada();
-
-        if ($reserva->estoyAlquilada()) {
-            $reserva = $reserva->formatearDatosActiva();
-            return view('cliente.alquiler_actual', compact('reserva'));
         }
 
         return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
@@ -110,6 +92,95 @@ class ReservaController extends Controller
         }
     }
 
+    public function indexAlquilerActual()
+    {
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+
+
+        if ($cliente->estoySuspendido()) {
+            return redirect()->route('inicio')
+                ->with('error', 'Su cuenta se encuentra suspendida.');
+        }
+
+        $reserva = $cliente->obtenerReservaAlquiladaReasignada();
+        $estado_reserva = $reserva->getEstadoReserva();
+
+        //? Es correcto que obtenga el id del cliente que va a devolver?
+        $id_cliente_devuelve = $reserva->getClienteDevuelve();
+        $usuario_devuelve = User::obtenerUsuarioPorId($id_cliente_devuelve); //Crea una instancia del usuario para poder mostrar su nombre y apellido en el alquiler actual
+
+        if ($reserva && $reserva->estoyAlquilada()) {
+            $reserva = $reserva->formatearDatosActiva();
+            return view('cliente.alquiler_actual', compact('reserva', 'estado_reserva', 'usuario_devuelve'));
+        }
+
+        return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
+    }
+
+    public function buscarUsuario(Request $request)
+    {
+        // TODO: Manejar excepciones
+        //El cliente no puede asignarse la devolución a sí mismo.
+        //El DNI tiene que estar en un rango numérico.
+        //
+
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+        $reserva = $cliente->obtenerReservaAlquiladaReasignada();
+
+        //Valida el DNI
+        $request->validate([
+            'dni' => 'required|numeric|digits:8',
+        ]);
+
+        $dni = $request->dni;
+
+        //Excepción: El usuario no se puede reasignar la devolución a sí mismo
+        if ($usuario->dni == $dni) {
+            return response()->json([
+                'status' => 'error',
+                'errorView' => view('cliente.partials.error_autoasignacion_reasignar')->render(),
+            ]);
+        }
+
+        // Buscar el cliente por DNI
+        $usuario_devuelve = User::obtenerUsuarioPorDni($request->dni);
+
+        if ($usuario_devuelve) {
+        } else {
+            // Si no se encuentra al usuario o no es un cliente, devuelve el JSON que le paso a la vista a través de ajax para modificar el contenedor #tarjeta_reasignar
+            return response()->json([
+                'status' => 'error',
+                'errorView' => view('cliente.partials.error_reasignar')->render(),
+            ]);
+        }
+
+        // Comprueba que usuario exista y que sea un cliente
+        if ($usuario_devuelve) {
+            $cliente_devuelve = $usuario_devuelve->obtenerCliente();
+            if (!$cliente_devuelve) {
+                return response()->json([
+                    'status' => 'error',
+                    'errorView' => view('cliente.partials.usuario_suspendido_reasignar')->render(),
+                ]);
+            }
+            if (!$cliente_devuelve->estoySuspendido()) {
+                $reserva->reasignarDevolucion($cliente_devuelve);
+
+                // Devuelve el JSON que le paso a la vista a través de ajax para modificar los contenedores #usuario_devuelve y #tarjeta_reasignar
+                return response()->json([
+                    'status' => 'success',
+                    'successView' => view('cliente.partials.exito_reasignar')->render(),
+                ]);
+            }
+            return response()->json([
+                'status' => 'error',
+                'errorView' => view('cliente.partials.usuario_suspendido_reasignar')->render(),
+            ]);
+        }
+    }
+
     // -------------
     // RESERVAR
     // -------------
@@ -132,26 +203,6 @@ class ReservaController extends Controller
         }
 
         return redirect()->back()->with('error', 'Hay una reserva actualmente activa, no puedes reservar.');
-    }
-
-    public function indexReservaActual()
-    {
-        $usuario = Auth::user();
-        $cliente = $usuario->obtenerCliente();
-
-        if ($cliente->estoySuspendido()) {
-            return redirect()->route('inicio')
-                ->with('error', 'Su cuenta se encuentra suspendida.');
-        }
-
-        $reserva = $cliente->obtenerReservaActivaModificada();
-
-        if ($reserva) {
-            $reserva = $reserva->formatearDatosActiva();
-            return view('cliente.reserva_actual', compact('reserva'));
-        }
-
-        return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
     }
 
     public function crearReserva(Request $request)
@@ -240,5 +291,25 @@ class ReservaController extends Controller
         } else {
             return response()->json(['success' => false, 'mensaje' => 'No se pudo realizar la reserva.']);
         }
+    }
+
+    public function indexReservaActual()
+    {
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+
+        if ($cliente->estoySuspendido()) {
+            return redirect()->route('inicio')
+                ->with('error', 'Su cuenta se encuentra suspendida.');
+        }
+
+        $reserva = $cliente->obtenerReservaActivaModificada();
+
+        if ($reserva && $reserva->estoyReservada()) {
+            $reserva = $reserva->formatearDatosActiva();
+            return view('cliente.reserva_actual', compact('reserva'));
+        }
+
+        return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
     }
 }

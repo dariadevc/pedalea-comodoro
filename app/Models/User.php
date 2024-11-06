@@ -65,4 +65,14 @@ class User extends Authenticatable
     {
         return Cliente::where('id_usuario', $this->id_usuario)->first();
     }
+
+    public static function obtenerUsuarioPorDni($dni)
+    {
+        return self::where('dni', $dni)->first();
+    }
+
+    public static function obtenerUsuarioPorId($id)
+    {
+        return self::where('id_usuario', $id)->first();
+    }
 }

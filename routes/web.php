@@ -76,7 +76,12 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::post('/reservar/datos-correctos', [ReservaController::class, 'reservarDatosCorrectos'])->name('reservar.datos-correctos');
     Route::post('/reservar/datos-incorrectos', [ReservaController::class, 'reservarDatosIncorrectos'])->name('reservar.datos-incorrectos');
     Route::post('/reservar/pagar-reserva', [ReservaController::class, 'pagarReserva'])->name('reservar.pagar-reserva');
-    Route::get('/reserva_actual', [ReservaController::class, 'indexReservaActual'])->name('reserva_actual');
+
+    Route::get('/reserva-actual', [ReservaController::class, 'indexReservaActual'])->name('reserva_actual');
+    Route::post('/reserva-actual/buscar-usuario', [ReservaController::class, 'buscarUsuario'])->name('reserva_actual.buscar_usuario');
+    Route::get('/reserva-actual/formulario-busqueda', function () {
+        return view('cliente.partials.buscar_usuario_reasignar');
+    })->name('reserva-actual.buscar-usuario');
 
     Route::get('/perfil', function () {
         return view('cliente.perfil');  // Renderiza la vista 'Perfil'
