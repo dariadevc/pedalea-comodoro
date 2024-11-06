@@ -15,7 +15,14 @@ class InicioController extends Controller
         if ($usuario->hasRole('administrativo')) {
             return view('administrativo.inicio');
         } elseif ($usuario->hasRole('cliente')) {
-            return view('cliente.inicio');
+            $cliente = $usuario->obtenerCliente();
+            $datos = [
+                'nombre' => $usuario->nombre,
+                'apellido' => $usuario->apellido,
+                'saldo' => $cliente->saldo,
+                'puntaje' => $cliente->puntaje,
+            ];
+            return view('cliente.inicio', compact('datos'));
         } elseif ($usuario->hasRole('inspector')) {
             return view('inspector.inicio');
         }
