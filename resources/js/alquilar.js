@@ -40,14 +40,7 @@ window.mandarFormularioBiciNoDisponible = function () {
                 window.ocultarDisponible();
                 window.mostrarPagarAlquiler();
             } else {
-
-                /**
-                 * 
-                 * FALTA REALIZAR LA LOGICA DE MOSTRAR SI QUIERE QUE SE LO MODIFIQUE LA RESERVA ACTUAL
-                 * 
-                 */
-
-                alert(response.mensaje);
+                                window.location.href = response.redirectUrl;
             }
         },
         error: function (xhr, status, error) {
@@ -57,6 +50,9 @@ window.mandarFormularioBiciNoDisponible = function () {
         }
     });
 };
+
+
+
 
 window.mandarFormularioPagar = function (valorBoton) {
     console.log(valorBoton);

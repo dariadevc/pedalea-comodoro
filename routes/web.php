@@ -47,7 +47,7 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     // Rutas para gestion tarifas
     Route::get('/modificar-tarifa', [AdministrativoController::class, 'editTarifa'])->name('administrativo.editTarifa');
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
-    
+
     //Rutas para la gestion de informes:
     
     //Ruta para el menu de informes:
@@ -59,9 +59,7 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     //Rutas utilizadas
     Route::get('/rutasInforme', [InformeController::class, 'informeRutas'])->name('informes.rutas');
     //Tiempo de alquileres solicitados y horarios con mas demanda:
-    Route::get('/alquiler-tiempo-horario',[InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
-
-
+    Route::get('/alquiler-tiempo-horario', [InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
 });
 
 //* CLIENTE
@@ -131,7 +129,13 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     // Cargar Saldo que viene de lo de maxi, el controlador trae la vista...
     Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
     Route::post('/cargar-saldo', [ClienteController::class, 'storeCargarSaldo'])->name('cargar-saldo.store');
+    //Modificar Reserva:
+    Route::get('/modificar-reserva', [ReservaController::class, 'modificarReservaC'])->name('reservas.modificar');
+    Route::post('/confirmar-modificacion', [ReservaController::class, 'confirmarModificacionReserva'])->name('reservar.confirmarModificacion');
+    Route::post('/rechazar-modificacion', [ReservaController::class, 'rechazarModificacion'])->name('reservas.rechazarModificacion');
 });
+
+
 
 
 // Ruta para obtener estaciones

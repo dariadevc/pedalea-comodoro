@@ -213,7 +213,74 @@ class Reserva extends Model
             'monto_senia' => $this->senia,
         ];
     }
+    ///////////////////
+    //Modificar Reserva:
+    ///////////////////
 
+    //Metodo para obtener la estacion mas cercana a la que selecciono en la reserva y su respectiva bicicleta.
+    public static function obtenerNuevaEstacionYBicicleta($estacionId)
+    {
+        $estacionSeleccionada = Estacion::find($estacionId);
+    
+        if (!$estacionSeleccionada) {
+            return null;
+        }
+    
+        //Se obtienen las estaciones activas con sus respectiva long y lat.
+        $estaciones = Estacion::where('id_estado', 1)
+                              ->where('id_estacion', '!=', $estacionId)
+                              ->get(['id_estacion', 'latitud', 'longitud']);
+    
+        // Variable para almacenar la estación más cercana y la distancia mínima
+        $estacionMasCercana = null;
+        $distanciaMinima = PHP_FLOAT_MAX;
+    
+        foreach ($estaciones as $estacion) {
+            $distancia = self::calcularDistancia(
+                $estacionSeleccionada->latitud,
+                $estacionSeleccionada->longitud,
+                $estacion->latitud,
+                $estacion->longitud
+            );
+    
+            if ($distancia < $distanciaMinima) {
+                $bicicletaDisponible = Bicicleta::where('id_estacion_actual', $estacion->id_estacion)
+                                                ->first();
+    
+                if ($bicicletaDisponible) {
+                    $distanciaMinima = $distancia;
+                    $estacionMasCercana = [
+                        'nuevaEstacionId' => $estacion->id_estacion,
+                        'bicicleta' => $bicicletaDisponible,
+                    ];
+                }
+            }
+        }
+        return $estacionMasCercana;
+    }
+    
+    private static function calcularDistancia($lat1, $lon1, $lat2, $lon2)
+    {
+        $radioTierra = 6371; 
+    
+        //Convierte los valores en radianes:
+        $dLat = deg2rad($lat2 - $lat1);  
+        $dLon = deg2rad($lon2 - $lon1);
+    
+        //Formula Haversine(Distancia entre un punto y otro).
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+             sin($dLon / 2) * sin($dLon / 2);
+    
+        //Arco de distancia en radianes:
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        //Convertir la distancia de radianes a kilometros:
+        $distancia = $radioTierra * $c;
+    
+        return $distancia;
+    }
+///////////////////////////////////////////////////////////////////////////////  
 
     /**
      * ACCESORES
