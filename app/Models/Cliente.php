@@ -66,8 +66,6 @@ class Cliente extends User
     }
 
 
-
-
     /**
      * ACA VAN FUNCIONES QUE RELACIONAN A OTROS MODELOS
      */

@@ -47,6 +47,7 @@ class Reserva extends Model
      * 
      */
 
+    // TODO: Modificar para que funcione con el modelo de EstadoReserva
     public function estoyReservada()
     {
         return in_array($this->id_estado, [1, 5]); //Estado = Alquilada o Modificada
@@ -54,6 +55,11 @@ class Reserva extends Model
     public function estoyAlquilada()
     {
         return in_array($this->id_estado, [2, 6]); //Estado = Alquilada o Reasignada
+    }
+
+    public function estoyReasignada()
+    {
+        return $this->id_estado == 6;
     }
 
     public static function crearReserva($horario_retiro, $tiempo_uso, $id_estacion_devolucion, $id_estacion_retiro, $id_cliente_reservo)
@@ -137,6 +143,14 @@ class Reserva extends Model
         } else {
             return false;
         }
+    }
+
+    // Método que setea el id del cliente que devuelve al reasignar la devolución y cambia el estado de la reserva a reasignada
+    public function reasignarDevolucion($usuario_devuelve)
+    {
+        $this->id_cliente_devuelve = $usuario_devuelve->id_usuario;
+        $this->cambiarEstado('Reasignada');
+        $this->save();
     }
 
     public function asignarNuevaBicicleta($nueva_bicicleta): void
@@ -280,6 +294,16 @@ class Reserva extends Model
     public function getFechaHoraRetiroAttribute($valor): Carbon
     {
         return Carbon::parse($valor);
+    }
+
+    public function getEstadoReserva(): string
+    {
+        return $this->estado->nombre;
+    }
+
+    public function getClienteDevuelve()
+    {
+        return $this->id_cliente_devuelve;
     }
 
 
