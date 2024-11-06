@@ -47,6 +47,7 @@ class Reserva extends Model
      * 
      */
 
+    // TODO: Modificar para que funcione con el modelo de EstadoReserva
     public function estoyReservada()
     {
         return in_array($this->id_estado, [1, 5]); //Estado = Alquilada o Modificada
@@ -54,6 +55,11 @@ class Reserva extends Model
     public function estoyAlquilada()
     {
         return in_array($this->id_estado, [2, 6]); //Estado = Alquilada o Reasignada
+    }
+
+    public function estoyReasignada()
+    {
+        return $this->id_estado == 6;
     }
 
     public static function crearReserva($horario_retiro, $tiempo_uso, $id_estacion_devolucion, $id_estacion_retiro, $id_cliente_reservo)
@@ -139,6 +145,14 @@ class Reserva extends Model
         }
     }
 
+    // Método que setea el id del cliente que devuelve al reasignar la devolución y cambia el estado de la reserva a reasignada
+    public function reasignarDevolucion($usuario_devuelve)
+    {
+        $this->id_cliente_devuelve = $usuario_devuelve->id_usuario;
+        $this->cambiarEstado('Reasignada');
+        $this->save();
+    }
+
     public function asignarNuevaBicicleta($nueva_bicicleta): void
     {
         $this->id_bicicleta = $nueva_bicicleta->id_bicicleta;
@@ -199,7 +213,74 @@ class Reserva extends Model
             'monto_senia' => $this->senia,
         ];
     }
+    ///////////////////
+    //Modificar Reserva:
+    ///////////////////
 
+    //Metodo para obtener la estacion mas cercana a la que selecciono en la reserva y su respectiva bicicleta.
+    public static function obtenerNuevaEstacionYBicicleta($estacionId)
+    {
+        $estacionSeleccionada = Estacion::find($estacionId);
+    
+        if (!$estacionSeleccionada) {
+            return null;
+        }
+    
+        //Se obtienen las estaciones activas con sus respectiva long y lat.
+        $estaciones = Estacion::where('id_estado', 1)
+                              ->where('id_estacion', '!=', $estacionId)
+                              ->get(['id_estacion', 'latitud', 'longitud']);
+    
+        // Variable para almacenar la estación más cercana y la distancia mínima
+        $estacionMasCercana = null;
+        $distanciaMinima = PHP_FLOAT_MAX;
+    
+        foreach ($estaciones as $estacion) {
+            $distancia = self::calcularDistancia(
+                $estacionSeleccionada->latitud,
+                $estacionSeleccionada->longitud,
+                $estacion->latitud,
+                $estacion->longitud
+            );
+    
+            if ($distancia < $distanciaMinima) {
+                $bicicletaDisponible = Bicicleta::where('id_estacion_actual', $estacion->id_estacion)
+                                                ->first();
+    
+                if ($bicicletaDisponible) {
+                    $distanciaMinima = $distancia;
+                    $estacionMasCercana = [
+                        'nuevaEstacionId' => $estacion->id_estacion,
+                        'bicicleta' => $bicicletaDisponible,
+                    ];
+                }
+            }
+        }
+        return $estacionMasCercana;
+    }
+    
+    private static function calcularDistancia($lat1, $lon1, $lat2, $lon2)
+    {
+        $radioTierra = 6371; 
+    
+        //Convierte los valores en radianes:
+        $dLat = deg2rad($lat2 - $lat1);  
+        $dLon = deg2rad($lon2 - $lon1);
+    
+        //Formula Haversine(Distancia entre un punto y otro).
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+             sin($dLon / 2) * sin($dLon / 2);
+    
+        //Arco de distancia en radianes:
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        //Convertir la distancia de radianes a kilometros:
+        $distancia = $radioTierra * $c;
+    
+        return $distancia;
+    }
+///////////////////////////////////////////////////////////////////////////////  
 
     /**
      * ACCESORES
@@ -213,6 +294,16 @@ class Reserva extends Model
     public function getFechaHoraRetiroAttribute($valor): Carbon
     {
         return Carbon::parse($valor);
+    }
+
+    public function getEstadoReserva(): string
+    {
+        return $this->estado->nombre;
+    }
+
+    public function getClienteDevuelve()
+    {
+        return $this->id_cliente_devuelve;
     }
 
 

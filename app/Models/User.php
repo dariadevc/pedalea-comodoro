@@ -78,4 +78,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(Inspector::class, 'id_usuario', 'id_usuario');
     }
+
+    public static function obtenerUsuarioPorDni($dni)
+    {
+        return self::where('dni', $dni)->first();
+    }
+
+    public static function obtenerUsuarioPorId($id)
+    {
+        return self::where('id_usuario', $id)->first();
+    }
 }

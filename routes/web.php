@@ -48,8 +48,11 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     // Rutas para gestion tarifas
     Route::get('/modificar-tarifa', [AdministrativoController::class, 'editTarifa'])->name('administrativo.editTarifa');
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
-    
+
     //Rutas para la gestion de informes:
+    
+    //Ruta para el menu de informes:
+    Route::get('/menuInformes',[InformeController::class,'informeMenu'])->name('informes.menu');
     //Multas realizadas
     Route::get('/multas', [InformeController::class, 'informeMultas'])->name('informes.multas');
     //Estaciones utilizadas
@@ -57,9 +60,7 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     //Rutas utilizadas
     Route::get('/rutasInforme', [InformeController::class, 'informeRutas'])->name('informes.rutas');
     //Tiempo de alquileres solicitados y horarios con mas demanda:
-    Route::get('/alquiler-tiempo-horario',[InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
-
-
+    Route::get('/alquiler-tiempo-horario', [InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
 });
 
 //* CLIENTE
@@ -84,7 +85,12 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::post('/reservar/datos-correctos', [ReservaController::class, 'reservarDatosCorrectos'])->name('reservar.datos-correctos');
     Route::post('/reservar/datos-incorrectos', [ReservaController::class, 'reservarDatosIncorrectos'])->name('reservar.datos-incorrectos');
     Route::post('/reservar/pagar-reserva', [ReservaController::class, 'pagarReserva'])->name('reservar.pagar-reserva');
-    Route::get('/reserva_actual', [ReservaController::class, 'indexReservaActual'])->name('reserva_actual');
+
+    Route::get('/reserva-actual', [ReservaController::class, 'indexReservaActual'])->name('reserva_actual');
+    Route::post('/reserva-actual/buscar-usuario', [ReservaController::class, 'buscarUsuario'])->name('reserva_actual.buscar_usuario');
+    Route::get('/reserva-actual/formulario-busqueda', function () {
+        return view('cliente.partials.buscar_usuario_reasignar');
+    })->name('reserva-actual.buscar-usuario');
 
     Route::get('/perfil', function () {
         return view('cliente.perfil');  // Renderiza la vista 'Perfil'
@@ -120,7 +126,13 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/restar-puntos', [ClienteController::class, 'restarPuntos'])->name('restar-puntos');
     Route::post('/restar-puntos', [ClienteController::class, 'storeRestarPuntos'])->name('restar-puntos.store');
     Route::post('/restablecer-multas-hechas', [ClienteController::class, 'restablecer_multas_hechas'])->name('restablecer-multas-hechas');
+    //Modificar Reserva:
+    Route::get('/modificar-reserva', [ReservaController::class, 'modificarReservaC'])->name('reservas.modificar');
+    Route::post('/confirmar-modificacion', [ReservaController::class, 'confirmarModificacionReserva'])->name('reservar.confirmarModificacion');
+    Route::post('/rechazar-modificacion', [ReservaController::class, 'rechazarModificacion'])->name('reservas.rechazarModificacion');
 });
+
+
 
 
 // Ruta para obtener estaciones

@@ -25,9 +25,8 @@ class Cliente extends Model
         'fecha_nacimiento',
     ];
 
-    public function obtenerReservaActivaModificada(): ?Reserva
-    {
-        return $this->reservaReservo->whereIn('id_estado', [1, 5])->first();
+    public function obtenerReservaActivaModificada(): ?Reserva { 
+        return $this->reservaReservo()->whereIn('id_estado', [1, 5])->first(); 
     }
 
     public function obtenerReservaAlquiladaReasignada(): ?Reserva
