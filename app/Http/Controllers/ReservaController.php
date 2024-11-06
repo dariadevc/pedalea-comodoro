@@ -131,6 +131,11 @@ class ReservaController extends Controller
         }
 
         $reserva = $cliente->obtenerReservaAlquiladaReasignada();
+        if (!$reserva) {
+            return redirect()->route('inicio')
+            ->with('error', 'No tiene actualmente un alquiler.');
+        }
+        
         $estado_reserva = $reserva->getEstadoReserva();
 
         //? Es correcto que obtenga el id del cliente que va a devolver?

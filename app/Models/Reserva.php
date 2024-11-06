@@ -123,7 +123,7 @@ class Reserva extends Model
 
     public function reservar($cliente, $usuario)
     {
-        if ($cliente->pagar($this->calcularMontoRestante())) {
+        if ($cliente->pagar($this->senia)) {
             $this->cambiarEstado('Activa');
 
             $mensaje = "Su reserva se ha realizado correctamente.";
