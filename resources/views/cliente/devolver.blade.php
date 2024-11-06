@@ -33,7 +33,7 @@
             <p id="mensajeDevolucion" class="text-pc-texto-p text-sm border-l-4 border-l-pc-azul pl-2">Ya podes devolver tu bicicleta!</p>
         </div>
         <div class="flex gap-6 self-center">
-            <button onclick="devolver()" id="botonDevolver" class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">Devolver
+            <button hidden onclick="devolver()" id="botonDevolver" class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul">Devolver
                 Bicicleta</button>
         </div>
     </div>
@@ -473,6 +473,7 @@ document.querySelectorAll('.estrella').forEach((estrella, index) => {
                     $('#formCalif')[0].reset(); // Limpiar el formulario
                     $('#calificacion .estrella').removeClass('seleccionada'); // Limpiar selección
                     document.getElementById('formContainer').innerHTML = ''; // Limpiar el contenedor del formulario
+                    document.getElementById("botonDevolver").style.display = "inline-block";
 
 
                 },
