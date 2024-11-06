@@ -6,6 +6,7 @@ use app\Models\Cliente;
 use App\Models\Estacion;
 use App\Models\Bicicleta;
 use App\Models\Reserva;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+
 
 use function Pest\Laravel\json;
 
@@ -34,6 +36,26 @@ class ReservaController extends Controller
             return view('cliente.alquilar', compact('reserva'));
         }
     
+        return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
+    }
+
+    public function indexAlquilerActual()
+    {
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+
+        if ($cliente->estoySuspendido()) {
+            return redirect()->route('inicio')
+                ->with('error', 'Su cuenta se encuentra suspendida.');
+        }
+
+        $reserva = $cliente->obtenerReservaAlquiladaReasignada();
+
+        if ($reserva->estoyAlquilada()) {
+            $reserva = $reserva->formatearDatosActiva();
+            return view('cliente.alquiler_actual', compact('reserva'));
+        }
+
         return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
     }
 
@@ -125,11 +147,38 @@ class ReservaController extends Controller
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
+        // if (!($cliente->tengoUnaReserva())) {
+        //     return view('cliente.reservar');
+        // }
+
         if (!($cliente->tengoUnaReserva())) {
-            return view('cliente.reservar');
+            return view('cliente.reservar')->render();
+        } else {
+            return redirect()->route('inicio')
+                ->with('error', 'Su cuenta se encuentra suspendida.');
         }
 
         return redirect()->back()->with('error', 'Hay una reserva actualmente activa, no puedes reservar.');
+    }
+
+    public function indexReservaActual()
+    {
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+
+        if ($cliente->estoySuspendido()) {
+            return redirect()->route('inicio')
+                ->with('error', 'Su cuenta se encuentra suspendida.');
+        }
+
+        $reserva = $cliente->obtenerReservaActivaModificada();
+
+        if ($reserva) {
+            $reserva = $reserva->formatearDatosActiva();
+            return view('cliente.reserva_actual', compact('reserva'));
+        }
+
+        return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
     }
 
     public function crearReserva(Request $request)

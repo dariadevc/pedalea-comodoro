@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <title>Pedalea Comodoro</title>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/layout-app.js'])
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -34,5 +32,14 @@
                 @yield('content')
             </main>
         </div>
-    </body>
+    </div>
+
+    {{-- CONTENIDO PRINCIPAL --}}
+    <main id="main" class="flex flex-col mt-14 p-8 gap-8  lg:ml-64 overflow-y-auto">
+        @yield('contenido')
+    </main>
+
+    @yield('scripts')
+</body>
+
 </html>

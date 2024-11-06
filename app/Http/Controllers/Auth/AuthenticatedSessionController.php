@@ -19,6 +19,7 @@ class AuthenticatedSessionController extends Controller
         return view('invitado.iniciar_sesion');
     }
 
+
     /**
      * Handle an incoming authentication request.
      */
