@@ -202,7 +202,7 @@ $('#formContainer').append(`
 </div>
 </div>
 
-<button id="idEnviar" type="submit" class="bg-blue-500 text-white px-4 py-2 mt-4 rounded">Enviar Calificacion</button>
+<button hidden id="idEnviar" type="submit" class="bg-blue-500 text-white px-4 py-2 mt-4 rounded">Enviar Calificacion</button>
 
 <input type="hidden" name="calificacion" id="inputCalificacion">
 
@@ -376,7 +376,7 @@ document.querySelectorAll('.estrella').forEach((estrella, index) => {
         </div>
     </div>
 
-    <button id="idEnviar" type="submit" class="bg-blue-500 text-white px-4 py-2 mt-4 rounded">Enviar Calificacion</button>
+    <button hidden id="idEnviar" type="submit" class="bg-blue-500 text-white px-4 py-2 mt-4 rounded">Enviar Calificacion</button>
 
     <input type="hidden" name="calificacion" id="inputCalificacion">
     <input type="hidden" name="devolucion" id="estacion">
@@ -409,6 +409,8 @@ document.querySelectorAll('.estrella').forEach((estrella, index) => {
 
     // Cuando se hace clic en una estrella
     $('#formContainer').on('click', '.estrella', function() {
+        document.getElementById("idEnviar").style.display = "inline-block";
+
         // Remover la clase 'seleccionada' de todas las estrellas
         $('#calificacion .estrella').removeClass('seleccionada');
 
