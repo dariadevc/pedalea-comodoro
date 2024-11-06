@@ -48,8 +48,11 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     // Rutas para gestion tarifas
     Route::get('/modificar-tarifa', [AdministrativoController::class, 'editTarifa'])->name('administrativo.editTarifa');
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
-    
+
     //Rutas para la gestion de informes:
+    
+    //Ruta para el menu de informes:
+    Route::get('/menuInformes',[InformeController::class,'informeMenu'])->name('informes.menu');
     //Multas realizadas
     Route::get('/multas', [InformeController::class, 'informeMultas'])->name('informes.multas');
     //Estaciones utilizadas
@@ -57,9 +60,7 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     //Rutas utilizadas
     Route::get('/rutasInforme', [InformeController::class, 'informeRutas'])->name('informes.rutas');
     //Tiempo de alquileres solicitados y horarios con mas demanda:
-    Route::get('/alquiler-tiempo-horario',[InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
-
-
+    Route::get('/alquiler-tiempo-horario', [InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
 });
 Route::middleware(['auth', 'role:inspector'])->group(function () {
 
@@ -79,12 +80,13 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     //     return view('cliente.alquilar');  // Renderiza la vista 'Alquilar'
     // })->name('alquilar');
 
-    //TODO: Conectar alquiler a la vista actualizada del cliente
     // Alquilar que viene de lo de maxi, el controlador le devuelve las vistas que tiene que mostrar...
     Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index');
     Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
     Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
     Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
+    Route::get('/alquiler-actual',  [ReservaController::class, 'indexAlquilerActual'])->name('alquiler_actual');
+    Route::post('/alquiler-actual/buscar-usuario', [])->name('alquiler_actual.buscar-usuario');
 
     Route::get('/devolver', function () {
         return view('cliente.devolver');  // Renderiza la vista 'Devolver'
@@ -100,25 +102,23 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::post('/reservar/datos-incorrectos', [ReservaController::class, 'reservarDatosIncorrectos'])->name('reservar.datos-incorrectos');
     Route::post('/reservar/pagar-reserva', [ReservaController::class, 'pagarReserva'])->name('reservar.pagar-reserva');
 
+    Route::get('/reserva-actual', [ReservaController::class, 'indexReservaActual'])->name('reserva_actual');
+    Route::post('/reserva-actual/buscar-usuario', [ReservaController::class, 'buscarUsuario'])->name('reserva_actual.buscar_usuario');
+    Route::get('/reserva-actual/formulario-busqueda', function () {
+        return view('cliente.partials.buscar_usuario_reasignar');
+    })->name('reserva-actual.buscar-usuario');
+
     Route::get('/perfil', function () {
         return view('cliente.perfil');  // Renderiza la vista 'Perfil'
     })->name('perfil');
-
-    Route::get('/reserva_actual', function () {
-        return view('cliente.reserva_actual');  // Renderiza la vista 'Reserva Actual'
-    })->name('reserva_actual');
-
-    Route::get('/alquiler_actual', function () {
-        return view('cliente.alquiler_actual');  // Renderiza la vista 'Alquiler Actual'
-    })->name('alquiler_actual');
 
     Route::get('/movimientos_saldo', function () {
         return view('cliente.movimientos_saldo');  // Renderiza la vista 'Movimientos del Saldo'
     })->name('mov_saldo');
 
-    Route::get('/historial_reservas', function () {
+    Route::get('/actividad', function () {
         return view('cliente.historial_reservas');  // Renderiza la vista 'Historial de Reservas'
-    })->name('his_reservas');
+    })->name('actividad');
 
     Route::get('/historial_multas', function () {
         return view('cliente.historial_multas');  // Renderiza la vista 'Historial de Multas'
@@ -139,7 +139,13 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     // Cargar Saldo que viene de lo de maxi, el controlador trae la vista...
     Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
     Route::post('/cargar-saldo', [ClienteController::class, 'storeCargarSaldo'])->name('cargar-saldo.store');
+    //Modificar Reserva:
+    Route::get('/modificar-reserva', [ReservaController::class, 'modificarReservaC'])->name('reservas.modificar');
+    Route::post('/confirmar-modificacion', [ReservaController::class, 'confirmarModificacionReserva'])->name('reservar.confirmarModificacion');
+    Route::post('/rechazar-modificacion', [ReservaController::class, 'rechazarModificacion'])->name('reservas.rechazarModificacion');
 });
+
+
 
 
 // Ruta para obtener estaciones

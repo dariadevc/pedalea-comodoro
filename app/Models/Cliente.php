@@ -24,9 +24,13 @@ class Cliente extends User
         'fecha_nacimiento',
     ];
 
-    public function obtenerReservaActivaModificada(): ?Reserva
+    public function obtenerReservaActivaModificada(): ?Reserva { 
+        return $this->reservaReservo()->whereIn('id_estado', [1, 5])->first(); 
+    }
+
+    public function obtenerReservaAlquiladaReasignada(): ?Reserva
     {
-        return $this->reservaReservo->whereIn('id_estado', [1, 5])->first();
+        return $this->reservaReservo->whereIn('id_estado', [2, 6])->first();
     }
 
 
@@ -60,8 +64,6 @@ class Cliente extends User
         $this->saldo += $monto;
         $this->save();
     }
-
-
 
 
     /**
