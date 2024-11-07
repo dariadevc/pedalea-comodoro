@@ -196,3 +196,5 @@ window.enviarFormularioPagarReserva = function () {
         }
     });
 }
+
+window

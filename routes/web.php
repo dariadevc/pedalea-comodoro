@@ -10,6 +10,7 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\ReservaController;
+use App\Models\Reserva;
 use Illuminate\Support\Facades\Log;
 
 // Vista principal
@@ -50,7 +51,7 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
 
     //Rutas para la gestion de informes:
-    
+
     //Ruta para el menu de informes:
     Route::get('/menuInformes',[InformeController::class,'informeMenu'])->name('informes.menu');
     //Multas realizadas
@@ -91,6 +92,8 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/reserva-actual/formulario-busqueda', function () {
         return view('cliente.partials.buscar_usuario_reasignar');
     })->name('reserva-actual.buscar-usuario');
+
+    Route::post('/cancelar-reserva', [ReservaController::class, 'cancelar'])->name('reserva-actual.cancelar');
 
     Route::get('/perfil', function () {
         return view('cliente.perfil');  // Renderiza la vista 'Perfil'
