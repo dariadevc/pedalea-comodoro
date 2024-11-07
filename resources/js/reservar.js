@@ -186,7 +186,7 @@ window.enviarFormularioPagarReserva = function () {
                 alert(response.mensaje);
                 window.location.href = response.redirect;
             } else {
-                alert(response.mensaje);
+                window.toggleModal();
             }
         },
         error: function (xhr, status, error) {
@@ -195,4 +195,8 @@ window.enviarFormularioPagarReserva = function () {
             console.log('Response:', xhr.responseText);
         }
     });
+}
+
+window.toggleModal = function () {
+    $('#modalConfirmacion').toggleClass('invisible');
 }
