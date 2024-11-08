@@ -10,6 +10,7 @@ use App\Models\Reserva;
 use App\Models\Estacion;
 use App\Models\Bicicleta;
 use Illuminate\View\View;
+use App\Rules\HorarioRetiro;
 use Illuminate\Http\Request;
 use function Pest\Laravel\json;
 use Illuminate\Support\Facades\Log;
@@ -236,6 +237,7 @@ class ReservaController extends Controller
     public function crearReserva(Request $request)
     {
         $validador = Validator::make($request->all(), [
+            'horario_retiro_reserva' => ['required', new HorarioRetiro],
             'estacion_retiro' => 'required|integer|exists:estaciones,id_estacion',
             'estacion_devolucion' => 'required|integer|exists:estaciones,id_estacion',
             'tiempo_uso' => 'required|integer|min:1|max:6',
