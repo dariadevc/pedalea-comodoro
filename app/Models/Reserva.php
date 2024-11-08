@@ -192,7 +192,7 @@ class Reserva extends Model
     public function formatearDatosActiva(): array
     {
         return [
-            'id'=> $this->id_reserva,
+            'id' => $this->id_reserva,
             'fecha_hora_devolucion' => $this->fecha_hora_devolucion->format('H:i'),
             'fecha_hora_retiro' => $this->fecha_hora_retiro->format('H:i'),
             'bicicleta_patente' => $this->bicicleta->patente,
