@@ -187,8 +187,10 @@ window.enviarFormularioDatosIncorrectos = function () {
                 window.location.href = response.redirect;
             }
         },
-        error: function (response) {
-            console.log('Error al enviar Formulario Datos Incorrectos');
+        error: function (xhr, status, error) {
+            console.log('Status:', status); // Ver el estado (como 500, 404, etc.)
+            console.log('Error:', error); // Mensaje general de error
+            console.log('Response:', xhr.responseText); // Ver el cuerpo completo de la respuesta
         }
     });
 }

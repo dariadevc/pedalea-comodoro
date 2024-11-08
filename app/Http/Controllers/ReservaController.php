@@ -223,18 +223,17 @@ class ReservaController extends Controller
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
-        // if (!($cliente->tengoUnaReserva())) {
-        //     return view('cliente.reservar');
-        // }
+        if ($cliente->estoySuspendido()) {
+            return redirect()->route('inicio')
+                ->with('error', 'Su cuenta se encuentra suspendida.');
+        }
 
         if (!($cliente->tengoUnaReserva())) {
             return view('cliente.reservar')->render();
         } else {
             return redirect()->route('inicio')
-                ->with('error', 'Su cuenta se encuentra suspendida.');
+                ->with('error', 'Hay una reserva actualmente activa, no puedes reservar.');
         }
-
-        return redirect()->back()->with('error', 'Hay una reserva actualmente activa, no puedes reservar.');
     }
 
     public function crearReserva(Request $request)
@@ -286,7 +285,7 @@ class ReservaController extends Controller
         return response()->json([
             'success' => true,
             'mensaje' => 'Datos incorrectos.',
-            'redirect' => route('reservar.index')
+            'redirect' => route('reservar')
         ]);
     }
 

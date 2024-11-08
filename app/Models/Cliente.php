@@ -79,7 +79,7 @@ class Cliente extends Model
         $this->saldo += $monto;
         $this->save();
         $this->historialesSaldo()->create([
-            'monto' => $monto * -1,
+            'monto' => $monto,
             'motivo' => $motivo,
             'fecha_hora' => Carbon::now(),
         ]);
