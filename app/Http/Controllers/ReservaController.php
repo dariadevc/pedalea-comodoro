@@ -135,7 +135,6 @@ class ReservaController extends Controller
             return redirect()->route('inicio')
                 ->with('error', 'No tiene actualmente un alquiler.');
         }
-
         $estado_reserva = $reserva->getEstadoReserva();
 
         //? Es correcto que obtenga el id del cliente que va a devolver?
@@ -452,5 +451,13 @@ class ReservaController extends Controller
             'success' => true,
             'redirigir' => route('cargar-saldo.index'),
         ]);
+    }
+
+    public function cancelar(Request $request)
+    {
+        $reserva = Reserva::findOrFail($request->id_reserva);
+        $mensaje = $reserva->cancelar();
+        return redirect()->route('inicio')
+                ->with('success', $mensaje);
     }
 }

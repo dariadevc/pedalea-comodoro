@@ -18,6 +18,7 @@ export default defineConfig({
                 'resources/js/reservar.js',
                 'resources/js/reasignar_devolucion.js',
                 'resources/js/cargar-saldo.js',
+                'resources/js/cancelar.js',
             ],
             refresh: true,
         }),
