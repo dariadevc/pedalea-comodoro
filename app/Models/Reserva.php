@@ -44,7 +44,7 @@ class Reserva extends Model
 
     /**
      * FUNCIONES DEL MODELO
-     * 
+     *
      */
 
     // TODO: Modificar para que funcione con el modelo de EstadoReserva
@@ -110,7 +110,7 @@ class Reserva extends Model
             /**
              * $mensaje, $asunto HAY QUE FIJARSE QUE PONEMOS
              * ------
-             * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE 
+             * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE
              */
 
             // Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
@@ -135,7 +135,7 @@ class Reserva extends Model
             /**
              * $mensaje, $asunto HAY QUE FIJARSE QUE PONEMOS
              * ------
-             *  * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE 
+             *  * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE
              */
 
             // Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
@@ -175,7 +175,7 @@ class Reserva extends Model
         /**
          * TODO
          * FALTA REALIZAR LA LOGICA DE CERRAR EL ALQUILER Y DESCONTAR PUNTOS
-         * 
+         *
          */
 
         $this->save();
@@ -194,6 +194,7 @@ class Reserva extends Model
     public function formatearDatosActiva(): array
     {
         return [
+            'id' => $this->id_reserva,
             'fecha_hora_devolucion' => $this->fecha_hora_devolucion->format('H:i'),
             'fecha_hora_retiro' => $this->fecha_hora_retiro->format('H:i'),
             'bicicleta_patente' => $this->bicicleta->patente,
@@ -215,6 +216,20 @@ class Reserva extends Model
             'monto_senia' => $this->senia,
         ];
     }
+
+    public function cancelar(){
+        if($this->id_estado == 5){
+            $cliente = $this->clienteReservo;
+            $cliente->agregarSaldo($this->senia);
+            $mensaje = 'Se canceló su reserva correctamente, se devolvió su saldo correspondiente.';
+        } else {
+            $mensaje = 'Se canceló su reserva correctamente.';
+        }
+        $this->id_estado= 4;
+        $this->save();
+        return $mensaje;
+    }
+
     ///////////////////
     //Modificar Reserva:
     ///////////////////
@@ -223,20 +238,20 @@ class Reserva extends Model
     public static function obtenerNuevaEstacionYBicicleta($estacionId)
     {
         $estacionSeleccionada = Estacion::find($estacionId);
-    
+
         if (!$estacionSeleccionada) {
             return null;
         }
-    
+
         //Se obtienen las estaciones activas con sus respectiva long y lat.
         $estaciones = Estacion::where('id_estado', 1)
-                              ->where('id_estacion', '!=', $estacionId)
-                              ->get(['id_estacion', 'latitud', 'longitud']);
-    
+                            ->where('id_estacion', '!=', $estacionId)
+                            ->get(['id_estacion', 'latitud', 'longitud']);
+
         // Variable para almacenar la estación más cercana y la distancia mínima
         $estacionMasCercana = null;
         $distanciaMinima = PHP_FLOAT_MAX;
-    
+
         foreach ($estaciones as $estacion) {
             $distancia = self::calcularDistancia(
                 $estacionSeleccionada->latitud,
@@ -244,11 +259,11 @@ class Reserva extends Model
                 $estacion->latitud,
                 $estacion->longitud
             );
-    
+
             if ($distancia < $distanciaMinima) {
                 $bicicletaDisponible = Bicicleta::where('id_estacion_actual', $estacion->id_estacion)
                                                 ->first();
-    
+
                 if ($bicicletaDisponible) {
                     $distanciaMinima = $distancia;
                     $estacionMasCercana = [
@@ -260,29 +275,29 @@ class Reserva extends Model
         }
         return $estacionMasCercana;
     }
-    
+
     private static function calcularDistancia($lat1, $lon1, $lat2, $lon2)
     {
-        $radioTierra = 6371; 
-    
+        $radioTierra = 6371;
+
         //Convierte los valores en radianes:
-        $dLat = deg2rad($lat2 - $lat1);  
+        $dLat = deg2rad($lat2 - $lat1);
         $dLon = deg2rad($lon2 - $lon1);
-    
+
         //Formula Haversine(Distancia entre un punto y otro).
         $a = sin($dLat / 2) * sin($dLat / 2) +
              cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
              sin($dLon / 2) * sin($dLon / 2);
-    
+
         //Arco de distancia en radianes:
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
         //Convertir la distancia de radianes a kilometros:
         $distancia = $radioTierra * $c;
-    
+
         return $distancia;
     }
-///////////////////////////////////////////////////////////////////////////////  
+///////////////////////////////////////////////////////////////////////////////
 
     /**
      * ACCESORES
@@ -310,9 +325,9 @@ class Reserva extends Model
 
 
     /**
-     * 
+     *
      * FUNCIONES QUE RELACIONAN A OTROS MODELOS
-     * 
+     *
      */
 
     public function bicicleta()

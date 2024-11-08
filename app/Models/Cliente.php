@@ -38,6 +38,19 @@ class Cliente extends Model
 
     public function pagar($monto, $motivo)
     {
+        $tarifa = Configuracion::where('clave', 'tarifa')->first();
+        $limite_multiplicador_negativo = Configuracion::where('clave', 'limite_multiplicador_negativo')->first();
+        $monto_limite_negativo = floatval($tarifa->valor) * floatval($limite_multiplicador_negativo->valor);
+        $monto_limite_negativo *= -1;
+        if ($this->saldo - $monto < $monto_limite_negativo) {
+            return false;
+        }
+        
+        /**
+         * TODO
+         * FALTA HACER LA LOGICA DEL MONTO NEGATIVO
+         * 
+         */
         $this->saldo -= $monto;
         $this->save();
         $this->historialesSaldo()->create([

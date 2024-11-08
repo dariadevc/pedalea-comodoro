@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Estacion;
 use App\Models\EstadoEstacion;
+use App\Rules\HorarioRetiro;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class EstacionController extends Controller
 {
@@ -136,6 +138,18 @@ class EstacionController extends Controller
 
     public function disponibilidadHorarioRetiro(Request $request)
     {
+        $validador = Validator::make($request->all(), [
+            'horario_retiro' => ['required', new HorarioRetiro],
+        ], [
+            'horario_retiro.required' => 'El horario de retiro es obligatorio.',
+        ]);
+
+        if ($validador->fails()) {
+            // Si hay errores, devolvemos los mensajes como JSON con el código de estado 422
+            return response()->json(['errors' => $validador->errors()], 422);
+        }
+
+
         $estaciones = Estacion::where('id_estado', 1)->get();
         $estaciones_disponibles = [];
         $estaciones_devolucion = [];

@@ -12,6 +12,8 @@ class ClienteController extends Controller
 
     public function indexCargarSaldo()
     {
+        dump('Cuando este la vista de la pasarela de pago y termine de pagar hay que redirigir a esta vista, si es nulo, redirige al inicio');
+        dump(session('url_actual'));
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 

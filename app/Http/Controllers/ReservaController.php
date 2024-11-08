@@ -3,13 +3,20 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\Estacion;
-use App\Models\Reserva;
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Cliente;
+use App\Models\Reserva;
+use App\Models\Estacion;
+use App\Models\Bicicleta;
+use Illuminate\View\View;
+use App\Rules\HorarioRetiro;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class ReservaController extends Controller
 {
@@ -108,7 +115,7 @@ class ReservaController extends Controller
                     'redirect' => route('inicio')
                 ]);
             } else {
-                return response()->json(['success' => false, 'mensaje' => 'No se pudo realizar el alquiler.']);
+                return response()->json(['success' => false, 'mensaje' => 'Monto insuficiente para pagar el alquiler.']);
             }
         }
     }
@@ -130,7 +137,6 @@ class ReservaController extends Controller
             return redirect()->route('inicio')
                 ->with('error', 'No tiene actualmente un alquiler.');
         }
-
         $estado_reserva = $reserva->getEstadoReserva();
 
         //? Es correcto que obtenga el id del cliente que va a devolver?
@@ -234,6 +240,7 @@ class ReservaController extends Controller
     public function crearReserva(Request $request)
     {
         $validador = Validator::make($request->all(), [
+            'horario_retiro_reserva' => ['required', new HorarioRetiro],
             'estacion_retiro' => 'required|integer|exists:estaciones,id_estacion',
             'estacion_devolucion' => 'required|integer|exists:estaciones,id_estacion',
             'tiempo_uso' => 'required|integer|min:1|max:6',
@@ -441,5 +448,24 @@ class ReservaController extends Controller
         }
 
         return response()->json(['success' => true, 'mensaje' => 'Reserva cancelada y saldo devuelto exitosamente.']);
+    }
+
+    public function guardarUrlIrCargarSaldo(Request $request)
+    {
+        $url_actual = $request->url_actual;
+
+        session(['url_actual' => $url_actual]);
+        return response()->json([
+            'success' => true,
+            'redirigir' => route('cargar-saldo.index'),
+        ]);
+    }
+
+    public function cancelar(Request $request)
+    {
+        $reserva = Reserva::findOrFail($request->id_reserva);
+        $mensaje = $reserva->cancelar();
+        return redirect()->route('inicio')
+                ->with('success', $mensaje);
     }
 }

@@ -52,9 +52,33 @@
     <div class="flex flex-row-reverse md:flex-col gap-4 justify-center">
         <a href="{{ route('alquilar.index') }}"
             class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50 text-center">Alquilar</a>
-        <button type="button"
+        <button type="button" onclick="toogleModal()"
             class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-gray-400 text-gray-400 hover:bg-gray-400 hover:text-slate-50">Cancelar
             reserva</button>
     </div>
 
-@endsection
+    <div id="modalConfirmacion"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 invisible">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-11/12 sm:w-1/3">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">¿Estás seguro de que deseas cancelar la reserva?</h2>
+            <div class="flex gap-4 justify-center">
+                <form action="{{ route('reserva-actual.cancelar') }}" method="POST">
+                    @csrf
+                    <button type="submit"
+                        class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50">
+                        Cancelar reserva
+                    </button>
+                    <input type="hidden" name="id_reserva" value="{{ $reserva['id'] }}">
+                </form>
+                <button type="button" onclick="toogleModal()"
+                    class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-gray-400 text-gray-400 hover:bg-gray-400 hover:text-slate-50">
+                    No Cancelar reserva
+                </button>
+            </div>
+        </div>
+
+    @endsection
+
+    @section('scripts')
+        @vite('resources/js/cancelar.js')
+    @endsection
