@@ -4,31 +4,22 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Estacion;
-use App\Models\Bicicleta;
 use App\Models\Reserva;
-use App\Models\Cliente;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\View\View;
-use Illuminate\Validation\ValidationException;
-
-
-use function Pest\Laravel\json;
 
 class ReservaController extends Controller
 {
-
     // -------------
     // ALQUILAR
     // -------------
-
+    
     public function indexAlquilar()
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
         $reserva = $cliente->obtenerReservaActivaModificada();
@@ -43,6 +34,7 @@ class ReservaController extends Controller
 
     public function bicicletaDisponible(Request $request)
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $reserva_actual = $usuario->obtenerCliente()->obtenerReservaActivaModificada();
         $bicicleta = $reserva_actual->bicicleta;
@@ -57,6 +49,7 @@ class ReservaController extends Controller
 
     public function bicicletaNoDisponible(Request $request)
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
         // Verificación de existencia de reserva
@@ -103,6 +96,7 @@ class ReservaController extends Controller
         $inputPagar = $request->input('pagar');
 
         if (!($inputPagar === '')) {
+            /** @var \App\Models\User $usuario */
             $usuario = Auth::user();
             $cliente = $usuario->obtenerCliente();
             $reserva = $cliente->obtenerReservaActivaModificada();
@@ -121,6 +115,7 @@ class ReservaController extends Controller
 
     public function indexAlquilerActual()
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
@@ -133,9 +128,9 @@ class ReservaController extends Controller
         $reserva = $cliente->obtenerReservaAlquiladaReasignada();
         if (!$reserva) {
             return redirect()->route('inicio')
-            ->with('error', 'No tiene actualmente un alquiler.');
+                ->with('error', 'No tiene actualmente un alquiler.');
         }
-        
+
         $estado_reserva = $reserva->getEstadoReserva();
 
         //? Es correcto que obtenga el id del cliente que va a devolver?
@@ -163,6 +158,7 @@ class ReservaController extends Controller
 
 
 
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $dni = $request->dni;
 
@@ -217,6 +213,7 @@ class ReservaController extends Controller
 
     public function indexReserva()
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
@@ -305,6 +302,7 @@ class ReservaController extends Controller
 
     public function pagarReserva(Request $request)
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
         $reserva = session('reserva_pendiente');
@@ -324,6 +322,7 @@ class ReservaController extends Controller
 
     public function indexReservaActual()
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
@@ -347,6 +346,7 @@ class ReservaController extends Controller
     //////////////////
     public function modificarReservaC(Request $request)
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
         $reserva_id = session('id_reserva');
@@ -413,7 +413,7 @@ class ReservaController extends Controller
         if (is_null($reserva->senia)) {
             return response()->json(['success' => false, 'mensaje' => 'El campo senia es null.']);
         }
-
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 

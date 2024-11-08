@@ -99,7 +99,8 @@ class Reserva extends Model
 
     public function alquilar($cliente, $usuario)
     {
-        if ($cliente->pagar($this->calcularMontoRestante())) {
+        $motivo = 'Pagar un alquiler';
+        if ($cliente->pagar($this->calcularMontoRestante(), $motivo)) {
             $this->cambiarEstado('Alquilada');
 
             $mensaje = "Su alquiler se ha realizado correctamente.";
@@ -121,9 +122,10 @@ class Reserva extends Model
         }
     }
 
-    public function reservar($cliente, $usuario)
+    public function reservar(Cliente $cliente, User $usuario)
     {
-        if ($cliente->pagar($this->senia)) {
+        $motivo = 'Pagar una reserva';
+        if ($cliente->pagar($this->senia, $motivo)) {
             $this->cambiarEstado('Activa');
 
             $mensaje = "Su reserva se ha realizado correctamente.";

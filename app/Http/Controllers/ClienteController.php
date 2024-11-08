@@ -30,13 +30,14 @@ class ClienteController extends Controller
         ]);
 
         // ACA TENDRIA QUE IR LA PASARELA DE PAGO
-
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
         if (rand(0, 1)) {
             $monto = floatval($request->monto);
-            $cliente->agregarSaldo($monto);
+            $motivo = 'Carga de saldo';
+            $cliente->agregarSaldo($monto, $motivo);
 
             return redirect()->route('inicio')
                 ->with('success', 'Se ha cargado satisfactoriamente su saldo.');

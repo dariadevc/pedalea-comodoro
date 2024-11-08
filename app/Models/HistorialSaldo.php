@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class HistorialSaldo extends Model
 {
-
     use HasFactory;
 
-    protected $primaryKey = ['id_usuario', 'id_historial_saldo'];
+    protected $primaryKey = 'id_usuario';
     public $incrementing = false;
 
     protected $table = 'historiales_saldo';
@@ -28,7 +28,6 @@ class HistorialSaldo extends Model
         return $this->belongsTo(Cliente::class, 'id_usuario', 'id_usuario');
     }
 
-    // Generar dependiente_id automáticamente
     protected static function booted()
     {
         static::creating(function ($historialSaldo) {

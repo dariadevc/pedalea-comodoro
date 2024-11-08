@@ -19,9 +19,9 @@ return new class extends Migration
             ->onDelete('cascade');
             $table->unsignedBigInteger('id_historial_saldo');
             $table->primary(['id_usuario', 'id_historial_saldo']);
-            $table->timestamp('fecha_hora')->useCurrent();
+            $table->datetime('fecha_hora')->useCurrent();
             $table->double('monto');
-            $table->text('motivo');
+            $table->string('motivo');
 
         });
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -35,15 +36,15 @@ class Cliente extends Model
     }
 
 
-    public function pagar($monto)
+    public function pagar($monto, $motivo)
     {
-        /**
-         * TODO
-         * FALTA HACER LA LOGICA DEL MONTO NEGATIVO
-         * 
-         */
         $this->saldo -= $monto;
         $this->save();
+        $this->historialesSaldo()->create([
+            'monto' => $monto * -1,
+            'motivo' => $motivo,
+            'fecha_hora' => Carbon::now(),
+        ]);
         return true;
     }
 
@@ -60,10 +61,15 @@ class Cliente extends Model
         return $this->reservaReservo()->whereIn('id_estado', [1, 2, 5, 6])->exists();
     }
 
-    public function agregarSaldo($monto): void
+    public function agregarSaldo($monto, $motivo): void
     {
         $this->saldo += $monto;
         $this->save();
+        $this->historialesSaldo()->create([
+            'monto' => $monto * -1,
+            'motivo' => $motivo,
+            'fecha_hora' => Carbon::now(),
+        ]);
     }
 
     public function actualizarPuntaje($puntos)
