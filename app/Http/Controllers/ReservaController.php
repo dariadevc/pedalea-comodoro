@@ -3,23 +3,23 @@
 namespace App\Http\Controllers;
 
 
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Cliente;
+use App\Models\Reserva;
 use App\Models\Estacion;
 use App\Models\Bicicleta;
-use App\Models\Reserva;
-use App\Models\Cliente;
-use App\Models\User;
+use Illuminate\View\View;
 use App\Rules\HorarioRetiro;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use function Pest\Laravel\json;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\View\View;
+
+
 use Illuminate\Validation\ValidationException;
-
-
-use function Pest\Laravel\json;
 
 class ReservaController extends Controller
 {
@@ -115,7 +115,7 @@ class ReservaController extends Controller
                     'redirect' => route('inicio')
                 ]);
             } else {
-                return response()->json(['success' => false, 'mensaje' => 'No se pudo realizar el alquiler.']);
+                return response()->json(['success' => false, 'mensaje' => 'Monto insuficiente para pagar el alquiler.']);
             }
         }
     }
@@ -134,9 +134,8 @@ class ReservaController extends Controller
         $reserva = $cliente->obtenerReservaAlquiladaReasignada();
         if (!$reserva) {
             return redirect()->route('inicio')
-            ->with('error', 'No tiene actualmente un alquiler.');
+                ->with('error', 'No tiene actualmente un alquiler.');
         }
-        
         $estado_reserva = $reserva->getEstadoReserva();
 
         //? Es correcto que obtenga el id del cliente que va a devolver?
@@ -443,5 +442,24 @@ class ReservaController extends Controller
         }
 
         return response()->json(['success' => true, 'mensaje' => 'Reserva cancelada y saldo devuelto exitosamente.']);
+    }
+
+    public function guardarUrlIrCargarSaldo(Request $request)
+    {
+        $url_actual = $request->url_actual;
+
+        session(['url_actual' => $url_actual]);
+        return response()->json([
+            'success' => true,
+            'redirigir' => route('cargar-saldo.index'),
+        ]);
+    }
+
+    public function cancelar(Request $request)
+    {
+        $reserva = Reserva::findOrFail($request->id_reserva);
+        $mensaje = $reserva->cancelar();
+        return redirect()->route('inicio')
+                ->with('success', $mensaje);
     }
 }

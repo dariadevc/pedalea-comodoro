@@ -1,17 +1,28 @@
-inicio
-
 @extends('layouts.cliente')
 
 @section('nombre_seccion', 'Inicio')
 
 @section('contenido')
     <div class="flex flex-col gap-6">
+        @if (session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+        @endif
         <div class="flex flex-col justify-center items-center gap-4">
             {{-- BIENVENIDA --}}
             <div class="flex flex-col md:flex-row items-center gap-1 md:gap-4">
                 <!-- CAMBIAR LOGO POR LA VERSIÓN FINAL -->
+
                 <img src="img/bicicleta.png" alt="" class="h-14 w-14">
-                <p class="text-xl font-semibold text-pc-texto-h">¡Hola, <span class="font-extrabold text-2xl text-pc-rojo">{{ $datos['nombre']." ".$datos['apellido'] }}</span>!</p>
+                <p class="text-xl font-semibold text-pc-texto-h">¡Hola, <span
+                        class="font-extrabold text-2xl text-pc-rojo">{{ $datos['nombre'] . ' ' . $datos['apellido'] }}</span>!
+                </p>
             </div>
 
             <div class="flex gap-4 w-full">

@@ -16,10 +16,13 @@ class ConfiguracionesSeeder extends Seeder
         $configuraciones = [
             [
                 'clave' => 'tarifa',
-                'valor' => '1000',
+                'valor' => '1000.00',
             ], [
                 'clave' => 'fecha_modificacion_tarifa',
                 'valor' => '2024-08-20',
+            ], [
+                'clave' => 'limite_multiplicador_negativo',
+                'valor' => '3',
             ],
         ];
         Configuracion::insert($configuraciones);
