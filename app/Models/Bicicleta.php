@@ -16,17 +16,13 @@ class Bicicleta extends Model
     protected $primaryKey = 'id_bicicleta';
     public $timestamps = false;
 
-
-    // bicicleta
-
-    // Los atributos que pueden modificarse
     protected $fillable = [
         'id_estado',
         'id_estacion_actual',
         'patente',
     ];
 
-    // Los atributos que no pueden modificarse
+
     protected $guarded = [
         'id_bicicleta',
     ];
@@ -35,6 +31,13 @@ class Bicicleta extends Model
     /**
      * FUNCIONES DEL MODELO
      */
+
+    public function editar($id_estado, $id_estacion_actual)
+    {
+        $this->id_estado = $id_estado;
+        $this->id_estacion_actual = $id_estacion_actual;
+        $this->save();
+    }
 
     public function estoyEnUnaReserva(): bool
     {

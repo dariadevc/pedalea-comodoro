@@ -20,9 +20,6 @@ class CleanAndListRoutes extends Command
      */
     protected $description = 'Command description';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         $this->call('cache:clear');
