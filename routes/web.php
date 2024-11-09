@@ -93,9 +93,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
         return view('cliente.partials.buscar_usuario_reasignar');
     })->name('reserva-actual.buscar-usuario');
 
-    Route::get('/perfil', function () {
-        return view('cliente.perfil');  // Renderiza la vista 'Perfil'
-    })->name('perfil');
+    Route::get('/perfil', [ClienteController::class, 'verPerfilCliente'])->name('perfil');
 
     Route::get('/movimientos_saldo', function () {
         return view('cliente.movimientos_saldo');  // Renderiza la vista 'Movimientos del Saldo'
