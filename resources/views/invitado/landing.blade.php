@@ -170,20 +170,20 @@
                 <div class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md flex flex-col items-center">
                     <x-icon-billetera-azul height="100px" width="100px" class="mb-4"/>
                     <p class="font-semibold text-xl">2</p>
-                    <h4 class="font-semibold text-xl mb-1">Cargá saldo,</h4>
+                    <h4 class="font-semibold text-xl mb-1">Cargá saldo</h4>
                     <p>para pagar las reservas y los alquileres</p>
                 </div>
                 <div class="border-2 border-solid border-pc-rojo rounded-xl p-5 text-center shadow-md flex flex-col items-center">
                     <x-icon-reloj-rojo height="100px" width="100px" class="mb-4"/>
                     <p class="font-semibold text-xl">3</p>
-                    <h4 class="font-semibold text-xl mb-1">Reservá una bicicleta,</h4>
+                    <h4 class="font-semibold text-xl mb-1">Reservá una bicicleta</h4>
                     <p>indicando el tiempo de uso</p>
                 </div>
                 <div class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md flex flex-col items-center">
                     <x-icon-bicicleta-azul height="100px" width="100px" class="mb-4"/>
                     <p class="font-semibold text-xl">4</p>
-                    <h4 class="font-semibold text-xl mb-1">Retirá tu bicicleta,</h4>
-                    <p>de tu estación de preferencia</p>
+                    <h4 class="font-semibold text-xl mb-1">Retirá la bicicleta</h4>
+                    <p>en tu estación de preferencia</p>
                 </div>
             </div>
             <div class="text-center mt-4">
