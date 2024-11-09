@@ -7,20 +7,25 @@ use Illuminate\Console\Command;
 class CleanAndListRoutes extends Command
 {
     /**
-     * The name and signature of the console command.
+     * El nombre del comando de consola.
      *
      * @var string
      */
     protected $signature = 'clean:laravel';
 
     /**
-     * The console command description.
+     * La descripción del comando de consola.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Comando que limpia varias cachés de Laravel y lista las rutas.';
 
-    public function handle()
+    /**
+     * Maneja la ejecución del comando de consola.
+     *
+     * @return void
+     */
+    public function handle(): void
     {
         $this->call('cache:clear');
         $this->call('config:clear');
@@ -30,5 +35,4 @@ class CleanAndListRoutes extends Command
         $this->call('route:list');
         $this->info('Cache cleared and routes listed successfully.');
     }
-    
 }

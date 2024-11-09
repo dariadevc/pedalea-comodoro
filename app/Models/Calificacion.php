@@ -13,32 +13,43 @@ class Calificacion extends Model
     protected $primaryKey = 'id_calificacion';
     public $timestamps = false;
 
-    // Los atributos que pueden modificarse
     protected $fillable = [
         'id_estacion',
         'id_tipo_calificacion',
-
     ];
 
-    // Los atributos que no pueden modificarse
-    protected $guarded = [
-        'id_calificacion',
-    ];
 
-    // Evento que se dispara cuando se crea una calificación para actualizar el promedio
-    protected static function booted()
+    /**
+     * Establece el comportamiento de eventos del modelo al inicializarse.
+     * 
+     * Este método se ejecuta automáticamente cuando el modelo es "booted" y
+     * define un evento `created` que, al crear una nueva calificación, actualiza
+     * el promedio de la estación asociada.
+     * 
+     * @return void
+     */
+    protected static function booted(): void
     {
         static::created(function ($calificacion) {
             $calificacion->estacion->actualizarPromedio();
         });
     }
 
-    // Relación con el estado
+    /**
+     * Relación con el tipo de calificación.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|\App\Models\TipoCalificacion
+     */
     public function tipoCalificacion()
     {
         return $this->belongsTo(TipoCalificacion::class, 'id_tipo_calificacion', 'id_tipo_calificacion');
     }
 
+    /**
+     * Relación con la estación.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|\App\Models\Estacion
+     */
     public function estacion()
     {
         return $this->belongsTo(Estacion::class, 'id_estacion', 'id_estacion');

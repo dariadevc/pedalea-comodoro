@@ -13,15 +13,19 @@ class EstadoEstacion extends Model
     protected $primaryKey = 'id_estado';
     public $timestamps = false;
 
+    public const ACTIVA = 1;
+    public const INACTIVA = 2;
+
     protected $fillable = [
         'nombre'
     ];
 
-    // Los atributos que no pueden modificarse
-    protected $guarded = [
-        'id_estado',
-    ];
 
+    /**
+     * Define la relación de pertenencia con el modelo Estacion.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function estacion()
     {
         return $this->hasMany(Estacion::class, 'id_estacion', 'id_estado');

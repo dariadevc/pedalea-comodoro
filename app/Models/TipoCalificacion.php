@@ -18,7 +18,12 @@ class TipoCalificacion extends Model
         'cantidad_estrellas',
     ];
     
-    public function calificaciones()
+    /**
+     * Define la relación de pertenencia con el modelo Calificacion.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function calificaciones(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Calificacion::class, 'id_tipo_calificacion', 'id_tipo_calificacion');
     }

@@ -79,8 +79,8 @@ class ReservaController extends Controller
         $reserva_actual = $usuario->obtenerCliente()->obtenerReservaActivaModificada();
         $bicicleta = $reserva_actual->bicicleta;
 
-        if ($bicicleta->estoyEnUnaReserva()) {
-            $reserva_alquilada = $bicicleta->getReservaActual();
+        if ($bicicleta->estoyEnUnAlquiler()) {
+            $reserva_alquilada = $bicicleta->getAlquilerActual();
             $reserva_alquilada->cerrarAlquiler();
         }
 
@@ -206,9 +206,13 @@ class ReservaController extends Controller
             return $this->redireccionarInicio('error', 'No tiene actualmente un alquiler.');
         }
 
-        $estado_reserva = $reserva->getEstadoReserva();
+        $estado_reserva = $reserva->getNombreEstadoReserva();
 
-        $usuario_devuelve = $reserva->clienteDevuelve->usuario;
+        if (!$reserva->clienteDevuelve) {
+            $usuario_devuelve = null;
+        } else {
+            $usuario_devuelve = $reserva->clienteDevuelve->usuario;
+        }
 
         // el ' $cliente->obtenerReservaAlquiladaReasignada()' ya busca una reserva con estado alquilada o reasignada
         // si ya se verifico arriba no es bueno volver a verificar.
@@ -458,35 +462,60 @@ class ReservaController extends Controller
     //////////////////
     //Modificar Reserva
     //////////////////
+
+    /**
+     * Muestra el formulario para modificar una reserva.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
+     */
     public function modificarReservaC(Request $request)
     {
         /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
-        $cliente = $usuario->obtenerCliente();
         $reserva_id = session('id_reserva');
 
         if (!$reserva_id) {
-            return response()->json(['success' => false, 'mensaje' => 'No se ha encontrado la reserva en la sesión.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'No se ha encontrado la reserva en la sesión.'
+            ]);
         }
 
         $reserva = Reserva::find($reserva_id);
 
         if (!$reserva) {
-            return response()->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Reserva no encontrada.'
+            ]);
         }
 
-        $nuevaEstacionYBicicleta = Reserva::obtenerNuevaEstacionYBicicleta($reserva->id_estacion_retiro);
+        $nuevoHoraRetiro = $reserva->fecha_hora_retiro->addMinutes(15);
+        $nuevaEstacionYBicicleta = Reserva::obtenerNuevaEstacionYBicicleta($reserva->id_estacion_retiro, $nuevoHoraRetiro->format('H:i:s'));
 
         if (!$nuevaEstacionYBicicleta) {
-            return response()->json(['success' => false, 'mensaje' => 'No hay bicicletas disponibles en las estaciones cercanas.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'No hay bicicletas disponibles en las estaciones cercanas.'
+            ]);
         }
         $nuevaEstacion = Estacion::find($nuevaEstacionYBicicleta['nuevaEstacionId']);
         $nuevaBicicleta = $nuevaEstacionYBicicleta['bicicleta'];
-        $nuevoHoraRetiro = $reserva->fecha_hora_retiro->addMinutes(15);
+        $nuevoHoraDevolucion = $reserva->fecha_hora_devolucion->addMinutes(15);
 
-        return view('cliente.ModificarReserva', compact('reserva', 'nuevaEstacion', 'nuevaBicicleta', 'nuevoHoraRetiro'));
+        return view('cliente.modificar_reserva', compact('reserva', 'nuevaEstacion', 'nuevaBicicleta', 'nuevoHoraRetiro', 'nuevoHoraDevolucion'));
     }
 
+
+    /**
+     * Confirmar la modificación de una reserva.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     */
     public function confirmarModificacionReserva(Request $request)
     {
         $request->validate([
@@ -494,23 +523,36 @@ class ReservaController extends Controller
             'id_bicicleta' => 'required|integer',
             'id_estacion_retiro' => 'required|integer',
             'nuevoHorarioRetiro' => 'required|date',
+            'nuevoHorarioDevolucion' => 'required|date',
         ]);
 
         $reserva = Reserva::find($request->id_reserva);
 
         if (!$reserva) {
-            return response()->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Reserva no encontrada.'
+            ]);
         }
         //Actuzalimos los datos y los guardamos en la BD
         $reserva->id_bicicleta = $request->id_bicicleta;
         $reserva->id_estacion_retiro = $request->id_estacion_retiro;
         $reserva->id_estado = 5;
         $reserva->fecha_hora_retiro = $request->nuevoHorarioRetiro;
+        $reserva->fecha_hora_devolucion = $request->nuevoHorarioDevolucion;
         $reserva->save();
 
-        return response()->json(['success' => true, 'mensaje' => 'Reserva modificada correctamente.']);
+        return redirect()->route('reserva_actual')->with('success', 'Reserva modificada correctamente.');
     }
 
+    /**
+     * Rechazar la modificación de una reserva.
+     * 
+     * @param Request $request
+     * @param Reserva $reserva
+     * 
+     * @return \Illuminate\Http\JsonResponse|
+     */
     public function rechazarModificacion(Request $request, Reserva $reserva)
     {
         $request->validate([
@@ -521,43 +563,48 @@ class ReservaController extends Controller
         $reserva = Reserva::find($idReserva);
 
         if (!$reserva) {
-            return response()->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Reserva no encontrada.'
+            ]);
         }
 
         if (is_null($reserva->senia)) {
-            return response()->json(['success' => false, 'mensaje' => 'El campo senia es null.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'El campo senia es null.'
+            ]);
         }
         /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
         if (!$cliente) {
-            return response()->json(['success' => false, 'mensaje' => 'Cliente no encontrado.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Cliente no encontrado.'
+            ]);
         }
 
 
-        $saldoAnterior = $cliente->saldo;
         $senia = $reserva->senia;
-        $cliente->saldo += $senia;
+        $motivo = 'Devolución de seña';
+        $cliente->agregarSaldo($senia, $motivo);
 
-        if ($cliente->save()) {
-            Log::info('Saldo devuelto al cliente', ['saldo' => $cliente->saldo]);
-        } else {
-            Log::error('Error al guardar el saldo del cliente');
-        }
+        $reserva->cambiarEstado('Cancelada');
+        $reserva->save();
 
-        $reserva->id_estado = 4;
-
-        if ($reserva->save()) {
-            Log::info('Reserva cancelada con éxito');
-        } else {
-            Log::error('Error al guardar el estado de la reserva');
-        }
-
-        return response()->json(['success' => true, 'mensaje' => 'Reserva cancelada y saldo devuelto exitosamente.']);
+        return $this->redireccionarInicio('success', 'Reserva cancelada y saldo devuelto exitosamente.');
     }
 
-    public function guardarUrlIrCargarSaldo(Request $request)
+    /**
+     * Guarda la url en la session.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function guardarUrlIrCargarSaldo(Request $request): JsonResponse
     {
         $url_actual = $request->url_actual;
 
@@ -568,11 +615,21 @@ class ReservaController extends Controller
         ]);
     }
 
-    public function cancelar(Request $request)
+    /**
+     * Cancelar una reserva.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function cancelar(Request $request): RedirectResponse
     {
         $reserva = Reserva::findOrFail($request->id_reserva);
+        if (!$reserva) {
+            return redirect()->route('reserva_actual')->with('error', 'Reserva no encontrada.');
+        }
+
         $mensaje = $reserva->cancelar();
-        return redirect()->route('inicio')
-            ->with('success', $mensaje);
+        return $this->redireccionarInicio('success', $mensaje);
     }
 }

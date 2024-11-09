@@ -2,23 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Log;
-use Laravel\Telescope\Telescope;
-use phpDocumentor\Reflection\Types\Self_;
 
 class ClienteRangoPuntos extends Pivot
 {
-
     use HasFactory;
 
     protected $table = 'clientes_rangos_puntos';
-    // protected $primaryKey = ['id_usuario', 'id_rango_puntos'];
     public $timestamps = false;
     public $incrementing = false;
-
 
     protected $fillable = [
         'id_usuario',
@@ -28,15 +21,14 @@ class ClienteRangoPuntos extends Pivot
         'cantidad_veces',
     ];
 
-    public function obtenerObjetos()
-    {
-        $objetos = [];
-        $objetos[] = $this->cliente();
-        $objetos[] = $this->rangoPuntos();
-        return $objetos;
-    }
-
-    public function evaluarCorrespondeMulta($puntaje, $rango_puntos)
+    /**
+     * Evalúa si corresponde aplicar una multa al cliente basado en el puntaje y el rango de puntos.
+     *
+     * @param int $puntaje 
+     * @param RangoPuntos $rango_puntos
+     * @return bool
+     */
+    public function evaluarCorrespondeMulta(int $puntaje, RangoPuntos $rango_puntos): bool
     {
         if ($rango_puntos->dentroDelRango($puntaje)) {
             if (!$this->multa_hecha_por_dia) {
@@ -47,7 +39,14 @@ class ClienteRangoPuntos extends Pivot
         return false;
     }
 
-    public function evaluarCorrespondeSuspension($puntaje, $rango_puntos)
+    /**
+     * Evalúa si corresponde aplicar una suspensión al cliente basado en el puntaje y el rango de puntos.
+     *
+     * @param int $puntaje Puntaje actual del cliente.
+     * @param RangoPuntos $rango_puntos
+     * @return bool
+     */
+    public function evaluarCorrespondeSuspension(int $puntaje, RangoPuntos $rango_puntos): bool
     {
         if ($rango_puntos->dentroDelRango($puntaje)) {
             if (!$this->suspension_hecha_por_dia && $rango_puntos->tiempo_suspension_dias != null) {
@@ -58,7 +57,14 @@ class ClienteRangoPuntos extends Pivot
         return false;
     }
 
-    public function generarMulta($rango_puntos, $cliente)
+    /**
+     * Genera una multa para el cliente en base al rango de puntos.
+     *
+     * @param RangoPuntos $rango_puntos
+     * @param Cliente $cliente
+     * @return void
+     */
+    public function generarMulta(RangoPuntos $rango_puntos, Cliente $cliente): void
     {
         $this->activarMultaHechaPorDia();
         $this->actualizarVecesEnRango();
@@ -71,7 +77,14 @@ class ClienteRangoPuntos extends Pivot
         $this->guardarClienteRangoPuntos($this);
     }
 
-    public function generarSuspension($rango_puntos, $cliente)
+    /**
+     * Genera una suspensión para el cliente en base al rango de puntos.
+     *
+     * @param RangoPuntos $rango_puntos
+     * @param Cliente $cliente
+     * @return void
+     */
+    public function generarSuspension(RangoPuntos $rango_puntos, Cliente $cliente): void
     {
         $this->activarSuspensionHechaPorDia();
         
@@ -82,18 +95,33 @@ class ClienteRangoPuntos extends Pivot
         $this->guardarClienteRangoPuntos($this);
     }
 
-    public function actualizarVecesEnRango()
+    /**
+     * Actualiza la cantidad de veces que el cliente ha estado en el rango de puntos.
+     *
+     * @return void
+     */
+    public function actualizarVecesEnRango(): void
     {
         $this->cantidad_veces += 1;
     }
 
-    public function calcularMontoMulta($monto_multa)
+    /**
+     * Calcula el monto de la multa en función de la cantidad de veces que el cliente ha estado en el rango.
+     *
+     * @param float $monto_multa
+     * @return float
+     */
+    public function calcularMontoMulta(float $monto_multa): float
     {
         return $monto_multa * $this->cantidad_veces;
     }
 
-
-    public function guardarClienteRangoPuntos()
+    /**
+     * Guarda los cambios realizados para ese cliente y ese rango de puntos en la base de datos.
+     *
+     * @return void
+     */
+    public function guardarClienteRangoPuntos(): void
     {
         ClienteRangoPuntos::where('id_usuario', $this->id_usuario)
             ->where('id_rango_puntos', $this->id_rango_puntos)
@@ -104,28 +132,61 @@ class ClienteRangoPuntos extends Pivot
             ]);
     }
 
-    public function activarMultaHechaPorDia()
+    /**
+     * Activa la multa hecha por día.
+     *
+     * @return void
+     */
+    public function activarMultaHechaPorDia(): void
     {
         $this->multa_hecha_por_dia = true;
     }
-    public function desactivarMultaHechaPorDia()
+
+    /**
+     * Desactiva la multa hecha por día.
+     *
+     * @return void
+     */
+    public function desactivarMultaHechaPorDia(): void
     {
         $this->multa_hecha_por_dia = false;
     }
-    public function activarSuspensionHechaPorDia()
+
+    /**
+     * Activa la suspensión hecha por día.
+     *
+     * @return void
+     */
+    public function activarSuspensionHechaPorDia(): void
     {
         $this->suspension_hecha_por_dia = true;
     }
-    public function desactivarSuspensionHechaPorDia()
+
+    /**
+     * Desactiva la suspensión hecha por día.
+     *
+     * @return void
+     */
+    public function desactivarSuspensionHechaPorDia(): void
     {
         $this->suspension_hecha_por_dia = false;
     }
 
+    /**
+     * Define la relación de pertenencia con el modelo Cliente.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|App\Models\Cliente
+     */
     public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'id_usuario', 'id_usuario');
     }
 
+    /**
+     * Define la relación de pertenencia con el modelo RangoPuntos.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|\App\Models\RangoPuntos
+     */
     public function rangoPuntos()
     {
         return $this->belongsTo(RangoPuntos::class, 'id_rango_puntos', 'id_rango_puntos');

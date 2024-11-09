@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
 class HistorialSaldo extends Model
 {
@@ -23,12 +22,23 @@ class HistorialSaldo extends Model
         'motivo',
     ];
 
-    public function cliente()
+    /**
+     * Devuelve el cliente asociado al historial de saldo.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cliente(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cliente::class, 'id_usuario', 'id_usuario');
     }
 
-    protected static function booted()
+    /**
+     * Define el comportamiento al crear un historial de saldo.
+     * Genera automáticamente el id_historial_saldo incrementando el último valor.
+     *
+     * @return void
+     */
+    protected static function booted(): void
     {
         static::creating(function ($historialSaldo) {
             $ultimoHistorialSaldo = HistorialSaldo::where('id_usuario', $historialSaldo->id_usuario)

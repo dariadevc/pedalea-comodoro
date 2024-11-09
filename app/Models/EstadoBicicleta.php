@@ -13,16 +13,18 @@ class EstadoBicicleta extends Model
     protected $primaryKey = 'id_estado';
     public $timestamps = false;
 
-    // Los atributos que se pueden modificar
+    public const DISPONIBLE = 1;
+    public const DESHABILITADA = 2;
+    
     protected $fillable = [
         'nombre'
     ];
 
-    // Los atributos que no pueden modificarse
-    protected $guarded = [
-        'id_estado',
-    ];
-
+    /**
+     * Define la relación de pertenencia con el modelo Bicicleta.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function bicicletas()
     {
         return $this->hasMany(Bicicleta::class, 'id_estado', 'id_estado');
