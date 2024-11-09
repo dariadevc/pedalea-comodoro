@@ -33,6 +33,7 @@ $(document).ready(function () {
 
 window.traerEstacionesDisponibles = function () {
     var datos = $('#formularioHorarioRetiro').serialize();
+    $('.error-message').text('');
 
     $.ajax({
         url: $('#formularioHorarioRetiro').attr('action'),
@@ -41,10 +42,21 @@ window.traerEstacionesDisponibles = function () {
         success: function (response) {
             if (response.success) {
                 window.activarFormularioDatosReserva(response);
+            } else {
+
             }
         },
-        error: function (response) {
-            console.log('Hubo un error al enviar el formulario');
+        error: function (xhr) {
+            if (xhr.status === 422) {
+                window.desactivarFormulariaDatosReserva();
+                let errors = xhr.responseJSON.errors;
+
+                if (errors.horario_retiro) {
+                    $('#error-horario-retiro').text(errors.horario_retiro.join(', '));
+                }
+            } else {
+                alert('Hubo un error inesperado. Intenta de nuevo.');
+            }
         },
     });
 };
@@ -72,17 +84,26 @@ window.agregarOpcionesDevolucion = function (response) {
         $('#estacion_devolucion').append('<option value="' + estacion.id_estacion + '">' + estacion.nombre + '</option>');
     });
 }
+window.desactivarFormulariaDatosReserva = function () {
+    $('#estacion_retiro').empty();
+    $('#estacion_devolucion').empty();
+    $('#tiempo_uso').empty();
+    $('#estacion_retiro').prop('disabled', true);
+    $('#estacion_devolucion').prop('disabled', true);
+    $('#tiempo_uso').prop('disabled', true);
+}
+
+
 window.activarFormularioDatosReserva = function (response) {
-
-
     if (response.estaciones_disponibles.length === 0) {
-        $('#errorHorarioRetiro').prop('disabled', false);
-        $('#errorHorarioRetiro').append('No hay bicicletas disponibles para el horario seleccionado. Seleccione nuevamente otro horario.')
+        $('#error-horario-retiro').prop('disabled', false);
+        $('#error-horario-retiro').append('No hay bicicletas disponibles para el horario seleccionado. Seleccione nuevamente otro horario.')
     } else {
-        $('#errorHorarioRetiro').prop('disabled', true);
-        $('#errorHorarioRetiro').empty();
+        $('#error-horario-retiro').prop('disabled', true);
+        $('#error-horario-retiro').empty();
         window.agregarOpcionesDevolucion(response);
         window.agregarOpcionesRetiro(response);
+        $('#tiempo_uso').append(` <option value="" selected>Seleccione una opción</option> <option value="1">1h</option> <option value="2">2hs</option> <option value="3">3hs</option> <option value="4">4hs</option> <option value="5">5hs</option> <option value="6">6hs</option> `);
         $('#tiempo_uso').prop('disabled', false);
     }
 }
@@ -102,12 +123,13 @@ window.mandarFormularioDatosReserva = function () {
         success: function (response) {
             window.cargarPaso('2');
         },
-        error: function (xhr, status, error) {
-            console.log('Status:', status);
-            console.log('Error:', error);
-            console.log('Response:', xhr.responseText);
+        error: function (xhr) {
             if (xhr.status === 422) {
                 let errors = xhr.responseJSON.errors;
+
+                if (errors.horario_retiro_reserva) {
+                    $('#error-horario-retiro').text(errors.horario_retiro_reserva.join(', '));
+                }
 
                 if (errors.estacion_retiro) {
                     $('#error-estacion-retiro').text(errors.estacion_retiro.join(', '));
@@ -165,8 +187,10 @@ window.enviarFormularioDatosIncorrectos = function () {
                 window.location.href = response.redirect;
             }
         },
-        error: function (response) {
-            console.log('Error al enviar Formulario Datos Incorrectos');
+        error: function (xhr, status, error) {
+            console.log('Status:', status); // Ver el estado (como 500, 404, etc.)
+            console.log('Error:', error); // Mensaje general de error
+            console.log('Response:', xhr.responseText); // Ver el cuerpo completo de la respuesta
         }
     });
 }
@@ -186,7 +210,7 @@ window.enviarFormularioPagarReserva = function () {
                 alert(response.mensaje);
                 window.location.href = response.redirect;
             } else {
-                alert(response.mensaje);
+                window.toggleModal();
             }
         },
         error: function (xhr, status, error) {
@@ -195,4 +219,8 @@ window.enviarFormularioPagarReserva = function () {
             console.log('Response:', xhr.responseText);
         }
     });
+}
+
+window.toggleModal = function () {
+    $('#modalConfirmacion').toggleClass('invisible');
 }

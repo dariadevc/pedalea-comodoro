@@ -2,107 +2,173 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Models\Estacion;
-use App\Models\Bicicleta;
-use App\Models\Reserva;
-use App\Models\Cliente;
 use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Validator;
+use App\Models\Reserva;
+use App\Models\Estacion;
+use App\Models\EstadoReserva;
 use Illuminate\View\View;
-use Illuminate\Validation\ValidationException;
-
-
-use function Pest\Laravel\json;
+use App\Rules\HorarioRetiro;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ReservaController extends Controller
 {
-
     // -------------
     // ALQUILAR
     // -------------
 
+    /**
+     * Muestra el formulario para alquilar una bicicleta, o redirige si hay una reserva activa o estoy suspendido.
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function indexAlquilar()
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
-        $reserva = $cliente->obtenerReservaActivaModificada();
-    
-        if ($reserva) {
-            $reserva = $reserva->formatearDatosActiva();
-            return view('cliente.alquilar', compact('reserva'));
+
+        if ($cliente->estoySuspendido()) {
+            return $this->redireccionarInicio('error', 'Su cuenta se encuentra suspendida.');
         }
-    
-        return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
+
+        $reserva = $cliente->obtenerReservaActivaModificada();
+        if ($reserva) {
+            return $this->mostrarFormularioAlquilar($reserva);
+        }
+
+        return redirect()->back()->with('error', 'No hay ningun alquiler activo.');
     }
 
-    public function bicicletaDisponible(Request $request)
+    /**
+     * Redirecciona al inicio con un mensaje según la clave.
+     *
+     * @param string $mensaje
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function redireccionarInicio(string $clave, string $mensaje): RedirectResponse
     {
+        return redirect()->route('inicio')->with($clave, $mensaje);
+    }
+
+    /**
+     * Muestra el formulario para alquilar una bicicleta.
+     *
+     * @param \App\Models\Reserva $reserva
+     * @return \Illuminate\View\View
+     */
+    protected function mostrarFormularioAlquilar(Reserva $reserva): View
+    {
+        $reserva = $reserva->formatearDatosActiva();
+        return view('cliente.alquilar', compact('reserva'));
+    }
+
+    /**
+     * Confirmar que la bicicleta esta disponible en la estación de retiro.
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function bicicletaDisponible(): JsonResponse
+    {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $reserva_actual = $usuario->obtenerCliente()->obtenerReservaActivaModificada();
         $bicicleta = $reserva_actual->bicicleta;
 
-        if ($bicicleta->estoyEnUnaReserva()) {
-            $reserva_alquilada = $bicicleta->getReservaActual();
+        if ($bicicleta->estoyEnUnAlquiler()) {
+            $reserva_alquilada = $bicicleta->getAlquilerActual();
             $reserva_alquilada->cerrarAlquiler();
         }
 
         return response()->json(['success' => true]);
     }
 
-    public function bicicletaNoDisponible(Request $request)
-{
-    $usuario = Auth::user();
-    $cliente = $usuario->obtenerCliente();
-    // Verificación de existencia de reserva
-    $tieneReserva = $cliente->tengoUnaReserva();
+    /**
+     * Asignar una nueva bicicleta si hay disponible en la estación de retiro o modificar la reserva.
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function bicicletaNoDisponible(): JsonResponse
+    {
+        /** @var \App\Models\User $usuario */
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+        // Verificación de existencia de reserva
+        $tieneReserva = $cliente->tengoUnaReserva();
 
-    if (!$tieneReserva) {
-        return response()->json(['success' => false, 'mensaje' => 'El cliente no tiene ninguna reserva activa.']);
-    }
-    $reserva_actual = $cliente->obtenerReservaActivaModificada();
+        if (!$tieneReserva) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'El cliente no tiene ninguna reserva activa.'
+            ]);
+        }
+        $reserva_actual = $cliente->obtenerReservaActivaModificada();
 
-    if (!$reserva_actual || !isset($reserva_actual->id_reserva)) {
-      
-        return response()->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
-    }
+        if (!$reserva_actual || !isset($reserva_actual->id_reserva)) {
 
-    $estacion_retiro = $reserva_actual->estacionRetiro;
-    $nueva_bicicleta = $estacion_retiro->getBicicletaDisponibleAhora();
-    if ($nueva_bicicleta) {
-        $reserva_actual->asignarNuevaBicicleta($nueva_bicicleta);
-        return response()->json(['success' => true, 'mensaje' => 'Se le asigno una nueva bicicleta de la estación']);
-    }
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Reserva no encontrada.'
+            ]);
+        }
 
-    $estacion_retiro = $reserva_actual->estacionRetiro;
-    $bicicleta_asignada = $reserva_actual->bicicleta;
+        $estacion_retiro = $reserva_actual->estacionRetiro;
+        $nueva_bicicleta = $estacion_retiro->getBicicletaDisponibleAhora();
+        if ($nueva_bicicleta) {
+            $reserva_actual->asignarNuevaBicicleta($nueva_bicicleta);
+            return response()->json([
+                'success' => true,
+                'mensaje' => 'Se le asigno una nueva bicicleta de la estación'
+            ]);
+        }
 
-    if (is_null($bicicleta_asignada->id_estacion_actual && $reserva_actual->id_estacion_retiro != $bicicleta_asignada->id_estacion_actual)) {
+        $estacion_retiro = $reserva_actual->estacionRetiro;
+        $bicicleta_asignada = $reserva_actual->bicicleta;
+
+        if (is_null($bicicleta_asignada->id_estacion_actual && $reserva_actual->id_estacion_retiro != $bicicleta_asignada->id_estacion_actual)) {
+            session(['id_reserva' => $reserva_actual->id_reserva]);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'La bicicleta no está disponible en la estación.',
+                'redirectUrl' => route('reservas.modificar')
+            ]);
+        }
+        $nueva_bicicleta = $estacion_retiro->bicicletas()->whereNull('id_estacion_actual')->first();
+
+        if ($nueva_bicicleta) {
+            $reserva_actual->asignarNuevaBicicleta($nueva_bicicleta);
+            session(['id_reserva' => $reserva_actual->id_reserva]);
+            return response()->json([
+                'success' => true,
+                'mensaje' => 'Se le asignó una nueva bicicleta de la estación'
+            ]);
+        }
+
         session(['id_reserva' => $reserva_actual->id_reserva]);
-        return response()->json(['success' => false, 'mensaje' => 'La bicicleta no está disponible en la estación.', 'redirectUrl' => route('reservas.modificar')]);
-    }
-    $nueva_bicicleta = $estacion_retiro->bicicletas()->whereNull('id_estacion_actual')->first();
-
-    if ($nueva_bicicleta) {
-        $reserva_actual->asignarNuevaBicicleta($nueva_bicicleta);
-        session(['id_reserva' => $reserva_actual->id_reserva]);
-        return response()->json(['success' => true, 'mensaje' => 'Se le asignó una nueva bicicleta de la estación']);
+        return response()->json([
+            'success' => false,
+            'mensaje' => 'No hay bicicletas disponibles en esta estación.',
+            'redirectUrl' => route('reservas.modificar')
+        ]);
     }
 
-    session(['id_reserva' => $reserva_actual->id_reserva]);
-    return response()->json(['success' => false, 'mensaje' => 'No hay bicicletas disponibles en esta estación.', 'redirectUrl' => route('reservas.modificar')]);
-}
-    
-    public function pagarAlquiler(Request $request)
+    /**
+     * Pagar el alquiler y almacenarlo en la base de datos. Si no tiene saldo devolver un mensaje de error.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function pagarAlquiler(Request $request): JsonResponse
     {
         $inputPagar = $request->input('pagar');
 
         if (!($inputPagar === '')) {
+            /** @var \App\Models\User $usuario */
             $usuario = Auth::user();
             $cliente = $usuario->obtenerCliente();
             $reserva = $cliente->obtenerReservaActivaModificada();
@@ -114,53 +180,79 @@ class ReservaController extends Controller
                     'redirect' => route('inicio')
                 ]);
             } else {
-                return response()->json(['success' => false, 'mensaje' => 'No se pudo realizar el alquiler.']);
+                return response()->json(['success' => false, 'mensaje' => 'Monto insuficiente para pagar el alquiler.']);
             }
         }
     }
 
+
+    /**
+     * Muestra el alquiler actual.
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function indexAlquilerActual()
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
-
         if ($cliente->estoySuspendido()) {
-            return redirect()->route('inicio')
-                ->with('error', 'Su cuenta se encuentra suspendida.');
+            return $this->redireccionarInicio('error', 'Su cuenta se encuentra suspendida.');
         }
 
         $reserva = $cliente->obtenerReservaAlquiladaReasignada();
-        $estado_reserva = $reserva->getEstadoReserva();
-
-        //? Es correcto que obtenga el id del cliente que va a devolver?
-        $id_cliente_devuelve = $reserva->getClienteDevuelve();
-        $usuario_devuelve = User::obtenerUsuarioPorId($id_cliente_devuelve); //Crea una instancia del usuario para poder mostrar su nombre y apellido en el alquiler actual
-
-        if ($reserva && $reserva->estoyAlquilada()) {
-            $reserva = $reserva->formatearDatosActiva();
-            return view('cliente.alquiler_actual', compact('reserva', 'estado_reserva', 'usuario_devuelve'));
+        if (!$reserva) {
+            return $this->redireccionarInicio('error', 'No tiene actualmente un alquiler.');
         }
 
-        return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
+        $estado_reserva = $reserva->getNombreEstadoReserva();
+
+        if (!$reserva->clienteDevuelve) {
+            $usuario_devuelve = null;
+        } else {
+            $usuario_devuelve = $reserva->clienteDevuelve->usuario;
+        }
+
+        // el ' $cliente->obtenerReservaAlquiladaReasignada()' ya busca una reserva con estado alquilada o reasignada
+        // si ya se verifico arriba no es bueno volver a verificar.
+        // 1º arriba hay un !reserva, 2º la consulta de obtener la reserva ya te trae con alguna de los 2 estados
+        //-------------------------------------
+        // if ($reserva && $reserva->estoyAlquilada()) {
+        //     $reserva = $reserva->formatearDatosActiva();
+        //     return view('cliente.alquiler_actual', compact('reserva', 'estado_reserva', 'usuario_devuelve'));
+        // }
+
+        $reserva = $reserva->formatearDatosActiva();
+        return view('cliente.alquiler_actual', compact('reserva', 'estado_reserva', 'usuario_devuelve'));
     }
 
-    public function buscarUsuario(Request $request)
+    // -------------
+    // REASIGNAR
+    // -------------
+
+    /**
+     * Buscar el usuario por DNI y reasignar la devolución a él.
+     *
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function buscarUsuario(Request $request): JsonResponse
     {
         // TODO: Manejar excepciones
         //El cliente no puede asignarse la devolución a sí mismo.
         //El DNI tiene que estar en un rango numérico.
         //
-
-        $usuario = Auth::user();
-        $cliente = $usuario->obtenerCliente();
-        $reserva = $cliente->obtenerReservaAlquiladaReasignada();
-
         //Valida el DNI
         $request->validate([
-            'dni' => 'required|numeric|digits:8',
+            'dni' => 'required|numeric|between:20000000,99999999|digits:8',
         ]);
 
+
+
+        /** @var \App\Models\User $usuario */
+        $usuario = Auth::user();
         $dni = $request->dni;
 
         //Excepción: El usuario no se puede reasignar la devolución a sí mismo
@@ -171,12 +263,12 @@ class ReservaController extends Controller
             ]);
         }
 
-        // Buscar el cliente por DNI
+
+        $cliente = $usuario->obtenerCliente();
+        $reserva = $cliente->obtenerReservaAlquiladaReasignada();
         $usuario_devuelve = User::obtenerUsuarioPorDni($request->dni);
 
-        if ($usuario_devuelve) {
-        } else {
-            // Si no se encuentra al usuario o no es un cliente, devuelve el JSON que le paso a la vista a través de ajax para modificar el contenedor #tarjeta_reasignar
+        if (!$usuario_devuelve) {
             return response()->json([
                 'status' => 'error',
                 'errorView' => view('cliente.partials.error_reasignar')->render(),
@@ -184,57 +276,64 @@ class ReservaController extends Controller
         }
 
         // Comprueba que usuario exista y que sea un cliente
-        if ($usuario_devuelve) {
-            $cliente_devuelve = $usuario_devuelve->obtenerCliente();
-            if (!$cliente_devuelve) {
-                return response()->json([
-                    'status' => 'error',
-                    'errorView' => view('cliente.partials.usuario_suspendido_reasignar')->render(),
-                ]);
-            }
-            if (!$cliente_devuelve->estoySuspendido()) {
-                $reserva->reasignarDevolucion($cliente_devuelve);
-
-                // Devuelve el JSON que le paso a la vista a través de ajax para modificar los contenedores #usuario_devuelve y #tarjeta_reasignar
-                return response()->json([
-                    'status' => 'success',
-                    'successView' => view('cliente.partials.exito_reasignar')->render(),
-                ]);
-            }
+        $cliente_devuelve = $usuario_devuelve->obtenerCliente();
+        if (!$cliente_devuelve) {
             return response()->json([
                 'status' => 'error',
-                'errorView' => view('cliente.partials.usuario_suspendido_reasignar')->render(),
+                'errorView' => view('cliente.partials.error_reasignar')->render(),
             ]);
         }
+        if (!$cliente_devuelve->estoySuspendido()) {
+            $reserva->reasignarDevolucion($cliente_devuelve);
+
+            // Devuelve el JSON que le paso a la vista a través de ajax para modificar los contenedores #usuario_devuelve y #tarjeta_reasignar
+            return response()->json([
+                'status' => 'success',
+                'successView' => view('cliente.partials.exito_reasignar')->render(),
+            ]);
+        }
+        return response()->json([
+            'status' => 'error',
+            'errorView' => view('cliente.partials.usuario_suspendido_reasignar')->render(),
+        ]);
     }
 
     // -------------
     // RESERVAR
     // -------------
 
-
+    /**
+     * Muestra el formulario para reservar una bicicleta.
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function indexReserva()
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
-        // if (!($cliente->tengoUnaReserva())) {
-        //     return view('cliente.reservar');
-        // }
+        if ($cliente->estoySuspendido()) {
+            return $this->redireccionarInicio('error', 'Su cuenta se encuentra suspendida.');
+        }
 
         if (!($cliente->tengoUnaReserva())) {
             return view('cliente.reservar')->render();
-        } else {
-            return redirect()->route('inicio')
-                ->with('error', 'Su cuenta se encuentra suspendida.');
         }
-
-        return redirect()->back()->with('error', 'Hay una reserva actualmente activa, no puedes reservar.');
+        return $this->redireccionarInicio('error', 'Ya tiene una reserva activa.');
     }
 
-    public function crearReserva(Request $request)
+    /**
+     * Crea una nueva reserva y la almacena en la session.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function crearReserva(Request $request): JsonResponse
     {
         $validador = Validator::make($request->all(), [
+            'horario_retiro_reserva' => ['required', new HorarioRetiro],
             'estacion_retiro' => 'required|integer|exists:estaciones,id_estacion',
             'estacion_devolucion' => 'required|integer|exists:estaciones,id_estacion',
             'tiempo_uso' => 'required|integer|min:1|max:6',
@@ -280,11 +379,18 @@ class ReservaController extends Controller
         return response()->json([
             'success' => true,
             'mensaje' => 'Datos incorrectos.',
-            'redirect' => route('reservar.index')
+            'redirect' => route('reservar')
         ]);
     }
 
-    public function reservarPasos(Request $request)
+    /**
+     * Muestra el formulario para reservar una bicicleta según el paso actual.
+     *
+     * @param Request $request
+     * 
+     * @return string|void
+     */
+    public function reservarPasos(Request $request): string
     {
         switch ($request->input('paso')) {
             case '1':
@@ -301,11 +407,21 @@ class ReservaController extends Controller
         }
     }
 
-    public function pagarReserva(Request $request)
+    /**
+     * Pagar la reserva y almacenarlo en la base de datos. Si no tiene saldo devolver un mensaje de error.
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function pagarReserva(): JsonResponse
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
+        /** @var \App\Models\Reserva $reserva */
         $reserva = session('reserva_pendiente');
+
+        // falta si la reserva no existe, esto:
+        // if (!reserva) {}
 
         if ($reserva->reservar($cliente, $usuario)) {
             session()->forget('reserva_pendiente');
@@ -315,62 +431,92 @@ class ReservaController extends Controller
                 'mensaje' => 'Reserva realizada correctamente.',
                 'redirect' => route('inicio')
             ]);
-        } else {
-            return response()->json(['success' => false, 'mensaje' => 'No se pudo realizar la reserva.']);
         }
+        return response()->json(['success' => false, 'mensaje' => 'No se pudo realizar la reserva.']);
     }
 
+    /**
+     * Muestra la reserva actual.
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function indexReservaActual()
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
         if ($cliente->estoySuspendido()) {
-            return redirect()->route('inicio')
-                ->with('error', 'Su cuenta se encuentra suspendida.');
+            return $this->redireccionarInicio('error', 'Su cuenta se encuentra suspendida.');
         }
 
         $reserva = $cliente->obtenerReservaActivaModificada();
 
-        if ($reserva && $reserva->estoyReservada()) {
-            $reserva = $reserva->formatearDatosActiva();
-            return view('cliente.reserva_actual', compact('reserva'));
+        if (!$reserva) {
+            return $this->redireccionarInicio('error', 'No tiene actualmente una reserva.');
         }
 
-        return redirect()->back()->with('error', 'No hay ninguna reserva activa.');
+        $reserva = $reserva->formatearDatosActiva();
+        return view('cliente.reserva_actual', compact('reserva'));
     }
 
-     //////////////////
+    //////////////////
     //Modificar Reserva
     //////////////////
+
+    /**
+     * Muestra el formulario para modificar una reserva.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
+     */
     public function modificarReservaC(Request $request)
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
-        $cliente = $usuario->obtenerCliente();
         $reserva_id = session('id_reserva');
-    
+
         if (!$reserva_id) {
-            return response()->json(['success' => false, 'mensaje' => 'No se ha encontrado la reserva en la sesión.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'No se ha encontrado la reserva en la sesión.'
+            ]);
         }
-    
+
         $reserva = Reserva::find($reserva_id);
-    
+
         if (!$reserva) {
-            return response()->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Reserva no encontrada.'
+            ]);
         }
-    
-        $nuevaEstacionYBicicleta = Reserva::obtenerNuevaEstacionYBicicleta($reserva->id_estacion_retiro);
-    
+
+        $nuevoHoraRetiro = $reserva->fecha_hora_retiro->addMinutes(15);
+        $nuevaEstacionYBicicleta = Reserva::obtenerNuevaEstacionYBicicleta($reserva->id_estacion_retiro, $nuevoHoraRetiro->format('H:i:s'));
+
         if (!$nuevaEstacionYBicicleta) {
-            return response()->json(['success' => false, 'mensaje' => 'No hay bicicletas disponibles en las estaciones cercanas.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'No hay bicicletas disponibles en las estaciones cercanas.'
+            ]);
         }
         $nuevaEstacion = Estacion::find($nuevaEstacionYBicicleta['nuevaEstacionId']);
         $nuevaBicicleta = $nuevaEstacionYBicicleta['bicicleta'];
-        $nuevoHoraRetiro = $reserva->fecha_hora_retiro->addMinutes(15);
+        $nuevoHoraDevolucion = $reserva->fecha_hora_devolucion->addMinutes(15);
 
-        return view('cliente.ModificarReserva', compact('reserva', 'nuevaEstacion', 'nuevaBicicleta', 'nuevoHoraRetiro'));
+        return view('cliente.modificar_reserva', compact('reserva', 'nuevaEstacion', 'nuevaBicicleta', 'nuevoHoraRetiro', 'nuevoHoraDevolucion'));
     }
-    
+
+
+    /**
+     * Confirmar la modificación de una reserva.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     */
     public function confirmarModificacionReserva(Request $request)
     {
         $request->validate([
@@ -378,66 +524,113 @@ class ReservaController extends Controller
             'id_bicicleta' => 'required|integer',
             'id_estacion_retiro' => 'required|integer',
             'nuevoHorarioRetiro' => 'required|date',
+            'nuevoHorarioDevolucion' => 'required|date',
         ]);
-    
+
         $reserva = Reserva::find($request->id_reserva);
-    
+
         if (!$reserva) {
-            return response()->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Reserva no encontrada.'
+            ]);
         }
         //Actuzalimos los datos y los guardamos en la BD
         $reserva->id_bicicleta = $request->id_bicicleta;
         $reserva->id_estacion_retiro = $request->id_estacion_retiro;
         $reserva->id_estado = 5;
         $reserva->fecha_hora_retiro = $request->nuevoHorarioRetiro;
+        $reserva->fecha_hora_devolucion = $request->nuevoHorarioDevolucion;
         $reserva->save();
-    
-        return response()->json(['success' => true, 'mensaje' => 'Reserva modificada correctamente.']);
+
+        return redirect()->route('reserva_actual')->with('success', 'Reserva modificada correctamente.');
     }
 
+    /**
+     * Rechazar la modificación de una reserva.
+     * 
+     * @param Request $request
+     * @param Reserva $reserva
+     * 
+     * @return \Illuminate\Http\JsonResponse|
+     */
     public function rechazarModificacion(Request $request, Reserva $reserva)
     {
         $request->validate([
-            'id_reserva' => 'required|integer|exists:reservas,id_reserva', 
+            'id_reserva' => 'required|integer|exists:reservas,id_reserva',
         ]);
 
         $idReserva = $request->input('id_reserva');
         $reserva = Reserva::find($idReserva);
 
         if (!$reserva) {
-            return response()->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Reserva no encontrada.'
+            ]);
         }
 
         if (is_null($reserva->senia)) {
-            return response()->json(['success' => false, 'mensaje' => 'El campo senia es null.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'El campo senia es null.'
+            ]);
         }
-
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
         if (!$cliente) {
-            return response()->json(['success' => false, 'mensaje' => 'Cliente no encontrado.']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Cliente no encontrado.'
+            ]);
         }
 
-   
-        $saldoAnterior = $cliente->saldo;
-        $senia = $reserva->senia; 
-        $cliente->saldo += $senia;
 
-        if ($cliente->save()) {
-            Log::info('Saldo devuelto al cliente', ['saldo' => $cliente->saldo]);
-        } else {
-            Log::error('Error al guardar el saldo del cliente');
+        $senia = $reserva->senia;
+        $motivo = 'Devolución de seña';
+        $cliente->agregarSaldo($senia, $motivo);
+
+        $reserva->cambiarEstado(EstadoReserva::CANCELADA);
+        $reserva->save();
+
+        return $this->redireccionarInicio('success', 'Reserva cancelada y saldo devuelto exitosamente.');
+    }
+
+    /**
+     * Guarda la url en la session.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function guardarUrlIrCargarSaldo(Request $request): JsonResponse
+    {
+        $url_actual = $request->url_actual;
+
+        session(['url_actual' => $url_actual]);
+        return response()->json([
+            'success' => true,
+            'redirigir' => route('cargar-saldo.index'),
+        ]);
+    }
+
+    /**
+     * Cancelar una reserva.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function cancelar(Request $request): RedirectResponse
+    {
+        $reserva = Reserva::findOrFail($request->id_reserva);
+        if (!$reserva) {
+            return redirect()->route('reserva_actual')->with('error', 'Reserva no encontrada.');
         }
 
-        $reserva->id_estado = 4;  
-        
-        if ($reserva->save()) {
-            Log::info('Reserva cancelada con éxito');
-        } else {
-            Log::error('Error al guardar el estado de la reserva');
-        }
-
-        return response()->json(['success' => true, 'mensaje' => 'Reserva cancelada y saldo devuelto exitosamente.']);
+        $mensaje = $reserva->cancelar();
+        return $this->redireccionarInicio('success', $mensaje);
     }
 }

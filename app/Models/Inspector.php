@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Inspector extends User
+class Inspector extends Model
 {
     use HasFactory;
 
@@ -17,8 +17,23 @@ class Inspector extends User
         'id_usuario',
     ];
 
-    public function infracciones()
+    /**
+     * Devuelve las infracciones asociadas al inspector.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function infracciones(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Infraccion::class, 'id_usuario_inspector', 'id_usuario');
+    }
+
+    /**
+     * Devuelve el usuario asociado al inspector.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function usuario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'id_usuario', 'id_usuario');
     }
 }

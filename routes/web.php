@@ -11,6 +11,8 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\ReservaController;
+use App\Models\Reserva;
+use Illuminate\Support\Facades\Log;
 
 // Vista principal
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -75,14 +77,7 @@ Route::middleware(['auth', 'role:inspector'])->group(function () {
 
 //* CLIENTE
 Route::middleware(['auth', 'role:cliente'])->group(function () {
-    // Route::get('/inicio_cliente', [ClienteController::class, 'indexInicio'])->name('inicio_cliente');
-
-    // Route::get('/alquilar', function () {
-    //     return view('cliente.alquilar');  // Renderiza la vista 'Alquilar'
-    // })->name('alquilar');
-
-    // Alquilar que viene de lo de maxi, el controlador le devuelve las vistas que tiene que mostrar...
-    Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index');
+    Route::get('/alquilar',  [ReservaController::class, 'indexAlquilar'])->name('alquilar.index'); // Renderiza la vista 'home.blade.php'
     Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
     Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
     Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
@@ -97,7 +92,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     // TODO: Intentar que funcione todo con una única vista reservar, así podemos agrgear alguna trnasición cuando se agranda el contenedor de la vista
     Route::get('/reservar', [ReservaController::class, 'indexReserva'])->name('reservar');
     Route::post('/reservar/pasos', [ReservaController::class, 'reservarPasos'])->name('reservar.pasos');
-    Route::post('/estaciones/disponibilidad-horario-retiro', [EstacionController::class, 'disponibilidadHorarioRetiro'])->name('estaciones.disponibilidad-horario-retiro');
+    Route::post('/estaciones-disponibilidad-horario-retiro', [EstacionController::class, 'disponibilidadHorarioRetiro'])->name('estaciones.disponibilidad-horario-retiro');
     Route::post('/reservar/crear-reserva', [ReservaController::class, 'crearReserva'])->name('reservar.crearReserva');
     Route::post('/reservar/datos-correctos', [ReservaController::class, 'reservarDatosCorrectos'])->name('reservar.datos-correctos');
     Route::post('/reservar/datos-incorrectos', [ReservaController::class, 'reservarDatosIncorrectos'])->name('reservar.datos-incorrectos');
@@ -105,9 +100,12 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     Route::get('/reserva-actual', [ReservaController::class, 'indexReservaActual'])->name('reserva_actual');
     Route::post('/reserva-actual/buscar-usuario', [ReservaController::class, 'buscarUsuario'])->name('reserva_actual.buscar_usuario');
+    
     Route::get('/reserva-actual/formulario-busqueda', function () {
         return view('cliente.partials.buscar_usuario_reasignar');
     })->name('reserva-actual.buscar-usuario');
+
+    Route::post('/cancelar-reserva', [ReservaController::class, 'cancelar'])->name('reserva-actual.cancelar');
 
     Route::get('/perfil', function () {
         return view('cliente.perfil');  // Renderiza la vista 'Perfil'
@@ -140,6 +138,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     // Cargar Saldo que viene de lo de maxi, el controlador trae la vista...
     Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
     Route::post('/cargar-saldo', [ClienteController::class, 'storeCargarSaldo'])->name('cargar-saldo.store');
+    Route::post('/guardar-url-ir-cargar-saldo', [ReservaController::class, 'guardarUrlIrCargarSaldo'])->name('guardar-url-ir-cargar-saldo');
     //Modificar Reserva:
     Route::get('/modificar-reserva', [ReservaController::class, 'modificarReservaC'])->name('reservas.modificar');
     Route::post('/confirmar-modificacion', [ReservaController::class, 'confirmarModificacionReserva'])->name('reservar.confirmarModificacion');
@@ -151,6 +150,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
 // Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
+
 
 
 require __DIR__ . '/auth.php';

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Danio extends Model
 {
@@ -19,17 +19,22 @@ class Danio extends Model
         'descripcion',
     ];
 
-    // Los atributos que no pueden modificarse
-    protected $guarded = [
-        'id_danio',
-    ];
-
-    public function tipoDanio()
+    /**
+     * Define la relación de pertenencia con el modelo TipoDanio.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function tipoDanio(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(TipoDanio::class, 'id_tipo_danio', 'id_tipo_danio');
     }
 
-    public function historialDanio()
+    /**
+     * Define la relación de muchos a muchos con el modelo HistorialDanio.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function historialDanio(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(HistorialDanio::class, 'danios_por_uso', 'id_historial_danio', 'id_danio')
             ->using(DanioPorUso::class)

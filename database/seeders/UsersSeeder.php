@@ -76,8 +76,8 @@ class UsersSeeder extends Seeder
             'fecha_nacimiento' => Carbon::now()->subYears(rand(18, 50))->format('Y-m-d'),
             'id_usuario' => $usuario->id_usuario,
             'id_estado_cliente' => $estado_cliente->id_estado,
-            'puntaje' => 50,
-            'saldo' => 500,
+            'puntaje' => 0,
+            'saldo' => 0,
         ]);
     }
     private function crearUsuarioInspector($rol) 
