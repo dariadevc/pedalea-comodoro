@@ -20,6 +20,7 @@ class Infraccion extends Model
         'id_usuario_cliente',
         'id_usuario_inspector',
         'cantidad_puntos',
+        'fecha_hora',
         'motivo',
     ];
 
