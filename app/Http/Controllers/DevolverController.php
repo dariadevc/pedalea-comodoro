@@ -19,6 +19,8 @@ class DevolverController extends Controller
 
     public function mostrarVista()
     {
+        return view('cliente.devolver2');
+
         $usuarioId = Auth::id(); // Obtiene el ID del usuario autenticado
         
         //Obtener el id_restacion_retiro o devolucion

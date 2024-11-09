@@ -191,5 +191,11 @@ class ReservaController extends Controller
         } else {
             return response()->json(['success' => false, 'mensaje' => 'No se pudo realizar la reserva.']);
         }
-    }    
+    }
+
+    public function mostrarDanios()
+    {
+        $usuario = Auth::user();
+        $cliente = 
+    }
 }

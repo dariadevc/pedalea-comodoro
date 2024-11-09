@@ -15,6 +15,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/alquilar.js',
                 'resources/js/reservar.js',
+                'resources/js/devolucion2.js'
             ],
             refresh: true,
         }),

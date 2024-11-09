@@ -68,6 +68,9 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
     Route::post('/cargar-saldo', [ClienteController::class,'storeCargarSaldo'])->name('cargar-saldo.store');
+    
+    // DEVOLVER
+    Route::post('/devolver-mostrar-danios', [ReservaController::class,'mostrarDanios'])->name('devolver.mostrar-danios');
 });
 
 
