@@ -2,21 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bicicleta;
 use App\Models\Estacion;
-use App\Models\EstadoBicicleta;
-use App\Models\EstadoMulta;
+use App\Models\Bicicleta;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
-use PhpParser\Node\Stmt\ElseIf_;
+use App\Models\EstadoBicicleta;
+use Illuminate\Http\RedirectResponse;
 
 class BicicletaController extends Controller
 {
-    public function index()
+    /**
+     * Muestra el listado de bicicletas.
+     * 
+     * @return \Illuminate\View\View
+     */
+    public function index(): View
     {
         $bicicletas = Bicicleta::with(['estado', 'estacionActual'])->get();
         return view('bicicletas.index', compact('bicicletas'));
     }
 
+    /**
+     * Muestra el formulario para crear una bicicleta.
+     * 
+     * @return \Illuminate\View\View
+     */
     public function create()
     {
         $estados = EstadoBicicleta::all();
@@ -24,7 +34,14 @@ class BicicletaController extends Controller
         return view('bicicletas.create', compact('estados', 'estaciones'));
     }
 
-    public function store(Request $request) 
+    /**
+     * Almacena una nueva bicicleta en la base de datos.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'estacion' => 'required|integer',
@@ -35,25 +52,39 @@ class BicicletaController extends Controller
             'id_estado' => $request->input('estado'),
             'id_estacion_actual' => $request->input('estacion') == '0' ? null : $request->input('estacion'),
         ]);
-        
-        return redirect()->route('bicicletas.index')->with('success', 'Bicicleta creada exitosamente.');
 
+        return redirect()->route('bicicletas.index')->with('success', 'Bicicleta creada exitosamente.');
     }
 
+    /**
+     * Muestra el formulario para editar una bicicleta.
+     * 
+     * @param Bicicleta $bicicleta
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function edit(Bicicleta $bicicleta)
     {
-        $existe_bicicletas_en_reserva = $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
-        if ($existe_bicicletas_en_reserva) {
+        $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        if ($existe_bicicleta_en_reservas) {
             return redirect()->route('bicicletas.index')->with('error', 'No se puede editar la bicicleta. Está asociada a una reserva.');
         } else {
             $estados = EstadoBicicleta::all();
             $estaciones = Estacion::where('id_estado', 1)->get();
             return view('bicicletas.edit', compact('bicicleta', 'estados', 'estaciones'));
         }
-            
     }
 
-    public function update(Request $request, Bicicleta $bicicleta)
+
+    /**
+     * Actualiza una bicicleta en la base de datos.
+     * 
+     * @param Bicicleta $bicicleta
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(Request $request, Bicicleta $bicicleta): RedirectResponse
     {
         $request->validate([
             'estacion' => 'required|integer',
@@ -61,24 +92,33 @@ class BicicletaController extends Controller
         ]);
 
         if ($request->input('estacion') == '0') {
-            $bicicleta->id_estacion_actual = null;
+            $id_estacion_actual = null;
         } else {
             $estacion_inactiva = Estacion::where('id_estado', 2)->where('id_estacion', $request->estacion)->exists();
             if ($estacion_inactiva) {
                 return redirect()->back()->with('error', 'La estación seleccionada no está habilitada.');
             }
-            $bicicleta->id_estacion_actual = $request->input('estacion');
+            $id_estacion_actual = $request->input('estacion');
         }
+        $id_estado = $request->input('estado');
 
-        $bicicleta->id_estado = $request->input('estado');
+        $bicicleta->editar($id_estado, $id_estacion_actual);
 
-        $bicicleta->save();
         return redirect()->route('bicicletas.index')->with('success', 'Bicicleta actualizada correctamente');
     }
 
-    public function destroy(Bicicleta $bicicleta) 
+
+    /**
+     * Elimina suavemente (soft delete) una bicicleta de la base de datos.
+     * 
+     * @param Bicicleta $bicicleta
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(Bicicleta $bicicleta): RedirectResponse
     {
         $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+
         if ($existe_bicicleta_en_reservas) {
             return redirect()->route('bicicletas.index')->with('error', 'No se puede eliminar la bicicleta. Está asociada a una reserva.');
         } else {

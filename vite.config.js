@@ -13,8 +13,12 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/js/layout-app.js',
                 'resources/js/alquilar.js',
                 'resources/js/reservar.js',
+                'resources/js/reasignar_devolucion.js',
+                'resources/js/cargar-saldo.js',
+                'resources/js/cancelar.js',
                 'resources/js/devolucion2.js'
             ],
             refresh: true,

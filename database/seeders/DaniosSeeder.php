@@ -12,7 +12,7 @@ class DaniosSeeder extends Seeder
 
     public function run(): void
     {
-        $id_tipos_danio = TipoDanio::pluck('id_tipo_danio')->toArray();
+        $id_tipos_danio = TipoDanio::pluck('id_tipo_danio')->toArray(); // 0 recuperable y 1 no recuperable
 
         //1 -> Recuperable.          2->NO recuperable.
         $danios = [

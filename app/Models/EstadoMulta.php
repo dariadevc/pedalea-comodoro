@@ -13,19 +13,20 @@ class EstadoMulta extends Model
     protected $primaryKey = 'id_estado';
     public $timestamps = false;
 
+    public const PENDIENTE = 1;
+    public const PAGADA = 2;
 
     protected $fillable = [
         'nombre',
     ];
-    //No se pueden modificar:
-    protected $guarded = [
-        'id_estado_multa',
-
-    ];
 
 
-    //La rela 1aM 
-    public function multa()
+    /**
+     * Define la relación de pertenencia con el modelo Multa.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function multas()
     {
         return $this->hasMany(Multa::class, 'id_estado', 'id_estado');
     }

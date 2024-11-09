@@ -2,6 +2,17 @@
 
 @section('titulo', 'Pedalea Comodoro | Iniciar Sesión')
 
+@section('header')
+    <div class="container flex flex-1 justify-center items-center">
+        <a href="{{ route('landing') }}" class="px-2">
+            <div class="py-1 flex items-center gap-4 text-slate-50 uppercase text-sm font-semibold">
+                <img src="{{ asset('img/bicicleta_blanca.png') }}" alt="" class="h-14">
+                <h2 class="">Pedalea Comodoro</h2>
+            </div>
+        </a>
+    </div>
+@endsection
+
 @section('contenido')
     <section id="registrarse" class="relative flex flex-col items-center justify-center px-10 my-12 h-auto">
         <div
@@ -99,7 +110,7 @@
 
             <div class="mt-5 flex justify-between items-center gap-10 border-t border-pc-rojo py-4">
                 <p class="text-sm text-pc-texto-p">¿Ya tenes una cuenta?</p>
-                <a href="{{ route('iniciar-sesion') }} ">
+                <a href="{{ route('iniciar_sesion') }} ">
                     <x-btn-rojo-blanco class="text-xs">{{ 'Iniciá Sesión' }}</x-btn-rojo-blanco>
                 </a>
             </div>

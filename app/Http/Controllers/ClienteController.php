@@ -2,40 +2,55 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 
 class ClienteController extends Controller
 {
+    /** 
+     * Muestra la vista para cargar saldo o redirige si el cliente está suspendido. 
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse 
+     * */
     public function indexCargarSaldo()
     {
+        dump('Cuando este la vista de la pasarela de pago y termine de pagar hay que redirigir a esta vista, si es nulo, redirige al inicio');
+        dump(session('url_actual'));
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
         if (!$cliente->estoySuspendido()) {
-            return view('cliente.cargar_saldo');
+            return view('cliente.cargar_saldo')->render();
         } else {
-            return redirect()->route('cliente.inicio')
+            return redirect()->route('inicio')
                 ->with('error', 'Su cuenta se encuentra suspendida.');
         }
     }
 
-    public function storeCargarSaldo(Request $request)
+    /**
+     * Actualiza el saldo del cliente en la base de datos.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeCargarSaldo(Request $request): RedirectResponse
     {
         $request->validate([
             'monto' => 'required|numeric'
         ]);
 
-        // ACA TENDRIA QUE IR LA PASARELA DE PAGO
-
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
         if (rand(0, 1)) {
             $monto = floatval($request->monto);
-            $cliente->agregarSaldo($monto);
-            
+            $motivo = 'Carga de saldo';
+            $cliente->agregarSaldo($monto, $motivo);
+
             return redirect()->route('inicio')
                 ->with('success', 'Se ha cargado satisfactoriamente su saldo.');
         } else {

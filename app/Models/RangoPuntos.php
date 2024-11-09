@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class RangoPuntos extends Model
 {
-
     use HasFactory;
 
     protected $table = 'rangos_puntos';
@@ -25,11 +24,36 @@ class RangoPuntos extends Model
         'id_rango_puntos',
     ];
 
-    public function clientes()
+    /**
+     * Verifica si un puntaje dado se encuentra dentro del rango.
+     *
+     * @param int $puntaje
+     * @return bool
+     */
+    public function dentroDelRango(int $puntaje): bool
+    {
+        return ($this->rango_minimo >= $puntaje && $puntaje >= $this->rango_maximo);
+    }
+
+    /**
+     * Obtiene el monto de la multa para el rango de puntos.
+     *
+     * @return float
+     */
+    public function getMontoMulta(): float
+    {
+        return $this->monto_multa;
+    }
+
+    /**
+     * Define la relación de muchos a muchos con los clientes.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function clientes(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Cliente::class, 'clientes_rangos_puntos', 'id_rango_puntos', 'id_usuario')
                     ->using(ClienteRangoPuntos::class)  // Especifica el modelo de pivote
                     ->withPivot('multa_hecha_por_dia', 'suspension_hecha_por_dia', 'cantidad_veces');
     }
-
 }

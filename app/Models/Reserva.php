@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use App\Mail\MailTextoSimple;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 
 class Reserva extends Model
 {
@@ -43,21 +47,55 @@ class Reserva extends Model
 
 
     /**
-     * FUNCIONES DEL MODELO
-     * 
+     * Verifica si la reserva está en estado de reservada.
+     *
+     * @return bool
      */
-
-
-    public static function crearReserva($horario_retiro, $tiempo_uso, $id_estacion_devolucion, $id_estacion_retiro, $id_cliente_reservo) 
+    public function estoyReservada(): bool
     {
-        $tiempo_uso = (int) $tiempo_uso;
-        $id_estacion_devolucion = (int) $id_estacion_devolucion;
-        $id_estacion_retiro = (int) $id_estacion_retiro;
-        $id_cliente_reservo = (int) $id_cliente_reservo;
+        return in_array($this->id_estado, [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA]);
+    }
+
+    /**
+     * Verifica si la reserva está alquilada.
+     *
+     * @return bool
+     */
+    public function estoyAlquilada(): bool
+    {
+        return in_array($this->id_estado, [EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA]);
+    }
+
+    /**
+     * Verifica si la reserva ha sido reasignada.
+     *
+     * @return bool
+     */
+    public function estoyReasignada(): bool
+    {
+        return $this->id_estado == EstadoReserva::REASIGNADA;
+    }
+
+    /**
+     * Crea una nueva reserva.
+     *
+     * @param string $horario_retiro Horario de retiro
+     * @param int $tiempo_uso Tiempo de uso en horas
+     * @param int $id_estacion_devolucion ID de la estación de devolución
+     * @param int $id_estacion_retiro ID de la estación de retiro
+     * @param int $id_cliente_reservo ID del cliente que reserva
+     * @return self
+     */
+    public static function crearReserva(string $horario_retiro, int $tiempo_uso, int $id_estacion_devolucion, int $id_estacion_retiro, int $id_cliente_reservo): self
+    {
+        $tiempo_uso = $tiempo_uso;
+        $id_estacion_devolucion = $id_estacion_devolucion;
+        $id_estacion_retiro = $id_estacion_retiro;
+        $id_cliente_reservo = $id_cliente_reservo;
         $tarifa = Configuracion::where('clave', 'tarifa')->first();
         $fecha_hora_retiro = Carbon::today()->setTimeFromTimeString($horario_retiro);
         $fecha_hora_devolucion = (clone $fecha_hora_retiro)->addHours($tiempo_uso);
-        $id_estado = null; // Es null porque todavia no se pago la reserva
+        $id_estado = null; // Es null porque todavía no se pagó la reserva
         $monto = $tarifa->valor * $tiempo_uso;
         $senia = $monto * 0.25;
         $estacion_retiro = Estacion::find($id_estacion_retiro);
@@ -65,7 +103,6 @@ class Reserva extends Model
         if ($bicicleta === null) {
             $bicicleta = $estacion_retiro->getBicicletaDisponibleEnEstaHora($horario_retiro);
         }
-
 
         $nueva_reserva = new self();
         $nueva_reserva->id_bicicleta = $bicicleta->id_bicicleta;
@@ -79,38 +116,54 @@ class Reserva extends Model
         $nueva_reserva->monto = $monto;
         $nueva_reserva->senia = $senia;
         $nueva_reserva->puntaje_obtenido = null;
-        
+
         return $nueva_reserva;
     }
 
-    public function alquilar($cliente, $usuario)
+    /**
+     * Realiza el alquiler de una reserva.
+     *
+     * @param Cliente $cliente Cliente que alquila
+     * @param User $usuario Usuario asociado
+     * @return bool
+     */
+    public function alquilar(Cliente $cliente, User $usuario): bool
     {
-        if ($cliente->pagar($this->calcularMontoRestante())) {
-            $this->cambiarEstado('Alquilada');
+        $motivo = 'Pagar un alquiler';
+        if ($cliente->pagar($this->calcularMontoRestante(), $motivo)) {
+            $this->cambiarEstado(EstadoReserva::ALQUILADA);
 
             $mensaje = "Su alquiler se ha realizado correctamente.";
-            $asunto = "Alquler realizado";
+            $asunto = "Alquiler realizado";
             $destinatario = $usuario->email;
 
             /**
              * $mensaje, $asunto HAY QUE FIJARSE QUE PONEMOS
              * ------
-             * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE 
+             * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE
              */
 
             // Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
             $this->save();
-            
+
             return true;
         } else {
             return false;
         }
     }
 
-    public function reservar($cliente, $usuario)
+    /**
+     * Realiza el proceso de reserva para un cliente.
+     *
+     * @param Cliente $cliente Cliente que realiza la reserva
+     * @param User $usuario Usuario asociado
+     * @return bool
+     */
+    public function reservar(Cliente $cliente, User $usuario): bool
     {
-        if ($cliente->pagar($this->calcularMontoRestante())) {
-            $this->cambiarEstado('Activa');
+        $motivo = 'Pagar una reserva';
+        if ($cliente->pagar($this->senia, $motivo)) {
+            $this->cambiarEstado(EstadoReserva::ACTIVA);
 
             $mensaje = "Su reserva se ha realizado correctamente.";
             $asunto = "Reserva realizada";
@@ -119,57 +172,100 @@ class Reserva extends Model
             /**
              * $mensaje, $asunto HAY QUE FIJARSE QUE PONEMOS
              * ------
-             *  * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE 
+             * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE
              */
 
             // Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
             $this->save();
-            
+
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
-    public function asignarNuevaBicicleta($nueva_bicicleta): void
+    /**
+     * Reasigna la devolución de la reserva a un nuevo cliente y cambia su estado a 'Reasignada'.
+     *
+     * @param Cliente $cliente_devuelve
+     * @return void
+     */
+    public function reasignarDevolucion(Cliente $cliente_devuelve): void
+    {
+        $this->id_cliente_devuelve = $cliente_devuelve->id_usuario;
+        $this->cambiarEstado(EstadoReserva::REASIGNADA);
+        $this->save();
+    }
+
+    /**
+     * Asigna una nueva bicicleta a la reserva.
+     *
+     * @param Bicicleta $nueva_bicicleta
+     * @return void
+     */
+    public function asignarNuevaBicicleta(Bicicleta $nueva_bicicleta): void
     {
         $this->id_bicicleta = $nueva_bicicleta->id_bicicleta;
         $this->save();
     }
 
-
-    public function cambiarEstado($nombre_estado)
+    /**
+     * Cambia el estado de la reserva según el ID de estado proporcionado.
+     *
+     * @param int $id_estado
+     * @return void
+     */
+    public function cambiarEstado(int $id_estado): void
     {
-        $estado = EstadoReserva::where('nombre', $nombre_estado)->first();
-        $this->id_estado = $estado->id_estado;
+        $this->id_estado = $id_estado;
     }
 
+    /**
+     * Cierra el alquiler, actualizando el estado a 'Finalizada'.
+     *
+     * @return void
+     */
     public function cerrarAlquiler(): void
     {
-        $this->cambiarEstado('Finalizada');
-        
+        $this->cambiarEstado(EstadoReserva::FINALIZADA);
+
         /**
          * TODO
          * FALTA REALIZAR LA LOGICA DE CERRAR EL ALQUILER Y DESCONTAR PUNTOS
-         * 
+         *
          */
-        
+
         $this->save();
     }
-    
+
+    /**
+     * Calcula el monto restante que debe pagarse.
+     *
+     * @return float
+     */
     public function calcularMontoRestante(): float
     {
-        return $this->monto - $this->seña;
+        return $this->monto - $this->senia;
     }
 
+    /**
+     * Calcula el tiempo de uso en horas.
+     *
+     * @return int
+     */
     public function calcularTiempoUso(): int
     {
         return (int) $this->fecha_hora_retiro->diffInHours($this->fecha_hora_devolucion);
     }
 
+    /**
+     * Formatea los datos de la reserva cuando está activa.
+     *
+     * @return array
+     */
     public function formatearDatosActiva(): array
     {
         return [
+            'id' => $this->id_reserva,
             'fecha_hora_devolucion' => $this->fecha_hora_devolucion->format('H:i'),
             'fecha_hora_retiro' => $this->fecha_hora_retiro->format('H:i'),
             'bicicleta_patente' => $this->bicicleta->patente,
@@ -180,6 +276,11 @@ class Reserva extends Model
         ];
     }
 
+    /**
+     * Formatea los datos para realizar una reserva.
+     *
+     * @return array
+     */
     public function formatearDatosParaReservar(): array
     {
         return [
@@ -192,59 +293,209 @@ class Reserva extends Model
         ];
     }
 
+    /**
+     * Cancela la reserva, actualizando el estado y devolviendo la seña si es necesario.
+     *
+     * @return string Mensaje de confirmación
+     */
+    public function cancelar(): string
+    {
+        if ($this->id_estado == EstadoReserva::MODIFICADA) {
+            $cliente = $this->clienteReservo;
+            $motivo = 'Devolución de seña';
+            $cliente->agregarSaldo($this->senia, $motivo);
+            $mensaje = 'Se canceló su reserva correctamente, se devolvió su saldo correspondiente.';
+        } else {
+            $mensaje = 'Se canceló su reserva correctamente.';
+        }
+        $this->cambiarEstado(EstadoReserva::CANCELADA);
+        $this->save();
+        return $mensaje;
+    }
+
+    ///////////////////
+    //Modificar Reserva:
+    ///////////////////
 
     /**
-     * ACCESORES
+     * Obtiene la estación más cercana a la seleccionada en la reserva y su respectiva bicicleta disponible.
+     *
+     * @param int $estacionId ID de la estación seleccionada
+     * @param string $nuevo_horario_retiro Nuevo horario de retiro en formato 'H:i:s'
+     * @return array|null
      */
+    public static function obtenerNuevaEstacionYBicicleta(int $estacionId, string $nuevo_horario_retiro): ?array
+    {
+        $estacionSeleccionada = Estacion::find($estacionId);
 
+        if (!$estacionSeleccionada) {
+            return null;
+        }
+
+        $estaciones = Estacion::where('id_estado', 1)
+            ->where('id_estacion', '!=', $estacionId)
+            ->get();
+
+        $distanciaMinima = PHP_FLOAT_MAX;
+
+        foreach ($estaciones as $estacion) {
+            $distancia = self::calcularDistancia(
+                $estacionSeleccionada->latitud,
+                $estacionSeleccionada->longitud,
+                $estacion->latitud,
+                $estacion->longitud
+            );
+            $distancias_mas_estaciones[] = [$distancia, $estacion];
+        }
+
+        usort($distancias_mas_estaciones, function ($a, $b) {
+            return $a[0] <=> $b[0];
+        });
+
+        foreach ($distancias_mas_estaciones as $distancia_estacion) {
+            if ($distancia_estacion[0] < $distanciaMinima) {
+                $bicicleta = $distancia_estacion[1]->getBicicletaDisponibleEnEstaHora($nuevo_horario_retiro);
+                if ($bicicleta) {
+                    $estacion_y_bicicleta = [
+                        'nuevaEstacionId' => $distancia_estacion[1]->id_estacion,
+                        'bicicleta' => $bicicleta,
+                    ];
+                    break;
+                }
+            }
+        }
+        return $estacion_y_bicicleta ?? null;
+    }
+
+    /**
+     * Calcula la distancia entre dos puntos geográficos usando la fórmula de Haversine.
+     *
+     * @param float $lat1 Latitud del primer punto
+     * @param float $lon1 Longitud del primer punto
+     * @param float $lat2 Latitud del segundo punto
+     * @param float $lon2 Longitud del segundo punto
+     * @return float Distancia en kilómetros
+     */
+    private static function calcularDistancia(float $lat1, float $lon1, float $lat2, float $lon2): float
+    {
+        $radioTierra = 6371;
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $radioTierra * $c;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Accesores
+
+    /**
+     * Accesor para obtener y parsear la fecha/hora de devolución.
+     *
+     * @param string $valor
+     * @return Carbon
+     */
     public function getFechaHoraDevolucionAttribute($valor): Carbon
     {
         return Carbon::parse($valor);
     }
 
+    /**
+     * Accesor para obtener y parsear la fecha/hora de retiro.
+     *
+     * @param string $valor
+     * @return Carbon
+     */
     public function getFechaHoraRetiroAttribute($valor): Carbon
     {
         return Carbon::parse($valor);
     }
 
+    /**
+     * Obtiene el nombre del estado de la reserva.
+     *
+     * @return string
+     */
+    public function getNombreEstadoReserva(): string
+    {
+        return $this->estado->nombre;
+    }
+
 
     /**
+     * Relación con la bicicleta asociada a la reserva.
+     *
      * 
-     * FUNCIONES QUE RELACIONAN A OTROS MODELOS
-     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-
-    public function bicicleta()
+    public function bicicleta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Bicicleta::class, 'id_bicicleta', 'id_bicicleta');
     }
 
-    public function estacionRetiro()
+    /**
+     * Relación con la estación de retiro asociada.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function estacionRetiro(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Estacion::class, 'id_estacion_retiro');
+        return $this->belongsTo(Estacion::class, 'id_estacion_retiro', 'id_estacion');
     }
 
-    public function estacionDevolucion()
+    /**
+     * Relación con la estación de devolución asociada.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function estacionDevolucion(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Estacion::class, 'id_estacion_devolucion');
+        return $this->belongsTo(Estacion::class, 'id_estacion_devolucion', 'id_estacion');
     }
 
-    public function estado()
+    /**
+     * Relación con el estado de la reserva.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function estado(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(EstadoReserva::class, 'id_estado', 'id_estado');
     }
 
-    public function clienteReservo()
+    /**
+     * Relación con el cliente que realizó la reserva.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function clienteReservo(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cliente::class, 'id_cliente_reservo', 'id_usuario');
     }
 
-    public function clienteDevuelve()
+    /**
+     * Relación con el cliente que devuelve la bicicleta.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function clienteDevuelve(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cliente::class, 'id_cliente_devuelve', 'id_usuario');
     }
 
-    public function infracciones()
+    /**
+     * Relación con las infracciones asociadas a la reserva.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function infracciones(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Infraccion::class, 'id_reserva', 'id_reserva');
     }

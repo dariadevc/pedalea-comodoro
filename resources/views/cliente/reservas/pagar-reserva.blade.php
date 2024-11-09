@@ -39,7 +39,8 @@
 </div>
 
 <div id="contenedorPagarReserva" class="flex flex-col gap-4 mt-5">
-    <p class="text-pc-texto-p text-sm border-l-4 border-l-pc-rojo pl-2">El monto de la seña de la reserva es de ${{ $reserva['monto_senia'] }}</p>
+    <p class="text-pc-texto-p text-sm border-l-4 border-l-pc-rojo pl-2">El monto de la seña de la reserva es de
+        ${{ $reserva['monto_senia'] }}</p>
     <div class="flex gap-6 self-center">
         <form id="formularioPagarReserva" action="{{ route('reservar.pagar-reserva') }}" method="POST"
             class="row-auto">
@@ -47,9 +48,26 @@
             <input type="hidden" name="paso" id="paso">
             <meta name="csrf-token" content="{{ csrf_token() }}">
             <button type="button" id="mandarFormularioPagarReserva"
-                class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-md my-8 border-4 border-pc-rojo" value="4"
-                onclick="enviarFormularioPagarReserva()">Pagar reserva</button>
+                class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-md my-8 border-4 border-pc-rojo"
+                value="4" onclick="enviarFormularioPagarReserva()">Pagar reserva</button>
         </form>
 
     </div>
 </div>
+
+<div id="modalConfirmacion"
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 invisible">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-11/12 sm:w-1/3">
+        <h2 class="text-lg font-semibold text-gray-700 mb-4">Saldo insuficiente para pagar la reserva. ¿Quiere cargar
+            saldo en su cuenta?</h2>
+        <div class="flex gap-4 justify-center">
+            <button onclick="irCargarSaldo()"
+                class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50">
+                Si
+            </button>
+            <button type="button" onclick="toggleModal()"
+                class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50">
+                No
+            </button>
+        </div>
+    </div>
