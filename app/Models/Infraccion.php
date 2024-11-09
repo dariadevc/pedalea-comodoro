@@ -14,8 +14,8 @@ class Infraccion extends Model
     protected $primaryKey = 'id_infraccion';
     public $timestamps = false;
 
-    
-    protected $fillable = 
+
+    protected $fillable =
     [
         'id_reserva',
         'id_usuario_cliente',
@@ -24,7 +24,7 @@ class Infraccion extends Model
         'motivo',
     ];
 
-    public function reserva() 
+    public function reserva()
     {
         return $this->belongsTo(Reserva::class, 'id_reserva', 'id_reserva');
     }

@@ -50,7 +50,7 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
 
     //Rutas para la gestion de informes:
-    
+
     //Ruta para el menu de informes:
     Route::get('/menuInformes',[InformeController::class,'informeMenu'])->name('informes.menu');
     //Multas realizadas
@@ -70,6 +70,7 @@ Route::middleware(['auth', 'role:inspector'])->group(function () {
     Route::post('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
     Route::put('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
     Route::get('/inspector', function () {return view('inspector.inicio');})->name('inspector.inicio');
+    Route::post('/generar-infraccion', [InfraccionController::class, 'generarInfraccion'])->name('infraccion.generar');
 });
 
 //* CLIENTE

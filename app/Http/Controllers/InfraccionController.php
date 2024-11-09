@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bicicleta;
 use App\Models\Infraccion;
 use App\Models\Reserva;
 use App\Models\Cliente;
@@ -22,9 +23,34 @@ class InfraccionController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function generarInfraccion(Request $request)
     {
-        //
+        // Validar los datos del formulario
+        $request->validate([
+            'patente' => 'required|string',
+            'descripcion' => 'required|string',
+            'puntos' => 'required|integer|min:0',
+        ]);
+        //Encontrar la bicicleta para encontrar la reserva y posteriormente encontrar al cliente.
+        $bicicleta = Bicicleta::where('patente', $request->patente)->first();
+        //Validamos que exista esa bicicleta.
+        if (!$bicicleta) {
+            return response()->json(['error' => 'Bicicleta no encontrada'], 404);
+        }
+        // Encontramos la reserva activa asociada a la bicicleta.
+        $reserva = $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->first();
+        // Validar si la reserva existe.
+        if (!$reserva) {
+            return response()->json(['error' => 'No se encontró una reserva activa para esta bicicleta'], 404);
+        }
+        Infraccion::create([
+            'id_reserva' => $reserva->id_reserva,
+            'id_usuario_cliente' => $reserva->id_cliente_reservo,
+            'descripcion' => $request->descripcion,
+            //'cantidad_puntos'->puntos = $request->puntos,
+            //'fecha_hora'->fecha = Carbon::now(), // Asignar la fecha actual
+        ]);
+        return response()->json(['success' => 'Infracción creada exitosamente.'], 201);
     }
 
     /**
