@@ -95,10 +95,13 @@
                     Pedalea Comodoro
                 </h1>
                 <p class="text-pc-texto-p text-lg text-center lg:text-left mb-6">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lobortis volutpat turpis, ac
-                    elementum massa finibus vel. Mauris sollicitudin porta venenatis. Sed tincidunt sollicitudin tincidunt.
-                    Integer eu urna nisi. Nam in luctus ante. Donec rutrum vestibulum blandit. Fusce egestas nisi arcu, eu
-                    varius ex vulputate id. Proin elementum eros nec nunc egestas, at elementum ex posuere.
+                Con este innovador servicio, podrás disfrutar de una forma de transporte ecológica, saludable y accesible. Reservá, alquilá y devolvé las bicicletas de manera fácil y rápida, todo desde tu dispositivo.
+                </p>
+                <p class="text-pc-texto-p text-lg text-center lg:text-left mb-6">
+                A través de <span class="font-semibold">Pedalea Comodoro</span>, no solo contribuís al cuidado del medioambiente reduciendo la emisión de CO2, sino que también mejorás tu salud al incorporar el ejercicio físico en tu día a día.
+                </p>
+                <p class="text-pc-texto-p text-lg text-center lg:text-left mb-6">
+                ¡Sumate a la movida saludable y sustentable de la ciudad, y pedaleá por Comodoro de una manera más práctica y divertida!
                 </p>
 
                 <!-- BOTONES -->
@@ -158,30 +161,34 @@
                 <h2 class="text-pc-texto-h font-bold text-3xl sm:text-4xl capitalize">¿Cómo funciona?</h2>
             </div>
             <div class="grid justify-center content-center grid-cols-1 px-12 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-                <div class="border-2 border-solid border-pc-rojo rounded-xl p-5 text-center shadow-md">
-                    <p>icono</p>
+                <div class="border-2 border-solid border-pc-rojo rounded-xl p-5 flex flex-col items-center shadow-md">
+                    <x-icon-formulario-rojo height="100px" width="100px" class="mb-4"/>
                     <p class="font-semibold text-xl">1</p>
-                    <h4 class="font-semibold text-xl mb-5">Registrate,</h4>
-                    <p>completando los datos necesarios</p>
+                    <h4 class="font-semibold text-xl mb-1">Registrate</h4>
+                    <p class="">completando los datos necesarios</p>
                 </div>
-                <div class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md">
-                    <p>icono</p>
+                <div class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md flex flex-col items-center">
+                    <x-icon-billetera-azul height="100px" width="100px" class="mb-4"/>
                     <p class="font-semibold text-xl">2</p>
-                    <h4 class="font-semibold text-xl mb-5 under">Cargá saldo,</h4>
+                    <h4 class="font-semibold text-xl mb-1">Cargá saldo,</h4>
                     <p>para pagar las reservas y los alquileres</p>
                 </div>
-                <div class="border-2 border-solid border-pc-rojo rounded-xl p-5 text-center shadow-md">
-                    <p>icono</p>
+                <div class="border-2 border-solid border-pc-rojo rounded-xl p-5 text-center shadow-md flex flex-col items-center">
+                    <x-icon-reloj-rojo height="100px" width="100px" class="mb-4"/>
                     <p class="font-semibold text-xl">3</p>
-                    <h4 class="font-semibold text-xl mb-5 under">Reservá una bicicleta,</h4>
+                    <h4 class="font-semibold text-xl mb-1">Reservá una bicicleta,</h4>
                     <p>indicando el tiempo de uso</p>
                 </div>
-                <div class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md">
-                    <p>icono</p>
+                <div class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md flex flex-col items-center">
+                    <x-icon-bicicleta-azul height="100px" width="100px" class="mb-4"/>
                     <p class="font-semibold text-xl">4</p>
-                    <h4 class="font-semibold text-xl mb-5 under">Retirá tu bicicleta,</h4>
+                    <h4 class="font-semibold text-xl mb-1">Retirá tu bicicleta,</h4>
                     <p>de tu estación de preferencia</p>
                 </div>
+            </div>
+            <div class="text-center mt-4">
+                {{-- TODO: Agregar link al manual de usuario (Cliente) --}}
+                <p>Descargá el manual de usuario</p>
             </div>
         </div>
     </section>
@@ -207,7 +214,6 @@
         </div>
     </section>
 
-    {{-- TODO: Agregar mapa real! --}}
     <!-- MAPA INTERACTIVO  -->
     <section id="seccion-mapa" class="relative scroll-mt-28">
         <div class="container my-12 mt-20">
