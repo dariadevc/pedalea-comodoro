@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Administrativo extends Model
 {
@@ -18,7 +19,12 @@ class Administrativo extends Model
         'id_usuario',
     ];
 
-    public function usuario()
+    /**
+     * Relación con el usuario.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|\App\Models\User
+     */
+    public function usuario(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_usuario', 'id_usuario');
     }

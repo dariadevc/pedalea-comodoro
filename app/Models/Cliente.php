@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use PhpParser\Node\Expr\FuncCall;
 
 class Cliente extends Model
 {
@@ -15,7 +13,7 @@ class Cliente extends Model
 
     protected $table = 'clientes';
     protected $primaryKey = 'id_usuario';
-    public $timestamps = false; // Desactivar marcas de tiempo
+    public $timestamps = false;
 
 
     protected $fillable = [
@@ -24,19 +22,41 @@ class Cliente extends Model
         'puntaje',
         'saldo',
         'fecha_nacimiento',
+
     ];
 
-    public function obtenerReservaActivaModificada(): ?Reserva { 
-        return $this->reservaReservo()->whereIn('id_estado', [1, 5])->first(); 
+    /**
+     * Obtener una reserva activa o modificada, si no existe devuelve null.
+     * 
+     * @return \App\Models\Reserva|null
+     */
+    public function obtenerReservaActivaModificada(): ?Reserva
+    {
+        return $this->reservaReservo()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA])->first();
     }
 
+    /**
+     * Obtener una reserva alquilada o reasignada, si no existe devuelve null.
+     * 
+     * @return \App\Models\Reserva|null
+     */
     public function obtenerReservaAlquiladaReasignada(): ?Reserva
     {
-        return $this->reservaReservo->whereIn('id_estado', [2, 6])->first();
+        return $this->reservaReservo->whereIn('id_estado', [EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->first();
     }
 
 
-    public function pagar($monto, $motivo)
+    /**
+     * Pagar con el saldo del cliente.
+     * 
+     * Si el saldo negativo supera el límite, devuelve false.
+     * 
+     * @param float $monto
+     * @param string $motivo
+     * 
+     * @return bool
+     */
+    public function pagar(float $monto, string $motivo): bool
     {
         $tarifa = Configuracion::where('clave', 'tarifa')->first();
         $limite_multiplicador_negativo = Configuracion::where('clave', 'limite_multiplicador_negativo')->first();
@@ -45,12 +65,6 @@ class Cliente extends Model
         if ($this->saldo - $monto < $monto_limite_negativo) {
             return false;
         }
-        
-        /**
-         * TODO
-         * FALTA HACER LA LOGICA DEL MONTO NEGATIVO
-         * 
-         */
         $this->saldo -= $monto;
         $this->save();
         $this->historialesSaldo()->create([
@@ -62,19 +76,43 @@ class Cliente extends Model
     }
 
     /**
-     * ACA VAN FUNCIONES DEL MODELO
+     * Verifica si esta suspendido en el sistema.
+     * 
+     * @return bool
      */
     public function estoySuspendido(): bool
     {
-        return $this->estadoCliente->nombre == 'Suspendido';
+        return $this->id_estado_cliente == EstadoCliente::SUSPENDIDO;
     }
 
-    public function tengoUnaReserva()
+
+    /**
+     * Verifica si tiene una reserva.
+     * 
+     * Puede ser una reserva activa, modificada, alquilada o reasignada.
+     * 
+     * @return bool
+     */
+    public function tengoUnaReserva(): bool
     {
-        return $this->reservaReservo()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        return $this->reservaReservo()->whereIn('id_estado', [
+            EstadoReserva::ACTIVA,
+            EstadoReserva::ALQUILADA,
+            EstadoReserva::MODIFICADA,
+            EstadoReserva::REASIGNADA,
+        ])->exists();
     }
 
-    public function agregarSaldo($monto, $motivo): void
+    /**
+     * Agrega saldo al cliente y almacena el historial de saldo correspondiente.
+     * 
+     * 
+     * @param int $monto
+     * @param string $motivo
+     *
+     * @return void
+     */
+    public function agregarSaldo(int $monto, string $motivo): void
     {
         $this->saldo += $monto;
         $this->save();
@@ -85,7 +123,15 @@ class Cliente extends Model
         ]);
     }
 
-    public function actualizarPuntaje($puntos)
+    /**
+     * Actualiza el puntaje del cliente.
+     * 
+     * 
+     * @param int $puntos Puede ser negativo o positivo
+     * 
+     * @return void
+     */
+    public function actualizarPuntaje(int $puntos)
     {
         if ($puntos > 0) {
             $this->agregarPuntos($puntos);
@@ -94,39 +140,60 @@ class Cliente extends Model
         }
     }
 
-    public function descontarPuntos($puntos): void
+    /**
+     * Descuenta puntos al cliente.
+     * 
+     * Si el puntaje del cliente es menor a 0, evalúa si le corresponde una multa o una
+     * suspension. Si le corresponde le genera una multa o una suspension.
+     * 
+     * @param int $puntos
+     * 
+     * @return void
+     */
+    public function descontarPuntos(int $puntos): void
     {
         $this->puntaje += $puntos;
         $this->save();
-        $rango_puntos = RangoPuntos::where('rango_minimo', '>=', $this->puntaje)
-            ->where('rango_maximo', '<=', $this->puntaje)
-            ->first();
-        $cliente_rango_puntos = ClienteRangoPuntos::where('id_rango_puntos', $rango_puntos->id_rango_puntos)->where('id_usuario', $this->id_usuario)->first();
-        if ($cliente_rango_puntos->id_rango_puntos == 2 && $cliente_rango_puntos->cantidad_veces >= 3) {
-            if (!$cliente_rango_puntos->multa_hecha_por_dia) {
-                $rango_puntos = RangoPuntos::where('rango_minimo', '>=', $this->puntaje)
+
+        if ($this->puntaje < 0) {
+            $rango_puntos = RangoPuntos::where('rango_minimo', '>=', $this->puntaje)
                 ->where('rango_maximo', '<=', $this->puntaje)
-                ->where('id_rango_puntos', '!=', $cliente_rango_puntos->id_rango_puntos)
                 ->first();
-                $cliente_rango_puntos = ClienteRangoPuntos::where('id_rango_puntos', $rango_puntos->id_rango_puntos)->where('id_usuario', $this->id_usuario)->first();
+            $cliente_rango_puntos = ClienteRangoPuntos::where('id_rango_puntos', $rango_puntos->id_rango_puntos)->where('id_usuario', $this->id_usuario)->first();
+            if ($cliente_rango_puntos->id_rango_puntos == 2 && $cliente_rango_puntos->cantidad_veces >= 3) {
+                if (!$cliente_rango_puntos->multa_hecha_por_dia) {
+                    $rango_puntos = RangoPuntos::where('rango_minimo', '>=', $this->puntaje)
+                        ->where('rango_maximo', '<=', $this->puntaje)
+                        ->where('id_rango_puntos', '!=', $cliente_rango_puntos->id_rango_puntos)
+                        ->first();
+                    $cliente_rango_puntos = ClienteRangoPuntos::where('id_rango_puntos', $rango_puntos->id_rango_puntos)->where('id_usuario', $this->id_usuario)->first();
+                }
+            }
+            if ($cliente_rango_puntos->evaluarCorrespondeMulta($this->puntaje, $rango_puntos)) {
+                $cliente_rango_puntos->generarMulta($rango_puntos, $this);
+            }
+            if ($cliente_rango_puntos->evaluarCorrespondeSuspension($this->puntaje, $rango_puntos)) {
+                $cliente_rango_puntos->generarSuspension($rango_puntos, $this);
             }
         }
-        if ($cliente_rango_puntos->evaluarCorrespondeMulta($this->puntaje, $rango_puntos)) {
-            $cliente_rango_puntos->generarMulta($rango_puntos, $this);
-        }
-        if ($cliente_rango_puntos->evaluarCorrespondeSuspension($this->puntaje, $rango_puntos)) {
-            $cliente_rango_puntos->generarSuspension($rango_puntos, $this);
-        }
-
-
     }
 
-    public function agregarPuntos($puntos): void
+    /**
+     * Agrega puntos al cliente.
+     * 
+     * @param int $puntos
+     * 
+     * @return void
+     */
+    public function agregarPuntos(int $puntos): void
     {
         $this->puntaje += $puntos;
         $this->save();
     }
 
+    /**
+     * 
+     */
     public function reiniciarMultasSuspensionHechasPorDia()
     {
         foreach ($this->rangosPuntos as $rango_puntos) {
@@ -139,21 +206,34 @@ class Cliente extends Model
         }
     }
 
-    public function cambiarEstado($nombre_estado)
+    /**
+     * Cambia el estado del cliente.
+     * 
+     * @param int $id_estado
+     * 
+     * @return void
+     */
+    public function cambiarEstado(int $id_estado): void
     {
-        $estado = EstadoCliente::where('nombre', $nombre_estado)->first();
-        $this->id_estado_cliente = $estado->id_estado;
+        $this->id_estado_cliente = $id_estado;
         $this->save();
     }
 
     /**
-     * ACA VAN FUNCIONES QUE RELACIONAN A OTROS MODELOS
+     * Relación con el estado del cliente.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|\App\Models\EstadoCliente
      */
     public function estadoCliente()
     {
         return $this->belongsTo(EstadoCliente::class, 'id_estado_cliente', 'id_estado');
     }
 
+    /**
+     * Relación con los rangos de puntos.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\ManyToMany|\Illuminate\Database\Eloquent\Collection<\App\Models\RangoPuntos>
+     */
     public function rangosPuntos()
     {
         return $this->belongsToMany(RangoPuntos::class, 'clientes_rangos_puntos', 'id_usuario', 'id_rango_puntos')
@@ -161,36 +241,75 @@ class Cliente extends Model
             ->withPivot('multa_hecha_por_dia', 'suspension_hecha_por_dia', 'cantidad_veces');
     }
 
+
+    /**
+     * Relación con los historiales de saldo.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<\App\Models\HistorialSaldo>
+     */
     public function historialesSaldo()
     {
         return $this->hasMany(HistorialSaldo::class, 'id_usuario', 'id_usuario');
     }
 
+
+    /**
+     * Relación con las multas.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<\App\Models\Multa>
+     */
     public function multas()
     {
         return $this->hasMany(Multa::class, 'id_usuario', 'id_usuario');
     }
 
+    /**
+     * Relación con las suspensiones.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<\App\Models\Suspension>
+     */
     public function suspensiones()
     {
         return $this->hasMany(Suspension::class, 'id_usuario', 'id_usuario');
     }
 
-    public function reservaReservo()  //Cliente que realizo la reserva
+    /**
+     * Relación con las reservas donde el cliente reserva.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<\App\Models\Reserva>
+     */
+    public function reservaReservo()
     {
         return $this->hasMany(Reserva::class, 'id_cliente_reservo', 'id_usuario');
     }
 
-    public function reservaDevuelve() //Cliente que puede devolver si se reasigna la devolucion
+
+    /**
+     * Relación con las reservas donde el cliente devuelve.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<\App\Models\Reserva>
+     */
+    public function reservaDevuelve()
     {
         return $this->hasMany(Reserva::class, 'id_cliente_devuelve', 'id_usuario');
     }
 
+
+    /**
+     * Relación con las infracciones.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<\App\Models\Infraccion>
+     */
     public function infracciones()
     {
         return $this->hasMany(Infraccion::class, 'id_usuario_cliente', 'id_usuario');
     }
 
+    /**
+     * Relación con el usuario.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|\App\Models\User
+     */
     public function usuario()
     {
         return $this->belongsTo(User::class, 'id_usuario', 'id_usuario');

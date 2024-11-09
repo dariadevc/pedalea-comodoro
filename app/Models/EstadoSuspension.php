@@ -10,22 +10,24 @@ class EstadoSuspension extends Model
     use HasFactory;
 
     protected $table = 'estados_suspension';
-    protected $primaryKey = 'id_estado_suspensiones';
+    protected $primaryKey = 'id_estado';
     public $timestamps = false;
 
-    // Los atributos que pueden modificarse
+    public const ACTIVA = 1;
+    public const FINALIZADA = 2;
+
     protected $fillable = [
         'nombre',
     ];
 
-    // Los atributos que no pueden modificarse
-    protected $guarded = [
-        'id_estado_suspensiones',
-    ];
 
-    // Relación con el estado
-    public function multas()
+    /**
+     * Define la relación de pertenencia con el modelo Suspension.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function suspensiones()
     {
-        return $this->hasMany(Suspension::class, 'id_suspensiones');
+        return $this->hasMany(Suspension::class, 'id_estado', 'id_estado');
     }
 }

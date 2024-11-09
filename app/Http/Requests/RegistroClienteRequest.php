@@ -3,13 +3,16 @@
 namespace App\Http\Requests;
 
 use App\Models\User;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Cliente;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Foundation\Http\FormRequest;
 
 class RegistroClienteRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Determina si el usuario está autorizado para realizar esta solicitud.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
@@ -17,15 +20,14 @@ class RegistroClienteRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Obtiene las reglas de validación que se aplican a la solicitud.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
-
         return [
-            'dni' => ['required', 'numeric', 'between:20000000,99999999', 'digits:8', 'unique:'.User::class],
+            'dni' => ['required', 'numeric', 'between:20000000,99999999', 'digits:8', 'unique:'.Cliente::class],
             'nombre' => ['required', 'string', 'max:255'],
             'apellido' => ['required', 'string', 'max:255'],
             'numero_telefono' => ['required', 'regex:/^\+54[0-9]{10}$/'],
@@ -34,6 +36,11 @@ class RegistroClienteRequest extends FormRequest
         ];
     }
 
+    /**
+     * Obtiene los mensajes de error personalizados para la validación.
+     *
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [
@@ -48,11 +55,16 @@ class RegistroClienteRequest extends FormRequest
             'password.required' => 'La contraseña es obligatoria.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
             'numero_telefono.required' => 'El número de teléfono es obligatorio.',
-            'numero_telefono.regex' => 'El número de teléfono debe comenzar con +54 seguido de 10 digítos.',
+            'numero_telefono.regex' => 'El número de teléfono debe comenzar con +54 seguido de 10 dígitos.',
         ];
     }
 
-    protected function prepareForValidation()
+    /**
+     * Prepara los datos para la validación.
+     *
+     * @return void
+     */
+    protected function prepareForValidation(): void
     {
         $this->merge([
             'email' => strtolower($this->email),

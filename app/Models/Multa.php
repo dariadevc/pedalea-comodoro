@@ -16,7 +16,7 @@ class Multa extends Model
     protected $primaryKey = 'id_multa';
     public $timestamps = false;
 
-    //Son modificables:
+    // Son modificables:
     protected $fillable = [
         'id_usuario',
         'id_estado',
@@ -25,37 +25,53 @@ class Multa extends Model
         'descripcion',
     ];
 
-    //No modificables:
-    protected $guarded = [
-        'id_multa',
-    ];
-
-
-    public static function crearMulta($id_usuario, $monto)
+    /**
+     * Crea una nueva multa para un usuario.
+     *
+     * @param int $id_usuario ID del usuario asociado a la multa
+     * @param float $monto Monto de la multa
+     * @return Multa
+     */
+    public static function crearMulta(int $id_usuario, float $monto): Multa
     {
         $multa = new Self();
         $multa->id_usuario = $id_usuario;
         $multa->monto = $monto;
         $multa->fecha_hora = Carbon::now();
 
-
-        $multa->cambiarEstado('Pendiente');
+        $multa->cambiarEstado(EstadoMulta::PENDIENTE);
 
         return $multa;
     }
 
-    public function generarDescripcion($puntaje)
+    /**
+     * Genera una descripción de la multa basada en el puntaje.
+     *
+     * @param int $puntaje Puntaje asociado a la multa
+     * @return void
+     */
+    public function generarDescripcion(int $puntaje): void
     {
         $this->descripcion = "Multa generada por puntaje negativo acumulado: {$puntaje}";
     }
 
-    public function cambiarEstado($nombre_estado)
+    /**
+     * Cambia el estado de la multa.
+     *
+     * @param int $id_estado
+     * @return void
+     */
+    public function cambiarEstado(int $id_estado): void
     {
-        $estado = EstadoMulta::where('nombre', $nombre_estado)->first();
-        $this->id_estado = $estado->id_estado;
+        $this->id_estado = $id_estado;
     }
 
-    public function guardarMultaCreada()
+    /**
+     * Guarda la multa creada y envía una notificación por correo electrónico.
+     *
+     * @return void
+     */
+    public function guardarMultaCreada(): void
     {
         $mensaje = $this->getDetallesMulta();
         $asunto = "Multa realizada";
@@ -70,7 +86,13 @@ class Multa extends Model
         Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
         $this->save();
     }
-    public function getDetallesMulta()
+
+    /**
+     * Obtiene los detalles del mensaje de la multa.
+     *
+     * @return string
+     */
+    public function getDetallesMulta(): string
     {
         $mensaje = "Estimado/a {$this->cliente->usuario->nombre},\n\n" .
             "Esperamos que te encuentres bien. Queremos informarte que se ha generado una multa en tu cuenta debido a un puntaje acumulado negativo.\n\n" .
@@ -84,13 +106,22 @@ class Multa extends Model
         return $mensaje;
     }
 
-    //Una multa tiene un estado de multa:
-    public function estado()
+    /**
+     * Devuelve el estado asociado a la multa.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function estado(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(EstadoMulta::class, 'id_estado', 'id_estado');
     }
 
-    public function cliente()
+    /**
+     * Devuelve el cliente asociado a la multa.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cliente(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cliente::class, 'id_usuario', 'id_usuario');
     }
