@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Reserva;
 use App\Models\Estacion;
-use App\Models\EstadoReserva;
 use Illuminate\View\View;
 use App\Rules\HorarioRetiro;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Models\EstadoReserva;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Validator;
 
 class ReservaController extends Controller
@@ -24,7 +25,7 @@ class ReservaController extends Controller
     /**
      * Muestra el formulario para alquilar una bicicleta, o redirige si hay una reserva activa o estoy suspendido.
      * 
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * @return View|RedirectResponse
      */
     public function indexAlquilar()
     {
@@ -32,17 +33,43 @@ class ReservaController extends Controller
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
+
         if ($cliente->estoySuspendido()) {
             return $this->redireccionarInicio('error', 'Su cuenta se encuentra suspendida.');
         }
 
         $reserva = $cliente->obtenerReservaActivaModificada();
         if ($reserva) {
+            $mensajeError = $this->validarHorarioReserva($reserva, Carbon::now());
+            if ($mensajeError) {
+                return redirect()->back()->with('error', $mensajeError);
+            }
             return $this->mostrarFormularioAlquilar($reserva);
         }
 
         return redirect()->back()->with('error', 'No hay ningun alquiler activo.');
     }
+
+    /**
+     * Valida el horario de retiro de la reserva.
+     *
+     * @param \App\Models\Reserva $reserva
+     * @param \Carbon\Carbon $fecha_hora_actual
+     * 
+     * @return string|null
+     */
+    protected function validarHorarioReserva(Reserva $reserva, Carbon $fecha_hora_actual)
+    {
+        if ($fecha_hora_actual->greaterThan($reserva->fecha_hora_retiro->copy()->addMinutes(15))) {
+            return 'Ya pasó el horario de retiro de la bicicleta.';
+        }
+        if ($fecha_hora_actual->lessThan($reserva->fecha_hora_retiro->copy()->subMinutes(15))) {
+            return 'Todavía no puede alquilar la bicicleta. 15 minutos antes de la hora de retiro puede retirar.';
+        }
+    
+        return null;
+    }
+    
 
     /**
      * Redirecciona al inicio con un mensaje según la clave.
