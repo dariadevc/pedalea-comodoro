@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Reserva;
 use App\Models\Estacion;
-
+use App\Models\EstadoReserva;
 use Illuminate\View\View;
 use App\Rules\HorarioRetiro;
 use Illuminate\Http\JsonResponse;
@@ -61,7 +61,7 @@ class ReservaController extends Controller
      * @param \App\Models\Reserva $reserva
      * @return \Illuminate\View\View
      */
-    protected function mostrarFormularioAlquilar($reserva): View
+    protected function mostrarFormularioAlquilar(Reserva $reserva): View
     {
         $reserva = $reserva->formatearDatosActiva();
         return view('cliente.alquilar', compact('reserva'));
@@ -417,6 +417,7 @@ class ReservaController extends Controller
         /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
+        /** @var \App\Models\Reserva $reserva */
         $reserva = session('reserva_pendiente');
 
         // falta si la reserva no existe, esto:
@@ -591,7 +592,7 @@ class ReservaController extends Controller
         $motivo = 'Devolución de seña';
         $cliente->agregarSaldo($senia, $motivo);
 
-        $reserva->cambiarEstado('Cancelada');
+        $reserva->cambiarEstado(EstadoReserva::CANCELADA);
         $reserva->save();
 
         return $this->redireccionarInicio('success', 'Reserva cancelada y saldo devuelto exitosamente.');

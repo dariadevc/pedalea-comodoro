@@ -8,6 +8,9 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 
 class Reserva extends Model
 {
@@ -128,7 +131,7 @@ class Reserva extends Model
     {
         $motivo = 'Pagar un alquiler';
         if ($cliente->pagar($this->calcularMontoRestante(), $motivo)) {
-            $this->cambiarEstado('Alquilada');
+            $this->cambiarEstado(EstadoReserva::ALQUILADA);
 
             $mensaje = "Su alquiler se ha realizado correctamente.";
             $asunto = "Alquiler realizado";
@@ -160,7 +163,7 @@ class Reserva extends Model
     {
         $motivo = 'Pagar una reserva';
         if ($cliente->pagar($this->senia, $motivo)) {
-            $this->cambiarEstado('Activa');
+            $this->cambiarEstado(EstadoReserva::ACTIVA);
 
             $mensaje = "Su reserva se ha realizado correctamente.";
             $asunto = "Reserva realizada";
@@ -429,6 +432,7 @@ class Reserva extends Model
     /**
      * Relación con la bicicleta asociada a la reserva.
      *
+     * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function bicicleta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
