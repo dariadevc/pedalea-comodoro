@@ -11,6 +11,7 @@ use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\HistorialController;
 use App\Http\Controllers\ReservaController;
+use App\Models\Reserva;
 use Illuminate\Support\Facades\Log;
 
 // Vista principal
@@ -51,7 +52,7 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     Route::put('/modificar-tarifa', [AdministrativoController::class, 'updateTarifa'])->name('administrativo.updateTarifa');
 
     //Rutas para la gestion de informes:
-    
+
     //Ruta para el menu de informes:
     Route::get('/menuInformes',[InformeController::class,'informeMenu'])->name('informes.menu');
     //Multas realizadas
@@ -81,7 +82,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     // TODO: Intentar que funcione todo con una única vista reservar, así podemos agrgear alguna trnasición cuando se agranda el contenedor de la vista
     Route::get('/reservar', [ReservaController::class, 'indexReserva'])->name('reservar');
     Route::post('/reservar/pasos', [ReservaController::class, 'reservarPasos'])->name('reservar.pasos');
-    Route::post('/estaciones/disponibilidad-horario-retiro', [EstacionController::class, 'disponibilidadHorarioRetiro'])->name('estaciones.disponibilidad-horario-retiro');
+    Route::post('/estaciones-disponibilidad-horario-retiro', [EstacionController::class, 'disponibilidadHorarioRetiro'])->name('estaciones.disponibilidad-horario-retiro');
     Route::post('/reservar/crear-reserva', [ReservaController::class, 'crearReserva'])->name('reservar.crearReserva');
     Route::post('/reservar/datos-correctos', [ReservaController::class, 'reservarDatosCorrectos'])->name('reservar.datos-correctos');
     Route::post('/reservar/datos-incorrectos', [ReservaController::class, 'reservarDatosIncorrectos'])->name('reservar.datos-incorrectos');
@@ -89,9 +90,12 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     Route::get('/reserva-actual', [ReservaController::class, 'indexReservaActual'])->name('reserva_actual');
     Route::post('/reserva-actual/buscar-usuario', [ReservaController::class, 'buscarUsuario'])->name('reserva_actual.buscar_usuario');
+    
     Route::get('/reserva-actual/formulario-busqueda', function () {
         return view('cliente.partials.buscar_usuario_reasignar');
     })->name('reserva-actual.buscar-usuario');
+
+    Route::post('/cancelar-reserva', [ReservaController::class, 'cancelar'])->name('reserva-actual.cancelar');
 
     Route::get('/perfil', [ClienteController::class, 'verPerfilCliente'])->name('perfil');
 
@@ -122,9 +126,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     // Cargar Saldo que viene de lo de maxi, el controlador trae la vista...
     Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
     Route::post('/cargar-saldo', [ClienteController::class, 'storeCargarSaldo'])->name('cargar-saldo.store');
-    Route::get('/restar-puntos', [ClienteController::class, 'restarPuntos'])->name('restar-puntos');
-    Route::post('/restar-puntos', [ClienteController::class, 'storeRestarPuntos'])->name('restar-puntos.store');
-    Route::post('/restablecer-multas-hechas', [ClienteController::class, 'restablecer_multas_hechas'])->name('restablecer-multas-hechas');
+    Route::post('/guardar-url-ir-cargar-saldo', [ReservaController::class, 'guardarUrlIrCargarSaldo'])->name('guardar-url-ir-cargar-saldo');
     //Modificar Reserva:
     Route::get('/modificar-reserva', [ReservaController::class, 'modificarReservaC'])->name('reservas.modificar');
     Route::post('/confirmar-modificacion', [ReservaController::class, 'confirmarModificacionReserva'])->name('reservar.confirmarModificacion');

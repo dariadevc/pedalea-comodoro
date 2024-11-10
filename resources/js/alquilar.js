@@ -40,7 +40,7 @@ window.mandarFormularioBiciNoDisponible = function () {
                 window.ocultarDisponible();
                 window.mostrarPagarAlquiler();
             } else {
-                                window.location.href = response.redirectUrl;
+                window.location.href = response.redirectUrl;
             }
         },
         error: function (xhr, status, error) {
@@ -78,7 +78,7 @@ window.mandarFormularioPagar = function (valorBoton) {
                 alert(response.mensaje);
                 window.location.href = response.redirect;
             } else {
-                alert(response.mensaje);
+                window.toggleModal();
             }
         },
         error: function (xhr, status, error) {
@@ -97,4 +97,9 @@ window.ocultarDisponible = function () {
 window.mostrarPagarAlquiler = function () {
     $('#contenedorPagarAlquiler').removeClass('hidden');
 }
+
+window.toggleModal = function () {
+    $('#modalConfirmacion').toggleClass('invisible');
+}
+
 

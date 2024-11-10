@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cliente;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 
 class ClienteController extends Controller
 {
-
+    /** 
+     * Muestra la vista para cargar saldo o redirige si el cliente está suspendido. 
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse 
+     * */
     public function indexCargarSaldo()
     {
+        dump('Cuando este la vista de la pasarela de pago y termine de pagar hay que redirigir a esta vista, si es nulo, redirige al inicio');
+        dump(session('url_actual'));
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
@@ -24,20 +30,27 @@ class ClienteController extends Controller
         }
     }
 
-    public function storeCargarSaldo(Request $request)
+    /**
+     * Actualiza el saldo del cliente en la base de datos.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeCargarSaldo(Request $request): RedirectResponse
     {
         $request->validate([
             'monto' => 'required|numeric'
         ]);
 
-        // ACA TENDRIA QUE IR LA PASARELA DE PAGO
-
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
         if (rand(0, 1)) {
             $monto = floatval($request->monto);
-            $cliente->agregarSaldo($monto);
+            $motivo = 'Carga de saldo';
+            $cliente->agregarSaldo($monto, $motivo);
 
             return redirect()->route('inicio')
                 ->with('success', 'Se ha cargado satisfactoriamente su saldo.');
@@ -46,28 +59,6 @@ class ClienteController extends Controller
                 ->with('error', 'Ha ocurrido un error al procesar su pago.')
                 ->withInput();
         }
-    }
-
-    public function restarPuntos()
-    {
-        return view('cliente.restar_puntos');
-    }
-
-    public function storeRestarPuntos(Request $request)
-    {
-        $usuario = Auth::user();
-        $cliente = $usuario->obtenerCliente();
-        $cliente->actualizarPuntaje($request->puntos);
-        return redirect()->route('restar-puntos')->with('success', 'Puntos restados correctamente ' . $request->puntos);
-    }
-
-    public function restablecer_multas_hechas()
-    {
-        $usuario = Auth::user();
-        $cliente = $usuario->obtenerCliente();
-        $cliente->reiniciarMultasSuspensionHechasPorDia();
-        return redirect()->route('restar-puntos')->with('success', 'Multas restablecidas por dia');
-
     }
 
     public function verPerfilCliente(Request $request){

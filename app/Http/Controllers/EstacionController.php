@@ -3,27 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\Estacion;
-use App\Models\EstadoEstacion;
-use Carbon\Carbon;
+use Illuminate\View\View;
+use App\Rules\HorarioRetiro;
 use Illuminate\Http\Request;
+use App\Models\EstadoEstacion;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Validator;
 
 class EstacionController extends Controller
 {
-    public function index()
+    /**
+     * Muestra el listado de estaciones.
+     * 
+     * @return \Illuminate\View\View
+     */
+    public function index(): View
     {
         $estaciones = Estacion::with(['estado'])->get();
-        return view('estaciones.index', ['estaciones' => $estaciones]);
+        return view('estaciones.index', compact('estaciones'));
     }
 
-    public function create()
+
+    /**
+     * Muestra el formulario para crear una estación.
+     * 
+     * @return \Illuminate\View\View
+     */
+    public function create(): View
     {
         $estados = EstadoEstacion::all();
         return view('estaciones.create', compact('estados'));
     }
 
-    public function store(Request $request)
+    /**
+     * Almacena una nueva estación en la base de datos.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
@@ -43,10 +64,19 @@ class EstacionController extends Controller
         return redirect()->route('estaciones.index')->with('success', 'Estación creada correctamente.');
     }
 
+
+    /**
+     * Muestra el formulario para editar una estación o redirige si hay una reserva asociada a la estación.
+     * 
+     * @param Estacion $estacion
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function edit(Estacion $estacion)
     {
         $existe_reservas_devolucion_en_estacion = $estacion->reservasDevolucion()->whereIn('id_estado', [1, 2, 5, 6])->exists();
         $existe_reservas_retiro_en_estacion = $estacion->reservasRetiro()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+
         if ($existe_reservas_devolucion_en_estacion || $existe_reservas_retiro_en_estacion) {
             return redirect()->back()->with('error', 'No se puede deshabilitar la estación. Está asociada a reservas.');
         } else {
@@ -55,7 +85,16 @@ class EstacionController extends Controller
         }
     }
 
-    public function update(Request $request, Estacion $estacion)
+
+    /**
+     * Actualiza una estación en la base de datos.
+     *
+     * @param Estacion $estacion
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(Request $request, Estacion $estacion): RedirectResponse
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
@@ -72,13 +111,20 @@ class EstacionController extends Controller
         return redirect()->route('estaciones.index')->with('success', 'Estación actualizada correctamente');
     }
 
-    public function destroy(Estacion $estacion)
+    /**
+     * Elimina suavemente (soft delete) una estación de la base de datos.
+     *
+     * @param Estacion $estacion
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(Estacion $estacion): RedirectResponse
     {
         $tiene_reservas_con_devolucion = $estacion->reservasDevolucion()->whereIn('id_estado', [1, 2, 5, 6])->exists();
         $tiene_reservas_con_retiro = $estacion->reservasRetiro()->whereIn('id_estado', [1, 2, 5, 6])->exists();
 
 
-        $bicicletas = $estacion->bicicletas; // Obtiene las bicicletas asociadas a la estación
+        $bicicletas = $estacion->bicicletas;
         $bicicletas_con_reservas = $bicicletas->filter(function ($bicicleta) {
             return $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
         });
@@ -92,8 +138,12 @@ class EstacionController extends Controller
     }
 
 
-
-    public function getEstacionesMapa()
+    /**
+     * Obtener las estaciones disponibles con sus bicicletas disponibles.
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getEstacionesMapa(): JsonResponse
     {
         // CONSULTA SQL PARA TENER LAS ESTACIONES CON BICICLETAS DISPONIBLES
 
@@ -134,8 +184,28 @@ class EstacionController extends Controller
         return response()->json($estacionesConBicicletasDisponibles);
     }
 
-    public function disponibilidadHorarioRetiro(Request $request)
+
+    /**
+     * Obtener estaciones en el horario de retiro seleccionado.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function disponibilidadHorarioRetiro(Request $request): JsonResponse
     {
+        $validador = Validator::make($request->all(), [
+            'horario_retiro' => ['required', new HorarioRetiro],
+        ], [
+            'horario_retiro.required' => 'El horario de retiro es obligatorio.',
+        ]);
+
+        if ($validador->fails()) {
+            // Si hay errores, devolvemos los mensajes como JSON con el código de estado 422
+            return response()->json(['errors' => $validador->errors()], 422);
+        }
+
+
         $estaciones = Estacion::where('id_estado', 1)->get();
         $estaciones_disponibles = [];
         $estaciones_devolucion = [];
@@ -154,7 +224,11 @@ class EstacionController extends Controller
             }
         }
 
-
-        return response()->json(['success' => true, 'mensaje' => $request->input('horario_retiro'), 'estaciones_disponibles' => $estaciones_disponibles, 'estaciones_devolucion' => $estaciones_devolucion]);
+        return response()->json([
+            'success' => true,
+            'mensaje' => $request->input('horario_retiro'),
+            'estaciones_disponibles' => $estaciones_disponibles,
+            'estaciones_devolucion' => $estaciones_devolucion
+        ]);
     }
 }

@@ -56,28 +56,32 @@
         </div>
         <div class="flex gap-6 self-center">
             <!-- Formulario para Indicar que hay Bicicleta Disponible -->
-            <form action="{{ route('alquilar.bici-disponible') }}" method="POST" class="row-auto" id="formularioBiciDisponible">
+            <form action="{{ route('alquilar.bici-disponible') }}" method="POST" class="row-auto"
+                id="formularioBiciDisponible">
                 @csrf
                 <meta name="csrf-token" content="{{ csrf_token() }}">
                 <input type="hidden" name="bicicletaDisponible" value="Si">
-                <button type="button" 
-                    class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer" onclick="mandarFormularioBiciDisponible()">
+                <button type="button"
+                    class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer"
+                    onclick="mandarFormularioBiciDisponible()">
                     Sí
                 </button>
             </form>
-        
+
             <!-- Formulario para Indicar que No hay Bicicleta Disponible -->
-            <form action="{{ route('alquilar.bici-no-disponible') }}" method="POST" class="row-auto" id="formularioBiciNoDisponible">
+            <form action="{{ route('alquilar.bici-no-disponible') }}" method="POST" class="row-auto"
+                id="formularioBiciNoDisponible">
                 @csrf
                 <meta name="csrf-token" content="{{ csrf_token() }}">
                 <input type="hidden" name="bicicletaNoDisponible" value="No">
-                <button type="button" 
-                    class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer" onclick="mandarFormularioBiciNoDisponible()">
+                <button type="button"
+                    class="py-2 w-20 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul cursor-pointer"
+                    onclick="mandarFormularioBiciNoDisponible()">
                     No
                 </button>
             </form>
         </div>
-        
+
     </div>
 
     {{-- PAGAR ALQUILER --}}
@@ -101,14 +105,32 @@
             </form>
         </div>
     </div>
+    <div id="modalConfirmacion"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 invisible">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-11/12 sm:w-1/3">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Saldo insuficiente para pagar el alquiler. ¿Quiere cargar
+                saldo en su cuenta?</h2>
+            <div class="flex gap-4 justify-center">
+                <button onclick="irCargarSaldo()"
+                    class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50">
+                    Si
+                </button>
+                <button type="button" onclick="toggleModal()"
+                    class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50">
+                    No
+                </button>
+            </div>
+        </div>
 
-@endsection
+    @endsection
 
-@section('scripts')
-    @vite('resources/js/alquilar.js')
-    <script>
-        var urlBiciDisponible = "{{ route('alquilar.bici-disponible') }}";
-        var urlBiciNoDisponible = "{{ route('alquilar.bici-no-disponible') }}";
-        var urlPagar = "{{ route('alquilar.pagar-alquiler') }}";
-    </script>
-@endsection
+    @section('scripts')
+        @vite('resources/js/alquilar.js')
+        @vite('resources/js/cargar-saldo.js')
+        <script>
+            var urlBiciDisponible = "{{ route('alquilar.bici-disponible') }}";
+            var urlBiciNoDisponible = "{{ route('alquilar.bici-no-disponible') }}";
+            var urlPagar = "{{ route('alquilar.pagar-alquiler') }}";
+            var urlGuardarCargarSaldo = "{{ route('guardar-url-ir-cargar-saldo') }}";
+        </script>
+    @endsection
