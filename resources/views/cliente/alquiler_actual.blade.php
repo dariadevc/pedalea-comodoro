@@ -55,7 +55,7 @@
 
         @if ($estado_reserva != 'Reasignada')
             <div id="contenedor_botones" class="flex flex-col gap-4 justify-center">
-                <a href="{{ route('devolver') }}"
+                <a href="{{ route('devolver.index') }}"
                     class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50 text-center">Devolver
                     Bicicleta</a>
                 <button type="button" @click="mostrarBusqueda=!mostrarBusqueda"
