@@ -118,9 +118,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
         return view('cliente.historial_suspensiones');  // Renderiza la vista 'Historial de Suspensiones'
     })->name('his_suspensiones');
 
-    Route::get('/estaciones-cliente', function () {
-        return view('cliente.ver_estaciones');  // Renderiza la vista 'Ver Estaciones'
-    })->name('ver_estaciones');
+    Route::get('/estaciones-ver-mapa', [EstacionController::class, 'verMapaCliente'])->name('ver-mapa');
 
     Route::get('/mas', function () {
         return view('cliente.mas_opciones');  // Renderiza la vista 'Ver Estaciones'
