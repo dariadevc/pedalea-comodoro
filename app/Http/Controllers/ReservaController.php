@@ -654,7 +654,7 @@ class ReservaController extends Controller
         }
 
         session()->put('reserva_devolver', $reserva);
-        return view('cliente.devolver2');
+        return view('cliente.devolver');
     }
 
     /**
