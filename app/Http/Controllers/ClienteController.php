@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
@@ -58,5 +59,25 @@ class ClienteController extends Controller
                 ->with('error', 'Ha ocurrido un error al procesar su pago.')
                 ->withInput();
         }
+    }
+
+    public function verPerfilCliente(Request $request){
+
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+
+        if($cliente){
+
+            $perfil = DB::table('clientes')
+            ->select('clientes.puntaje', 'clientes.fecha_nacimiento', 'usuarios.nombre as nombre', 'usuarios.apellido as apellido', 'usuarios.email as email')
+            ->join('usuarios', 'clientes.id_usuario', "=", 'usuarios.id_usuario') 
+            ->where('clientes.id_usuario', $cliente->id_usuario)
+            ->first();
+
+        }else{
+        
+            $perfil = [];
+        }
+        return view('cliente.perfil', compact('perfil'));
     }
 }

@@ -97,9 +97,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     Route::post('/cancelar-reserva', [ReservaController::class, 'cancelar'])->name('reserva-actual.cancelar');
 
-    Route::get('/perfil', function () {
-        return view('cliente.perfil');  // Renderiza la vista 'Perfil'
-    })->name('perfil');
+    Route::get('/perfil', [ClienteController::class, 'verPerfilCliente'])->name('perfil');
 
     Route::get('/movimientos_saldo', function () {
         return view('cliente.movimientos_saldo');  // Renderiza la vista 'Movimientos del Saldo'
