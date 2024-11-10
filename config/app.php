@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://pedalea-comodoro'),
+    'url' => env('APP_URL', 'http://pedalea-comodoro.local'),
 
     /*
     |--------------------------------------------------------------------------
