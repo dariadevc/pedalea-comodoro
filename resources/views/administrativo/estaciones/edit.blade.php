@@ -8,19 +8,12 @@
             class="bg-white p-6 rounded shadow-md">
             @csrf
             @method('PUT')
-            
+
             @if (session('error'))
                 <div class="alert alert-danger">
                     {{ session('error') }}
                 </div>
             @endif
-            
-            <div class="mb-4">
-                <label for="id" class="block text-gray-700 font-bold mb-2">ID:</label>
-                <input type="text" id="id" value="{{ $estacion->id_estacion }}"
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    disabled>
-            </div>
 
             <div class="mb-4">
                 <label for="estado" class="block text-gray-700 font-bold mb-2">Estado:</label>

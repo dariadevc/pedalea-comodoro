@@ -15,13 +15,6 @@
             @endif
 
             <div class="mb-4">
-                <label for="id" class="block text-gray-700 font-bold mb-2">ID:</label>
-                <input type="text" id="id" value="{{ $bicicleta->id_bicicleta }}"
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    disabled>
-            </div>
-
-            <div class="mb-4">
                 <label for="patente" class="block text-gray-700 font-bold mb-2">Patente:</label>
                 <input type="text" id="patente" value="{{ $bicicleta->patente }}"
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

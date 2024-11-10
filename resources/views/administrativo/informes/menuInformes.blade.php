@@ -1,6 +1,16 @@
-@extends('layouts.app-blade')
+@extends('layouts.administrativo')
 
-@section('content')
+@section('nombre_seccion', 'Informes')
+
+@section('contenido')
+    <div class="-pt-8 bg-red-500 w-full h-full flex flex-col">
+        <div class="hidden md:flex space-x-4 place-self-start">
+            <a href="#" class="text-gray-300 hover:text-white">Inicio</a>
+            <a href="#" class="text-gray-300 hover:text-white">Servicios</a>
+            <a href="#" class="text-gray-300 hover:text-white">Sobre Nosotros</a>
+            <a href="#" class="text-gray-300 hover:text-white">Contacto</a>
+        </div>
+    </div>
     <div class="flex items-center justify-center min-h-screen">
         <div class="text-center">
             <!-- Título del Menú (fuera del contenedor con borde) -->
@@ -36,9 +46,3 @@
         </div>
     </div>
 @endsection
-
-
-
-
-
-

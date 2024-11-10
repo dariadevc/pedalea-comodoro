@@ -3,6 +3,7 @@
 @section('content')
     <div class="container mx-auto mt-6">
         <h1 class="text-2xl font-bold mb-4 text-white">Crear Nueva Bicicleta</h1>
+        <p>El sistema generará la patente automáticamente.</p>
 
         <form action="{{ route('bicicletas.store') }}" method="POST" class="bg-white p-6 rounded shadow-md">
             @csrf

@@ -11,10 +11,10 @@ class InformeController extends Controller
 {
 
 
-    public function informeMenu(Request $request)
+    public function informe(Request $request)
     {
 
-        return view('administrativo.informes.menuInformes');
+        return view('administrativo.informes');
     }
 
     public function informeMultas(Request $request)

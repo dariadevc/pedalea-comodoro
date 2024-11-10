@@ -21,7 +21,7 @@ class EstacionController extends Controller
      */
     public function index(): View
     {
-        $estaciones = Estacion::with(['estado'])->get();
+        $estaciones = Estacion::with(['estado'])->withCount('bicicletas')->get();
         return view('administrativo.estaciones.index', ['estaciones' => $estaciones]);
     }
 
