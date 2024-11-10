@@ -9,6 +9,7 @@ use App\Http\Controllers\InformeController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\AdministrativoController;
+use App\Http\Controllers\HistorialController;
 use App\Http\Controllers\ReservaController;
 use App\Models\Reserva;
 use Illuminate\Support\Facades\Log;
@@ -96,9 +97,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     Route::post('/cancelar-reserva', [ReservaController::class, 'cancelar'])->name('reserva-actual.cancelar');
 
-    Route::get('/perfil', function () {
-        return view('cliente.perfil');  // Renderiza la vista 'Perfil'
-    })->name('perfil');
+    Route::get('/perfil', [ClienteController::class, 'verPerfilCliente'])->name('perfil');
 
     Route::get('/movimientos_saldo', function () {
         return view('cliente.movimientos_saldo');  // Renderiza la vista 'Movimientos del Saldo'
@@ -132,6 +131,12 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/modificar-reserva', [ReservaController::class, 'modificarReservaC'])->name('reservas.modificar');
     Route::post('/confirmar-modificacion', [ReservaController::class, 'confirmarModificacionReserva'])->name('reservar.confirmarModificacion');
     Route::post('/rechazar-modificacion', [ReservaController::class, 'rechazarModificacion'])->name('reservas.rechazarModificacion');
+    
+    //Prueba para los historiales:
+    Route::get('/historial-reserva',[HistorialController::class, 'historialReservas'])->name('historiales.reservas');
+    Route::get('/historial-multa',[HistorialController::class, 'historialMultas'])->name('historiales.multas');
+    Route::get('/historial-suspension',[HistorialController::class, 'historialSuspensiones'])->name('historiales.suspensiones');
+    Route::get('/historial-movimiento',[HistorialController::class, 'historialMovimientos'])->name('historiales.movimientos');
 });
 
 
