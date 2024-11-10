@@ -129,6 +129,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     // Cargar Saldo que viene de lo de maxi, el controlador trae la vista...
     Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
     Route::post('/cargar-saldo', [ClienteController::class, 'storeCargarSaldo'])->name('cargar-saldo.store');
+    Route::post('/mostrar-cargar-saldo-modal', [ClienteController::class, 'mostrarCargarSaldoModal'])->name('cargar-saldo.mostrar-modal');
 
     //Modificar Reserva:
     Route::post('/guardar-url-ir-cargar-saldo', [ReservaController::class, 'guardarUrlIrCargarSaldo'])->name('guardar-url-ir-cargar-saldo');
@@ -159,10 +160,6 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
 // Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
-
-Route::post('/guardar-calif', [DevolverController::class, 'guardarCalif'])->name('guardar.calif');
-Route::post('/evaluar-puntaje', [DevolverController::class, 'evaluarPuntaje'])->name('evaluar.puntaje');
-Route::post('/guardar-danios', [DevolverController::class, 'guardarDanios'])->name('guardar.danios');
 
 
 

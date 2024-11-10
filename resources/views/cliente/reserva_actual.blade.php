@@ -6,7 +6,7 @@
     {{-- MOSTRAR DATOS DE RESERVA --}}
     <div class="flex flex-col gap-4 w-3/4 lg:w-1/2">
         <div class="">
-            <p class="text-pc-texto-p text-sm border-l-4 border-l-pc-rojo pl-2">Datos de tu reserva</p>
+            <p class="text-pc-texto-p text-base border-l-4 border-l-pc-rojo pl-2">Datos de tu reserva</p>
         </div>
         <div class="bg-gradient-to-br from-pc-naranja to-pc-rojo p-4 shadow-md rounded-xl w-full">
             <div class="rounded-xl bg-gray-50 p-4 shadow-md flex flex-col gap-3">

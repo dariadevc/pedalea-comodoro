@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use App\Models\User;
 use App\Models\Danio;
 use App\Models\Reserva;
@@ -41,7 +42,7 @@ class ReservaController extends Controller
 
         $reserva = $cliente->obtenerReservaActivaModificada();
         if ($reserva) {
-            return $this->mostrarFormularioAlquilar($reserva);
+            return $this->mostrarFormularioAlquilar($reserva, $cliente);
         }
 
         return redirect()->back()->with('error', 'No hay ningun alquiler activo.');
@@ -62,12 +63,14 @@ class ReservaController extends Controller
      * Muestra el formulario para alquilar una bicicleta.
      *
      * @param \App\Models\Reserva $reserva
+     * @param \App\Models\Cliente $cliente
      * @return \Illuminate\View\View
      */
-    protected function mostrarFormularioAlquilar(Reserva $reserva): View
+    protected function mostrarFormularioAlquilar(Reserva $reserva, Cliente $cliente): View
     {
+        $saldo_actual = $cliente->saldo;
         $reserva = $reserva->formatearDatosActiva();
-        return view('cliente.alquilar', compact('reserva'));
+        return view('cliente.alquilar', compact('reserva', 'saldo_actual'));
     }
 
     /**
@@ -404,9 +407,12 @@ class ReservaController extends Controller
                 $reserva_formateada = $reserva_pendiente->formatearDatosParaReservar();
                 return view('cliente.partials.reservas.confirmar', ['reserva' => $reserva_formateada])->render();
             case '3':
+                /** @var \App\Models\User $usuario */
+                $usuario = Auth::user();
+                $saldo_actual = $usuario->obtenerCliente()->saldo;
                 $reserva_pendiente = session('reserva_pendiente');
                 $reserva_formateada = $reserva_pendiente->formatearDatosParaReservar();
-                return view('cliente.partials.reservas.pagar-reserva', ['reserva' => $reserva_formateada])->render();
+                return view('cliente.partials.reservas.pagar-reserva', ['reserva' => $reserva_formateada, 'saldo_actual' => $saldo_actual])->render();
         }
     }
 
