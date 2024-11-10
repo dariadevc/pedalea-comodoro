@@ -2,36 +2,73 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 
 class InicioController extends Controller
 {
+    /**
+     * Muestra el inicio correspondiente de cada rol.
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function index()
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
 
-        // Verificar el rol del usuario
-        if ($usuario->hasRole('administrativo')) {
-            $admin = $usuario->obtenerCliente();
-            $datos = [
-                'nombre' => $usuario->nombre,
-                'apellido' => $usuario->apellido,
-            ];
-            return view('administrativo.inicio', compact('datos'));
-        } elseif ($usuario->hasRole('cliente')) {
-            $cliente = $usuario->obtenerCliente();
-            $datos = [
-                'nombre' => $usuario->nombre,
-                'apellido' => $usuario->apellido,
-                'saldo' => $cliente->saldo,
-                'puntaje' => $cliente->puntaje,
-            ];
-            return view('cliente.inicio', compact('datos'));
-        } elseif ($usuario->hasRole('inspector')) {
-            return view('inspector.inicio');
+        switch (true) {
+            case $usuario->hasRole('cliente'):
+                return $this->clienteInicio($usuario);
+            case $usuario->hasRole('administrativo'):
+                return $this->administrativoInicio($usuario);
+            case $usuario->hasRole('inspector'):
+                return $this->inspectorInicio();
+            default:
+                return redirect()->route('landing');
         }
+    }
 
-        return redirect()->route('landing');
+    /**
+     * Muestra la vista del inicio para el rol administrativo.
+     * 
+     * @return \Illuminate\View\View
+     */
+    protected function administrativoInicio($usuario): View
+    {
+        $admin = $usuario->obtenerCliente();
+        $datos = [
+            'nombre' => $usuario->nombre,
+            'apellido' => $usuario->apellido,
+        ];
+        return view('administrativo.inicio', compact('datos'));
+    }
+
+    /**
+     * Muestra la vista del inicio para el rol cliente.
+     * 
+     * @param \App\Models\User $usuario
+     * @return \Illuminate\View\View
+     */
+    protected function clienteInicio($usuario): View
+    {
+        $cliente = $usuario->obtenerCliente();
+        $datos = [
+            'nombre' => $usuario->nombre,
+            'apellido' => $usuario->apellido,
+            'saldo' => $cliente->saldo,
+            'puntaje' => $cliente->puntaje,
+        ];
+        return view('cliente.inicio', compact('datos'));
+    }
+
+    /**
+     * Muestra la vista del inicio para el rol inspector.
+     * 
+     * @return \Illuminate\View\View
+     */
+    protected function inspectorInicio(): View
+    {
+        return view('inspector.inicio');
     }
 }

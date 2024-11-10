@@ -9,6 +9,7 @@
     <div class="bg-sky-100 p-6 rounded shadow-md mb-6 text-center">
         <p><strong>Nueva Estación de Retiro:</strong> {{ $nuevaEstacion->nombre}}</p>
         <p><strong>Nueva Hora de Retiro:</strong> {{ $nuevoHoraRetiro }}</p>
+        <p><strong>Nueva Hora de Devolución:</strong> {{ $nuevoHoraDevolucion }}</p>
         <p><strong>Nueva Bicicleta Asignada:</strong> {{ $nuevaBicicleta->patente}}</p>
     </div>
     <div class="flex gap-4 justify-center">
@@ -18,6 +19,7 @@
         <input type="hidden" name="id_estacion_retiro" value="{{ $nuevaEstacion->id_estacion }}">
         <input type="hidden" name="id_bicicleta" value="{{ $nuevaBicicleta->id_bicicleta}}">
         <input type="hidden" name="nuevoHorarioRetiro" value="{{ $nuevoHoraRetiro }}">
+        <input type="hidden" name="nuevoHorarioDevolucion" value="{{ $nuevoHoraDevolucion }}">
         <button type="submit" class="bg-lime-500 hover:bg-lime-700 text-white font-bold py-2 px-4 rounded">Modificar Reserva</button>
     </form>
     <form method="POST" action="{{ route('reservas.rechazarModificacion')}}">
