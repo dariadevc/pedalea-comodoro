@@ -75,7 +75,6 @@ window.mandarFormularioPagar = function (valorBoton) {
         },
         success: function (response) {
             if (response.success) {
-                alert(response.mensaje);
                 window.location.href = response.redirect;
             } else {
                 window.toggleModal();

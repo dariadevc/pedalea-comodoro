@@ -45,6 +45,15 @@ class Cliente extends Model
         return $this->reservaReservo->whereIn('id_estado', [EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->first();
     }
 
+    /**
+     * Obtener una reserva alquilada, si no existe devuelve null.
+     * 
+     * @return \App\Models\Reserva|null
+     */
+    public function obtenerReservaAlquilada(): ?Reserva
+    {
+        return $this->reservaReservo->where('id_estado', EstadoReserva::ALQUILADA)->first();
+    }
 
     /**
      * Pagar con el saldo del cliente.
@@ -191,20 +200,7 @@ class Cliente extends Model
         $this->save();
     }
 
-    /**
-     * 
-     */
-    public function reiniciarMultasSuspensionHechasPorDia()
-    {
-        foreach ($this->rangosPuntos as $rango_puntos) {
 
-            if ($rango_puntos->pivot) {
-                $rango_puntos->pivot->desactivarMultaHechaPorDia();
-                $rango_puntos->pivot->desactivarSuspensionHechaPorDia();
-                $rango_puntos->pivot->save();
-            }
-        }
-    }
 
     /**
      * Cambia el estado del cliente.

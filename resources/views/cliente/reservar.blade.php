@@ -13,6 +13,6 @@
     @vite('resources/js/cargar-saldo.js')
     <script>
         var urlPasos = "{{ route('reservar.pasos') }}"
-        var urlGuardarCargarSaldo = "{{ route('guardar-url-ir-cargar-saldo') }}";
+        var urlCargarSaldoModal = "{{ route('cargar-saldo.mostrar-modal') }}";
     </script>
 @endsection

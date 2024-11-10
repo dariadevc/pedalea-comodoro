@@ -2,11 +2,7 @@ import $ from 'jquery';
 window.$ = $;
 
 
-// $.ajaxSetup({
-//     headers: {
-//         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//     }
-// });
+
 
 window.cargarPaso = function (paso) {
     $.ajax({
@@ -207,7 +203,6 @@ window.enviarFormularioPagarReserva = function () {
         },
         success: function (response) {
             if (response.success) {
-                alert(response.mensaje);
                 window.location.href = response.redirect;
             } else {
                 window.toggleModal();

@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use App\Mail\MailTextoSimple;
 use GuzzleHttp\Client;
+use App\Mail\MailTextoSimple;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
 class Reserva extends Model
@@ -391,6 +391,40 @@ class Reserva extends Model
 
         return $radioTierra * $c;
     }
+
+    // ------------------
+    // DEVOLVER
+    // ------------------
+
+    /**
+     * Realiza la devolución de la reserva.
+     *
+     * @param array $danios_objetos Array de objetos de Danio
+     * @param array $calificaciones Array de id_tipo_calificacion
+     * 
+     * @return void
+     */
+    public function devolver(array $danios_objetos, array $calificaciones): void
+    {
+        /** @var Estacion $estacion_retiro */
+        $estacion_retiro = $this->estacionRetiro;
+        $estacion_retiro->generarCalificacion($calificaciones['id_tipo_calificacion_retiro']);
+
+        /** @var Estacion $estacion_devolucion */
+        $estacion_devolucion = $this->estacionDevolucion;
+        $estacion_devolucion->generarCalificacion($calificaciones['id_tipo_calificacion_devolucion']);
+        
+        $puntaje_obtenido = PuntajeDevolucion::calcularPuntajeObtenido(Carbon::now(), $this->fecha_hora_devolucion->copy()->addMinutes(15), $danios_objetos);
+        
+        /** @var Cliente $cliente_reservo */
+        $cliente_reservo = $this->clienteReservo;
+        $cliente_reservo->actualizarPuntaje($puntaje_obtenido);
+        $this->puntaje_obtenido = $puntaje_obtenido;
+        $this->cambiarEstado(EstadoReserva::FINALIZADA);
+        $this->save();
+
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////////
 

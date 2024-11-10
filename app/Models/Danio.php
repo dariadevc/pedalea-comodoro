@@ -13,11 +13,20 @@ class Danio extends Model
     protected $primaryKey = 'id_danio';
     public $timestamps = false;
 
-    // Los atributos que pueden modificarse
     protected $fillable = [
         'id_tipo_danio',
         'descripcion',
     ];
+
+    /**
+     * Verifica si el tipo de danio es recuperable.
+     *
+     * @return bool
+     */
+    public function esRecuperable(): bool
+    {
+        return $this->id_tipo_danio == TipoDanio::RECUPERABLE;
+    }
 
     /**
      * Define la relación de pertenencia con el modelo TipoDanio.
