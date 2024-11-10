@@ -13,7 +13,12 @@ class InicioController extends Controller
 
         // Verificar el rol del usuario
         if ($usuario->hasRole('administrativo')) {
-            return view('administrativo.inicio');
+            $admin = $usuario->obtenerCliente();
+            $datos = [
+                'nombre' => $usuario->nombre,
+                'apellido' => $usuario->apellido,
+            ];
+            return view('administrativo.inicio', compact('datos'));
         } elseif ($usuario->hasRole('cliente')) {
             $cliente = $usuario->obtenerCliente();
             $datos = [

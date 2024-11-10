@@ -14,13 +14,13 @@ class EstacionController extends Controller
     public function index()
     {
         $estaciones = Estacion::with(['estado'])->get();
-        return view('estaciones.index', ['estaciones' => $estaciones]);
+        return view('administrativo.estaciones.index', ['estaciones' => $estaciones]);
     }
 
     public function create()
     {
         $estados = EstadoEstacion::all();
-        return view('estaciones.create', compact('estados'));
+        return view('administrativo.estaciones.create', compact('estados'));
     }
 
     public function store(Request $request)
@@ -51,7 +51,7 @@ class EstacionController extends Controller
             return redirect()->back()->with('error', 'No se puede deshabilitar la estación. Está asociada a reservas.');
         } else {
             $estados = EstadoEstacion::all();
-            return view('estaciones.edit', compact('estacion', 'estados'));
+            return view('administrativo.estaciones.edit', compact('estacion', 'estados'));
         }
     }
 

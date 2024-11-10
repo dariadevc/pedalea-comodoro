@@ -12,14 +12,14 @@
                 </div>
             @endif
 
-            <div class="mb-4">
+            <div class="mb-4 hidden">
                 <label for="id" class="block text-gray-700 font-bold mb-2">ID:</label>
                 <input type="text" id="id" value="{{ old('id') }}"
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     disabled>
             </div>
 
-            <div class="mb-4">
+            <div class="mb-4 hidden">
                 <label for="patente" class="block text-gray-700 font-bold mb-2">Patente:</label>
                 <input type="text" id="patente" value="{{ old('patente', 'PATENTE RANDOM') }}"
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -32,7 +32,8 @@
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     required>
                     @foreach ($estados as $estado)
-                        <option value="{{ $estado->id_estado }}"  {{ $estado->id_estado == '1' ? 'selected' : '' }}>{{ $estado->nombre }}</option>
+                        <option value="{{ $estado->id_estado }}" {{ $estado->id_estado == '1' ? 'selected' : '' }}>
+                            {{ $estado->nombre }}</option>
                     @endforeach
                 </select>
             </div>
