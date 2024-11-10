@@ -6,7 +6,7 @@
     {{-- MOSTRAR DATOS DE RESERVA --}}
     <div class="flex flex-col gap-4">
         <div class="">
-            <p class="text-pc-texto-p text-sm border-l-4 border-l-pc-azul pl-2">Datos de tu reserva</p>
+            <p class="text-pc-texto-p text-base border-l-4 border-l-pc-azul pl-2">Datos de tu reserva</p>
         </div>
         <div class="bg-gradient-to-br from-pc-celeste to-pc-azul p-4 shadow-md rounded-xl flex flex-col gap-6 w-full">
             <div class="rounded-xl bg-gray-50 p-4 shadow-md flex flex-col gap-3">
@@ -51,7 +51,7 @@
     {{-- INDICAR DISPONIBILIDAD DE BICICLETA EN LA ESTACIÓN --}}
     <div class="flex flex-col gap-4" id="contenedorDisponibilidad">
         <div class="">
-            <p class="text-pc-texto-p text-sm border-l-4 border-l-pc-azul pl-2">¿La bicicleta se encuentra en la
+            <p class="text-pc-texto-p text-base border-l-4 border-l-pc-azul pl-2">¿La bicicleta se encuentra en la
                 estación?</p>
         </div>
         <div class="flex gap-6 self-center">
@@ -85,26 +85,30 @@
     </div>
 
     {{-- PAGAR ALQUILER --}}
-    {{-- TODO: Mostrar lo que corresponda según la selección que haga en el div anterior --}}
-    <div class="flex flex-col gap-4 hidden" id="contenedorPagarAlquiler">
-        <div class="">
-            <p class="text-pc-texto-p text-sm border-l-4 border-l-pc-azul pl-2">
-                Ya podes pagar el alquiler para retirar tu bicicleta!
-            </p>
-        </div>
-        {{-- TODO: Al apretar el botón debería saltar un cartel que tenga un mensaje informando que la reserva se realizó con éxito y un botón que te manda al inicio --}}
+    <div id="contenedorPagarAlquiler" class="flex flex-col gap-4 mt-5 w-full lg:w-1/3 hidden">
+        <!-- Mostrar el saldo aquí -->
+        <p class="text-pc-texto-p text-base border-l-4 border-l-pc-azul pl-2">
+            Saldo actual disponible: ${{ $saldo_actual }} <!-- Asegúrate de tener $saldo_actual disponible -->
+        </p>
+
+        <p class="text-pc-texto-p text-base border-l-4 border-l-pc-azul pl-2">
+            Ya puedes pagar el alquiler para retirar tu bicicleta!
+        </p>
+
         <div class="flex gap-6 self-center">
             <form action="{{ route('alquilar.pagar-alquiler') }}" method="POST" id="formularioPagar">
                 @csrf
                 <meta name="csrf-token" content="{{ csrf_token() }}">
                 <input type="hidden" name="pagar" id="pagar" value="">
-                <button class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-md border-4 border-pc-azul"
+                <button class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-md my-8 border-4 border-pc-azul"
                     type="button" onclick="mandarFormularioPagar('1')">
                     Pagar Alquiler
                 </button>
             </form>
         </div>
     </div>
+
+
     <div id="modalConfirmacion"
         class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 invisible">
         <div class="bg-white p-6 rounded-lg shadow-lg w-11/12 sm:w-1/3">

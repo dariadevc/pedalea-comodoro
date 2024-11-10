@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use App\Models\User;
+use App\Models\Danio;
 use App\Models\Reserva;
 use App\Models\Estacion;
-use App\Models\EstadoReserva;
 use Illuminate\View\View;
 use App\Rules\HorarioRetiro;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Models\EstadoReserva;
+use function Pest\Laravel\json;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+
 use Illuminate\Support\Facades\Validator;
 
 class ReservaController extends Controller
@@ -38,7 +42,7 @@ class ReservaController extends Controller
 
         $reserva = $cliente->obtenerReservaActivaModificada();
         if ($reserva) {
-            return $this->mostrarFormularioAlquilar($reserva);
+            return $this->mostrarFormularioAlquilar($reserva, $cliente);
         }
 
         return redirect()->back()->with('error', 'No hay ningun alquiler activo.');
@@ -59,12 +63,14 @@ class ReservaController extends Controller
      * Muestra el formulario para alquilar una bicicleta.
      *
      * @param \App\Models\Reserva $reserva
+     * @param \App\Models\Cliente $cliente
      * @return \Illuminate\View\View
      */
-    protected function mostrarFormularioAlquilar(Reserva $reserva): View
+    protected function mostrarFormularioAlquilar(Reserva $reserva, Cliente $cliente): View
     {
+        $saldo_actual = $cliente->saldo;
         $reserva = $reserva->formatearDatosActiva();
-        return view('cliente.alquilar', compact('reserva'));
+        return view('cliente.alquilar', compact('reserva', 'saldo_actual'));
     }
 
     /**
@@ -394,16 +400,19 @@ class ReservaController extends Controller
     {
         switch ($request->input('paso')) {
             case '1':
-                return view('cliente.reservas.elegir-datos')->render();
+                return view('cliente.partials.reservas.elegir-datos')->render();
 
             case '2':
                 $reserva_pendiente = session('reserva_pendiente');
                 $reserva_formateada = $reserva_pendiente->formatearDatosParaReservar();
-                return view('cliente.reservas.confirmar', ['reserva' => $reserva_formateada])->render();
+                return view('cliente.partials.reservas.confirmar', ['reserva' => $reserva_formateada])->render();
             case '3':
+                /** @var \App\Models\User $usuario */
+                $usuario = Auth::user();
+                $saldo_actual = $usuario->obtenerCliente()->saldo;
                 $reserva_pendiente = session('reserva_pendiente');
                 $reserva_formateada = $reserva_pendiente->formatearDatosParaReservar();
-                return view('cliente.reservas.pagar-reserva', ['reserva' => $reserva_formateada])->render();
+                return view('cliente.partials.reservas.pagar-reserva', ['reserva' => $reserva_formateada, 'saldo_actual' => $saldo_actual])->render();
         }
     }
 
@@ -632,5 +641,170 @@ class ReservaController extends Controller
 
         $mensaje = $reserva->cancelar();
         return $this->redireccionarInicio('success', $mensaje);
+    }
+
+    /**
+     * Muestra el formulario para devolver una bicicleta.
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function indexDevolver()
+    {
+        /** @var \App\Models\User $usuario */
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+        $reserva = $cliente->obtenerReservaAlquilada();
+
+        if (!$reserva) {
+            return $this->redireccionarInicio('error', 'No tiene un alquiler activo.');
+        }
+
+        session()->put('reserva_devolver', $reserva);
+        return view('cliente.devolver');
+    }
+
+    /**
+     * Muestra el formulario para devolver una bicicleta.
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function mostrarDanios(Request $request): JsonResponse
+    {
+        $danios = Danio::all();
+        $vista_html = view('cliente.partials.devolver.formulario-danio', compact('danios'))->render();
+        return response()->json([
+            'success' => true,
+            'html' => $vista_html,
+        ]);
+    }
+
+    /**
+     * Guarda los danios seleccionados en la session.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function guardarDanios(Request $request): JsonResponse
+    {
+        $validador = Validator::make($request->all(), [
+            'elementos' => 'required|array|min:1',
+        ], [
+            'elementos.required' => 'Debes seleccionar al menos un elemento.',
+            'elementos.min' => 'Debes seleccionar al menos un elemento.',
+        ]);
+
+        if ($validador->fails()) {
+            // Si hay errores, devolvemos los mensajes como JSON con el código de estado 422
+            return response()->json(['errors' => $validador->errors()], 422);
+        }
+
+        $elementosSeleccionados = $request->input('elementos', []);
+        session()->put('daniosSeleccionados', $elementosSeleccionados);
+
+        $vista_calificar = $this->mostrarCalificacion();
+        return response()->json(['success' => true, 'html' => $vista_calificar]);
+    }
+
+    /**
+     * Guarda que no tuvo daños la bicicleta en la session.
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sinDanios(): JsonResponse
+    {
+        session()->put('daniosSeleccionados', []);
+        $vista_calificar = $this->mostrarCalificacion();
+        return response()->json(['success' => true, 'html' => $vista_calificar]);
+    }
+
+    /**
+     * Muestra el formulario para devolver una bicicleta.
+     * 
+     * @return string Retorna una vista renderizada.
+     */
+    public function mostrarCalificacion(): string
+    {
+        return view('cliente.partials.devolver.formulario-calificacion')->render();
+    }
+
+    /**
+     * Guarda la calificación de la estación de retiro y devolución en la session.
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function guardarCalificacion(Request $request): JsonResponse
+    {
+        $validador = Validator::make($request->all(), [
+            'calificacion_retiro' => 'required|integer|min:1|max:5',
+            'calificacion_devolucion' => 'required|integer|min:1|max:5',
+        ], [
+            'calificacion_retiro.required' => 'La calificación de la estación de retiro es obligatoria.',
+            'calificacion_retiro.integer' => 'La calificación debe ser un número entero.',
+            'calificacion_retiro.min' => 'La calificación debe ser al menos 1.',
+            'calificacion_retiro.max' => 'La calificación no puede ser mayor a 5.',
+            'calificacion_devolucion.required' => 'La calificación de la estación de devolución es obligatoria.',
+            'calificacion_devolucion.integer' => 'La calificación debe ser un número entero.',
+            'calificacion_devolucion.min' => 'La calificación debe ser al menos 1.',
+            'calificacion_devolucion.max' => 'La calificación no puede ser mayor a 5.',
+        ]);
+
+        $calificaciones = [
+            'id_tipo_calificacion_retiro' => $request->calificacion_retiro,
+            'id_tipo_calificacion_devolucion' => $request->calificacion_devolucion
+        ];
+        session()->put('calificaciones', $calificaciones);
+
+        if ($validador->fails()) {
+            // Si hay errores, devolvemos los mensajes como JSON con el código de estado 422
+            return response()->json(['errors' => $validador->errors()], 422);
+        }
+
+        $vista_html = $this->mostrarDevolverBicicleta();
+
+        return response()->json([
+            'success' => true,
+            'html' => $vista_html,
+        ]);
+    }
+
+    /**
+     * Muestra el formulario para devolver una bicicleta.
+     * 
+     * @return string Retorna una vista renderizada.
+     */
+    public function mostrarDevolverBicicleta(): string
+    {
+        return view('cliente.partials.devolver.confirmacion-devolucion')->render();
+    }
+
+    /**
+     * Confirmar la devolución de una bicicleta.
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function devolverConfirmar(): RedirectResponse
+    {
+        if (!session()->has('daniosSeleccionados')) {
+            return redirect()->route('devolver.index')->with('error', 'No eligio si tuvo daños o no la bicicleta.');
+        }
+        if (!session()->has('calificaciones')) {
+            return redirect()->route('devolver.index')->with('error', 'No califico las estaciones de devolucion y retiro.');
+        }
+        if (!session()->has('reserva_devolver')) {
+            return redirect()->route('devolver.index')->with('error', 'No se encontro la reserva.');
+        }
+        /** @var Reserva $reserva */
+        $reserva = session('reserva_devolver');
+        $daniosSeleccionados = session('daniosSeleccionados');
+        $calificaciones = session('calificaciones');
+        $danios_objetos = [];
+        foreach ($daniosSeleccionados as $id_danio) {
+            $danios_objetos[] = Danio::findOrFail($id_danio);
+        }
+        $reserva->devolver($danios_objetos, $calificaciones);
+        return $this->redireccionarInicio('success', 'Alquiler finalizado con éxito.');
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DevolverController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClienteController;
@@ -54,7 +55,7 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     //Rutas para la gestion de informes:
 
     //Ruta para el menu de informes:
-    Route::get('/menuInformes',[InformeController::class,'informeMenu'])->name('informes.menu');
+    Route::get('/menuInformes', [InformeController::class, 'informeMenu'])->name('informes.menu');
     //Multas realizadas
     Route::get('/multas', [InformeController::class, 'informeMultas'])->name('informes.multas');
     //Estaciones utilizadas
@@ -71,12 +72,14 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::post('/alquilar/bici-disponible', [ReservaController::class, 'bicicletaDisponible'])->name('alquilar.bici-disponible');
     Route::post('/alquilar/bici-no-disponible', [ReservaController::class, 'bicicletaNoDisponible'])->name('alquilar.bici-no-disponible');
     Route::post('/alquilar/pagar-alquiler',  [ReservaController::class, 'pagarAlquiler'])->name('alquilar.pagar-alquiler');
+
+
+
+    Route::get('/reservar', [ReservaController::class, 'indexReserva'])->name('reservar.index');
     Route::get('/alquiler-actual',  [ReservaController::class, 'indexAlquilerActual'])->name('alquiler_actual');
     Route::post('/alquiler-actual/buscar-usuario', [])->name('alquiler_actual.buscar-usuario');
 
-    Route::get('/devolver', function () {
-        return view('cliente.devolver');  // Renderiza la vista 'Devolver'
-    })->name('devolver');
+
 
 
     // TODO: Intentar que funcione todo con una única vista reservar, así podemos agrgear alguna trnasición cuando se agranda el contenedor de la vista
@@ -90,7 +93,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     Route::get('/reserva-actual', [ReservaController::class, 'indexReservaActual'])->name('reserva_actual');
     Route::post('/reserva-actual/buscar-usuario', [ReservaController::class, 'buscarUsuario'])->name('reserva_actual.buscar_usuario');
-    
+
     Route::get('/reserva-actual/formulario-busqueda', function () {
         return view('cliente.partials.buscar_usuario_reasignar');
     })->name('reserva-actual.buscar-usuario');
@@ -124,8 +127,10 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     // Cargar Saldo que viene de lo de maxi, el controlador trae la vista...
     Route::get('/cargar-saldo', [ClienteController::class, 'indexCargarSaldo'])->name('cargar-saldo.index');
     Route::post('/cargar-saldo', [ClienteController::class, 'storeCargarSaldo'])->name('cargar-saldo.store');
-    Route::post('/guardar-url-ir-cargar-saldo', [ReservaController::class, 'guardarUrlIrCargarSaldo'])->name('guardar-url-ir-cargar-saldo');
+    Route::post('/mostrar-cargar-saldo-modal', [ClienteController::class, 'mostrarCargarSaldoModal'])->name('cargar-saldo.mostrar-modal');
+
     //Modificar Reserva:
+    Route::post('/guardar-url-ir-cargar-saldo', [ReservaController::class, 'guardarUrlIrCargarSaldo'])->name('guardar-url-ir-cargar-saldo');
     Route::get('/modificar-reserva', [ReservaController::class, 'modificarReservaC'])->name('reservas.modificar');
     Route::post('/confirmar-modificacion', [ReservaController::class, 'confirmarModificacionReserva'])->name('reservar.confirmarModificacion');
     Route::post('/rechazar-modificacion', [ReservaController::class, 'rechazarModificacion'])->name('reservas.rechazarModificacion');
@@ -135,6 +140,17 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/historial-multa',[HistorialController::class, 'historialMultas'])->name('historiales.multas');
     Route::get('/historial-suspension',[HistorialController::class, 'historialSuspensiones'])->name('historiales.suspensiones');
     Route::get('/historial-movimiento',[HistorialController::class, 'historialMovimientos'])->name('historiales.movimientos');
+
+
+    // DEVOLVER
+    Route::get('/devolver', [ReservaController::class, 'indexDevolver'])->name('devolver.index');
+    Route::post('/devolver-mostrar-danios', [ReservaController::class, 'mostrarDanios'])->name('devolver.mostrar-danios');
+    Route::post('/devolver-guardar-danios', [ReservaController::class, 'guardarDanios'])->name('devolver.guardar-danios');
+    Route::post('/devolver-sin-danios', [ReservaController::class, 'sinDanios'])->name('devolver.sin-danios');
+    Route::post('/devolver-mostrar-calificacion', [ReservaController::class, 'mostrarCalificacion'])->name('devolver.mostrar-calificacion');
+    Route::post('/devolver-guardar-calificacion', [ReservaController::class, 'guardarCalificacion'])->name('devolver.guardar-calificacion');
+    Route::post('/devolver-mostrar-devolver-bicicleta', [ReservaController::class, 'mostrarDevolverBicicleta'])->name('devolver.mostrar-devolver-bicicleta');
+    Route::post('/devolver', [ReservaController::class, 'devolverConfirmar'])->name('devolver.confirmar');
 });
 
 
@@ -142,6 +158,8 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
 // Ruta para obtener estaciones
 Route::get('/estacionesMapa', [EstacionController::class, 'getEstacionesMapa'])->name('estacionesMapa');
+
+
 
 
 
