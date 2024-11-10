@@ -86,7 +86,7 @@
                             Actual</x-item-sidebar>
                         <x-item-sidebar ruta="alquiler_actual" @click="open = false">Alquiler
                             Actual</x-item-sidebar>
-                        <x-item-sidebar ruta="ver_estaciones" @click="open = false"> Estaciones</x-item-sidebar>
+                        <x-item-sidebar ruta="ver-mapa" @click="open = false"> Estaciones</x-item-sidebar>
                     </ul>
                 </div>
                 <hr>
@@ -148,8 +148,8 @@
                 </a>
                 {{-- ESTACIONES --}}
                 <a id="estaciones"
-                    class=" flex flex-col justify-center items-center gap-1 p-1 @if (Request::routeIs('ver_estaciones')) bg-pc-rojo text-white font-bold hover:bg-transparent hover:text-current @endif"
-                    href="{{ route('ver_estaciones') }}">
+                    class=" flex flex-col justify-center items-center gap-1 p-1 @if (Request::routeIs('ver-mapa')) bg-pc-rojo text-white font-bold hover:bg-transparent hover:text-current @endif"
+                    href="{{ route('ver-mapa') }}">
                     <x-icon-mapa-oscuro height="30px" width="30px" />
                     <p class="font-semibold text-pc-texto-p">Estaciones</p>
                 </a>
