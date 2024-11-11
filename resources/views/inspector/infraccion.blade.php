@@ -33,8 +33,7 @@
             <br>
             <textarea name="motivo" id="motivo" rows="5"
                 class="w-full mt-4 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 bg-gray-50 border-b-2 text-pc-texto-p resize-none"
-                placeholder="Ingrese el motivo..." required>
-            </textarea>
+                placeholder="Ingrese el motivo..." required></textarea>
         </div>
 
         <!-- Mensajes de éxito o error -->
