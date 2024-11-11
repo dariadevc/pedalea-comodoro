@@ -33,13 +33,15 @@ class RegisteredUserController extends Controller
 
         $user->assignRole('cliente');
 
-        Cliente::create([
+        $cliente = Cliente::create([
             'fecha_nacimiento' => $request->fecha_nacimiento,
             'id_usuario' => $user->id_usuario,
             'id_estado_cliente' => 1,
             'puntaje' => 0,
             'saldo' => 0.00,
         ]);
+        $cliente->crearRangosPuntos();
+
 
         event(new Registered($user));
 

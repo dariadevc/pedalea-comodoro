@@ -1,5 +1,5 @@
 <p class="text-pc-texto-p text-lg border-l-4 border-l-pc-azul pl-2 mb-3">Seleccione un daño</p>
-<form id="formularioDanios" action="{{ route('devolver.guardar-danios') }}" method="POST" class="flex flex-col gap-3 p-4 shadow-md rounded-xl border border-pc-azul bg-white">cliente.reservas
+<form id="formularioDanios" action="{{ route('devolver.guardar-danios') }}" method="POST" class="flex flex-col gap-3 p-4 shadow-md rounded-xl border border-pc-azul bg-white">
     @csrf
     @foreach ($danios as $danio)
         <div class="flex items-center gap-2">

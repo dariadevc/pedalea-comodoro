@@ -99,6 +99,7 @@ window.activarFormularioDatosReserva = function (response) {
         $('#error-horario-retiro').empty();
         window.agregarOpcionesDevolucion(response);
         window.agregarOpcionesRetiro(response);
+        $('#tiempo_uso').empty();
         $('#tiempo_uso').append(` <option value="" selected>Seleccione una opción</option> <option value="1">1h</option> <option value="2">2hs</option> <option value="3">3hs</option> <option value="4">4hs</option> <option value="5">5hs</option> <option value="6">6hs</option> `);
         $('#tiempo_uso').prop('disabled', false);
     }
