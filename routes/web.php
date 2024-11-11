@@ -62,14 +62,18 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     Route::get('/informe/rutas', [InformeController::class, 'informeRutas'])->name('informes.rutas');
     Route::get('/informe/alquiler', [InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
 });
+
+//* INSPECTOR
 Route::middleware(['auth', 'role:inspector'])->group(function () {
 
     // Rutas para gestión de bicicletas
-    Route::get('/bicicletas', [BicicletaController::class, 'vistaDeshabilitar'])->name('inspector.bicicletas');
+    Route::get('/deshabilitar-bicicleta', [BicicletaController::class, 'vistaDeshabilitar'])->name('inspector.bicicletas');
     Route::get('/infraccion', [InfraccionController::class, 'index'])->name('inspector.infraccion');
     Route::post('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
     Route::put('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
-    Route::get('/inspector', function () {return view('inspector.inicio');})->name('inspector.inicio');
+    Route::get('/inspector', function () {
+        return view('inspector.inicio');
+    })->name('inspector.inicio');
     Route::post('/generar-infraccion', [InfraccionController::class, 'generarInfraccion'])->name('infraccion.generar');
 });
 

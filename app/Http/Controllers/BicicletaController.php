@@ -50,7 +50,7 @@ class BicicletaController extends Controller
             'id_estacion_actual' => $request->input('estacion') == '0' ? null : $request->input('estacion'),
         ]);
 
-        return redirect()->route('bicicletas.index')->with('success', 'Bicicleta creada exitosamente.');
+        return redirect()->route('administrativo.bicicletas.index')->with('success', 'Bicicleta creada exitosamente.');
     }
 
     /**
@@ -64,7 +64,7 @@ class BicicletaController extends Controller
     {
         $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
         if ($existe_bicicleta_en_reservas) {
-            return redirect()->route('bicicletas.index')->with('error', 'No se puede editar la bicicleta. Está asociada a una reserva.');
+            return redirect()->route('administrativo.bicicletas.index')->with('error', 'No se puede editar la bicicleta. Está asociada a una reserva.');
         } else {
             $estados = EstadoBicicleta::all();
             $estaciones = Estacion::where('id_estado', EstadoEstacion::ACTIVA)->get();
@@ -92,7 +92,7 @@ class BicicletaController extends Controller
 
         $bicicleta->editar($id_estado, $id_estacion_actual);
 
-        return redirect()->route('bicicletas.index')->with('success', 'Bicicleta actualizada correctamente');
+        return redirect()->route('administrativo.bicicletas.index')->with('success', 'Bicicleta actualizada correctamente');
     }
 
     public function destroy(Bicicleta $bicicleta)
@@ -100,10 +100,10 @@ class BicicletaController extends Controller
         $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
 
         if ($existe_bicicleta_en_reservas) {
-            return redirect()->route('bicicletas.index')->with('error', 'No se puede eliminar la bicicleta. Está asociada a una reserva.');
+            return redirect()->route('administrativo.bicicletas.index')->with('error', 'No se puede eliminar la bicicleta. Está asociada a una reserva.');
         } else {
             $bicicleta->delete();
-            return redirect()->route('bicicletas.index')->with('success', 'Bicicleta eliminada correctamente');
+            return redirect()->route('administrativo.bicicletas.index')->with('success', 'Bicicleta eliminada correctamente');
         }
     }
     public function deshabilitar(Request $request)

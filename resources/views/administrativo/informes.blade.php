@@ -47,6 +47,8 @@
             </template>
         </div>
     </div> --}}
+
+    {{-- TODO: Conectar para que se muestre bien el informe en el contenedor!! Capaz es mejor usar jquery que alpinejs --}}
     <div x-data="{ informeActual: '' }" class="w-full flex flex-col gap-4">
         <div class="flex justify-around p-1 py-2 rounded-full">
             <button @click="informeActual = 'multas'; cargarInforme('multas')"
