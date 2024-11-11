@@ -4,6 +4,9 @@
         <span class="block sm:inline">{{ session('error') }}</span>
     </div>
     @endif
+    <div id="errorCarga" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2 invisible" role="alert">
+        <span class="block sm:inline"></span>
+    </div>
     <h2 class="text-2xl font-bold text-red-600 mb-4">Cargar Saldo</h2>
     <form id="paymentForm" action="{{ route('cargar-saldo.store') }}" method="POST" class="space-y-4">
         @csrf
@@ -14,7 +17,7 @@
                 <option value="1000" {{ old('amount') == '1000' ? 'selected' : '' }}>$1,000.00</option>
                 <option value="2500" {{ old('amount') == '2500' ? 'selected' : '' }}>$2,500.00</option>
                 <option value="5000" {{ old('amount') == '5000' ? 'selected' : '' }}>$5,000.00</option>
-                <option value="75000" {{ old('amount') == '7500' ? 'selected' : '' }}>$7,500.00</option>
+                <option value="7500" {{ old('amount') == '7500' ? 'selected' : '' }}>$7,500.00</option>
                 <option value="10000" {{ old('amount') == '10000' ? 'selected' : '' }}>$1,0000.00</option>
             </select>
             @error('amount')

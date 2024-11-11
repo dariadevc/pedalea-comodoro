@@ -7,7 +7,11 @@ use App\Models\Bicicleta;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\EstadoBicicleta;
+use App\Models\EstadoEstacion;
+use App\Models\EstadoReserva;
 use Illuminate\Http\RedirectResponse;
+
+use function Laravel\Prompts\alert;
 
 class BicicletaController extends Controller
 {
@@ -30,7 +34,7 @@ class BicicletaController extends Controller
     public function create()
     {
         $estados = EstadoBicicleta::all();
-        $estaciones = Estacion::where('id_estado', 1)->get();
+        $estaciones = Estacion::where('id_estado', EstadoEstacion::ACTIVA)->get();
         return view('administrativo.bicicletas.create', compact('estados', 'estaciones'));
     }
 
@@ -58,12 +62,12 @@ class BicicletaController extends Controller
      */
     public function edit(Bicicleta $bicicleta)
     {
-        $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
         if ($existe_bicicleta_en_reservas) {
             return redirect()->route('bicicletas.index')->with('error', 'No se puede editar la bicicleta. Está asociada a una reserva.');
         } else {
             $estados = EstadoBicicleta::all();
-            $estaciones = Estacion::where('id_estado', 1)->get();
+            $estaciones = Estacion::where('id_estado', EstadoEstacion::ACTIVA)->get();
             return view('administrativo.bicicletas.edit', compact('bicicleta', 'estados', 'estaciones'));
         }
     }
@@ -78,7 +82,7 @@ class BicicletaController extends Controller
         if ($request->input('estacion') == '0') {
             $id_estacion_actual = null;
         } else {
-            $estacion_inactiva = Estacion::where('id_estado', 2)->where('id_estacion', $request->estacion)->exists();
+            $estacion_inactiva = Estacion::where('id_estado', EstadoEstacion::INACTIVA)->where('id_estacion', $request->estacion)->exists();
             if ($estacion_inactiva) {
                 return redirect()->back()->with('error', 'La estación seleccionada no está habilitada.');
             }
@@ -93,7 +97,7 @@ class BicicletaController extends Controller
 
     public function destroy(Bicicleta $bicicleta)
     {
-        $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
 
         if ($existe_bicicleta_en_reservas) {
             return redirect()->route('bicicletas.index')->with('error', 'No se puede eliminar la bicicleta. Está asociada a una reserva.');
@@ -101,5 +105,35 @@ class BicicletaController extends Controller
             $bicicleta->delete();
             return redirect()->route('bicicletas.index')->with('success', 'Bicicleta eliminada correctamente');
         }
+    }
+    public function deshabilitar(Request $request)
+    {
+        $request->validate([
+            'patente' => 'required|string',
+        ]);
+
+        // Buscar la bicicleta por patente
+        $bicicleta = Bicicleta::where('patente', $request->input('patente'))->first();
+
+        if (!$bicicleta) {
+            return redirect()->back()->with('error', 'La bicicleta no fue encontrada.');
+        }
+
+        if ($bicicleta->id_estado == 2) {
+            return redirect()->back()->with('error', 'La bicicleta ya está deshabilitada.');
+        }
+        $existe_bicicletas_en_reserva = $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        if ($existe_bicicletas_en_reserva == true) {
+            return redirect()->route('inspector.bicicletas')->with('error', 'No se puede deshabilitar la bicicleta. Está asociada a una reserva.');
+        } else {
+            $estadoDeshabilitado = 2; // Asegúrate de que este ID sea correcto
+            $bicicleta->id_estado = $estadoDeshabilitado;
+            $bicicleta->save();
+            return redirect()->route('inspector.bicicletas')->with('success', 'Bicicleta deshabilitada correctamente.');
+        }
+    }
+    public function vistaDeshabilitar()
+    {
+        return view('inspector.bicicletas');
     }
 }

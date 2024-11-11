@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Estacion;
+use App\Models\EstadoBicicleta;
 use Illuminate\View\View;
 use App\Rules\HorarioRetiro;
 use Illuminate\Http\Request;
 use App\Models\EstadoEstacion;
+use App\Models\EstadoReserva;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
@@ -74,8 +76,8 @@ class EstacionController extends Controller
      */
     public function edit(Estacion $estacion)
     {
-        $existe_reservas_devolucion_en_estacion = $estacion->reservasDevolucion()->whereIn('id_estado', [1, 2, 5, 6])->exists();
-        $existe_reservas_retiro_en_estacion = $estacion->reservasRetiro()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        $existe_reservas_devolucion_en_estacion = $estacion->reservasDevolucion()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
+        $existe_reservas_retiro_en_estacion = $estacion->reservasRetiro()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
 
         if ($existe_reservas_devolucion_en_estacion || $existe_reservas_retiro_en_estacion) {
             return redirect()->back()->with('error', 'No se puede deshabilitar la estación. Está asociada a reservas.');
@@ -120,13 +122,13 @@ class EstacionController extends Controller
      */
     public function destroy(Estacion $estacion): RedirectResponse
     {
-        $tiene_reservas_con_devolucion = $estacion->reservasDevolucion()->whereIn('id_estado', [1, 2, 5, 6])->exists();
-        $tiene_reservas_con_retiro = $estacion->reservasRetiro()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        $tiene_reservas_con_devolucion = $estacion->reservasDevolucion()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
+        $tiene_reservas_con_retiro = $estacion->reservasRetiro()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
 
 
         $bicicletas = $estacion->bicicletas;
         $bicicletas_con_reservas = $bicicletas->filter(function ($bicicleta) {
-            return $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+            return $bicicleta->reservas()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
         });
 
         if ($tiene_reservas_con_devolucion || $tiene_reservas_con_retiro || $bicicletas_con_reservas->isNotEmpty()) {
@@ -144,14 +146,14 @@ class EstacionController extends Controller
      * 
      * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Estacion>
      */
-    public function getEstacionesDisponiblesParaVerMapa()
+    public static function getEstacionesDisponiblesParaVerMapa()
     {
-        $estacionesConBicicletasDisponibles = Estacion::where('id_estado', 1)
+        $estacionesConBicicletasDisponibles = Estacion::where('id_estado', EstadoEstacion::ACTIVA)
             ->select('nombre', 'latitud', 'longitud')
             ->withCount(['bicicletas as cantidad_bicicletas_disponibles' => function ($query) {
-                $query->where('id_estado', 1)
+                $query->where('id_estado', EstadoBicicleta::DISPONIBLE)
                     ->whereDoesntHave('reservas', function ($subQuery) {
-                        $subQuery->whereIn('id_estado', [1, 2, 5, 6]);
+                        $subQuery->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA]);
                     });
             }])
             ->get();
@@ -192,7 +194,7 @@ class EstacionController extends Controller
         }
 
 
-        $estaciones = Estacion::where('id_estado', 1)->get();
+        $estaciones = Estacion::where('id_estado', EstadoEstacion::ACTIVA)->get();
         $estaciones_disponibles = [];
         $estaciones_devolucion = [];
         $horario_retiro = $request->input('horario_retiro');

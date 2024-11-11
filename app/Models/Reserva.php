@@ -332,7 +332,7 @@ class Reserva extends Model
             return null;
         }
 
-        $estaciones = Estacion::where('id_estado', 1)
+        $estaciones = Estacion::where('id_estado', EstadoEstacion::ACTIVA)
             ->where('id_estacion', '!=', $estacionId)
             ->get();
 
@@ -420,6 +420,9 @@ class Reserva extends Model
         $cliente_reservo = $this->clienteReservo;
         $cliente_reservo->actualizarPuntaje($puntaje_obtenido);
         $this->puntaje_obtenido = $puntaje_obtenido;
+        if (!$this->bicicleta->estoyDisponible()) {
+            $this->bicicleta->habilitar();
+        }
         $this->cambiarEstado(EstadoReserva::FINALIZADA);
         $this->save();
 

@@ -41,9 +41,9 @@ class Estacion extends Model
      */
     public function getBicicletaDisponibleAhora(): ?Bicicleta
     {
-        return $this->bicicletas()->where('id_estado', 1)
+        return $this->bicicletas()->where('id_estado', EstadoBicicleta::DISPONIBLE)
             ->whereDoesntHave('reservas', function ($query) {
-                $query->whereIn('id_estado', [1, 2, 5, 6]);
+                $query->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA]);
             })->first();
     }
 
@@ -59,16 +59,16 @@ class Estacion extends Model
         $fecha_hora_retiro = $fecha_hora_retiro->subMinutes(30);
 
         $reserva_disponible = $this->reservasDevolucion()
-            ->whereIn('id_estado', [1, 2, 5, 6])
+            ->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])
             ->where('fecha_hora_devolucion', '<=', $fecha_hora_retiro)
             ->first();
         if ($reserva_disponible) {
             $bicicleta = $reserva_disponible->bicicleta;
         } else {
             $bicicleta = $this->bicicletas()
-                ->where('id_estado', 1)
+                ->where('id_estado', EstadoBicicleta::DISPONIBLE)
                 ->whereDoesntHave('reservas', function ($query) {
-                    $query->whereIn('id_estado', [1, 2, 5, 6]);
+                    $query->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA]);
                 })->first();
         }
 
@@ -87,7 +87,7 @@ class Estacion extends Model
         $fecha_hora_retiro = $fecha_hora_retiro->subMinutes(30);
 
         return $this->reservasDevolucion()
-            ->whereIn('id_estado', [1, 2, 5, 6])
+            ->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])
             ->where('fecha_hora_devolucion', '<=', $fecha_hora_retiro)
             ->exists();
     }
@@ -99,9 +99,9 @@ class Estacion extends Model
      */
     public function hayDisponibilidadAhora(): bool
     {
-        return $this->bicicletas()->where('id_estado', 1)
+        return $this->bicicletas()->where('id_estado', EstadoBicicleta::DISPONIBLE)
             ->whereDoesntHave('reservas', function ($query) {
-                $query->whereIn('id_estado', [1, 2, 5, 6]);
+                $query->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA]);
             })->exists();
     }
 

@@ -194,7 +194,7 @@ window.enviarFormularioDatosIncorrectos = function () {
 
 window.enviarFormularioPagarReserva = function () {
     var form = $('#formularioPagarReserva');
-
+    console.log('entre por aca');
     $.ajax({
         url: form.attr('action'),
         type: form.attr('method'),
@@ -206,7 +206,8 @@ window.enviarFormularioPagarReserva = function () {
             if (response.success) {
                 window.location.href = response.redirect;
             } else {
-                window.toggleModal();
+                window.toggleModal('modalConfirmacion');
+
             }
         },
         error: function (xhr, status, error) {
@@ -217,6 +218,6 @@ window.enviarFormularioPagarReserva = function () {
     });
 }
 
-window.toggleModal = function () {
-    $('#modalConfirmacion').toggleClass('invisible');
+window.toggleModal = function (id_contenedor) {
+    $(`#${id_contenedor}`).toggleClass('invisible');
 }

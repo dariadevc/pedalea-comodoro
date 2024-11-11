@@ -13,11 +13,14 @@ class Infraccion extends Model
     protected $primaryKey = 'id_infraccion';
     public $timestamps = false;
 
-    protected $fillable = [
+    
+    protected $fillable = 
+    [
         'id_reserva',
         'id_usuario_cliente',
         'id_usuario_inspector',
         'cantidad_puntos',
+        'fecha_hora',
         'motivo',
     ];
 

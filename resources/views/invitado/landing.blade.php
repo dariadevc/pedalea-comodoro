@@ -95,13 +95,18 @@
                     Pedalea Comodoro
                 </h1>
                 <p class="text-pc-texto-p text-lg text-center lg:text-left mb-6">
-                Con este innovador servicio, podrás disfrutar de una forma de transporte ecológica, saludable y accesible. Reservá, alquilá y devolvé las bicicletas de manera fácil y rápida, todo desde tu dispositivo.
+                    Con este innovador servicio, podrás disfrutar de una forma de transporte ecológica, saludable y
+                    accesible. Reservá, alquilá y devolvé las bicicletas de manera fácil y rápida, todo desde tu
+                    dispositivo.
                 </p>
                 <p class="text-pc-texto-p text-lg text-center lg:text-left mb-6">
-                A través de <span class="font-semibold">Pedalea Comodoro</span>, no solo contribuís al cuidado del medioambiente reduciendo la emisión de CO2, sino que también mejorás tu salud al incorporar el ejercicio físico en tu día a día.
+                    A través de <span class="font-semibold">Pedalea Comodoro</span>, no solo contribuís al cuidado del
+                    medioambiente reduciendo la emisión de CO2, sino que también mejorás tu salud al incorporar el ejercicio
+                    físico en tu día a día.
                 </p>
                 <p class="text-pc-texto-p text-lg text-center lg:text-left mb-6">
-                ¡Sumate a la movida saludable y sustentable de la ciudad, y pedaleá por Comodoro de una manera más práctica y divertida!
+                    ¡Sumate a la movida saludable y sustentable de la ciudad, y pedaleá por Comodoro de una manera más
+                    práctica y divertida!
                 </p>
 
                 <!-- BOTONES -->
@@ -162,25 +167,28 @@
             </div>
             <div class="grid justify-center content-center grid-cols-1 px-12 sm:grid-cols-2 lg:grid-cols-4 gap-12">
                 <div class="border-2 border-solid border-pc-rojo rounded-xl p-5 flex flex-col items-center shadow-md">
-                    <x-icon-formulario-rojo height="100px" width="100px" class="mb-4"/>
+                    <x-icon-formulario-rojo height="100px" width="100px" class="mb-4" />
                     <p class="font-semibold text-xl">1</p>
                     <h4 class="font-semibold text-xl mb-1">Registrate</h4>
                     <p class="">completando los datos necesarios</p>
                 </div>
-                <div class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md flex flex-col items-center">
-                    <x-icon-billetera-azul height="100px" width="100px" class="mb-4"/>
+                <div
+                    class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md flex flex-col items-center">
+                    <x-icon-billetera-azul height="100px" width="100px" class="mb-4" />
                     <p class="font-semibold text-xl">2</p>
                     <h4 class="font-semibold text-xl mb-1">Cargá saldo</h4>
                     <p>para pagar las reservas y los alquileres</p>
                 </div>
-                <div class="border-2 border-solid border-pc-rojo rounded-xl p-5 text-center shadow-md flex flex-col items-center">
-                    <x-icon-reloj-rojo height="100px" width="100px" class="mb-4"/>
+                <div
+                    class="border-2 border-solid border-pc-rojo rounded-xl p-5 text-center shadow-md flex flex-col items-center">
+                    <x-icon-reloj-rojo height="100px" width="100px" class="mb-4" />
                     <p class="font-semibold text-xl">3</p>
                     <h4 class="font-semibold text-xl mb-1">Reservá una bicicleta</h4>
                     <p>indicando el tiempo de uso</p>
                 </div>
-                <div class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md flex flex-col items-center">
-                    <x-icon-bicicleta-azul height="100px" width="100px" class="mb-4"/>
+                <div
+                    class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md flex flex-col items-center">
+                    <x-icon-bicicleta-azul height="100px" width="100px" class="mb-4" />
                     <p class="font-semibold text-xl">4</p>
                     <h4 class="font-semibold text-xl mb-1">Retirá la bicicleta</h4>
                     <p>en tu estación de preferencia</p>
@@ -214,7 +222,7 @@
         </div>
     </section>
 
-    <!-- MAPA INTERACTIVO  -->
+
     <section id="seccion-mapa" class="relative scroll-mt-28">
         <div class="container my-12 mt-20">
             <!-- CONTENIDO -->
@@ -227,17 +235,28 @@
                     de cada estación.</p>
             </div>
             <!-- Contenedor para el mapa interactivo -->
-            <div class="flex justify-center flex-1 mb-0 z-0" id="mapa" style="width: 100%; height: 500px;"></div>
+            <div
+            class="w-full md:w-3/4 lg:w-2/3 h-[600px] mx-auto rounded-lg overflow-hidden shadow-lg border border-gray-200">
+            @include('estaciones.partials.mapa-estaciones', ['estaciones' => $estaciones])
+        </div>
         </div>
     </section>
+    <!-- MAPA INTERACTIVO  -->
+    {{-- <div class="flex flex-col space-y-4 p-6 bg-white shadow-md rounded-lg mx-auto w-full max-w-screen-lg">
+        <h2 class="text-2xl font-semibold text-gray-800">Mapa de estaciones</h2>
+        <div
+            class="w-full md:w-3/4 lg:w-2/3 h-[600px] mx-auto rounded-lg overflow-hidden shadow-lg border border-gray-200">
+            @include('estaciones.partials.mapa-estaciones', ['estaciones' => $estaciones])
+        </div>
+    </div> --}}
 @endsection
 
 @section('scripts')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    {{-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" /> --}}
 
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    {{-- <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script> --}}
 
-    <script src="{{ asset('js/mapa.js') }}"></script>
+    {{-- <script src="{{ asset('js/mapa.js') }}"></script> --}}
 
 
     <script>
