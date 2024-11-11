@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Validator;
 
 class ClienteController extends Controller
 {
     /** 
-     * Muestra la vista para cargar saldo o redirige si el cliente está suspendido. 
+     * Muestra la vista para r saldo o redirige si el cliente está suspendido. 
      * 
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse 
      * */
     public function indexCargarSaldo()
     {
-        dump('Cuando este la vista de la pasarela de pago y termine de pagar hay que redirigir a esta vista, si es nulo, redirige al inicio');
-        dump(session('url_actual'));
         /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
@@ -34,29 +34,69 @@ class ClienteController extends Controller
      * 
      * @param Request $request
      * 
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function storeCargarSaldo(Request $request): RedirectResponse
+    public function storeCargarSaldo(Request $request)
     {
-        $request->validate([
-            'monto' => 'required|numeric'
+
+        $validator = Validator::make($request->all(), [
+            'amount' => 'required|numeric|min:100',
+            'cardNumber' => 'required|digits_between:16,19',
+            'cardName' => 'required|string|max:255',
+            'expiryDate' => 'required|regex:/^\d{2}\/\d{2}$/',
+            'cvv' => 'required|digits:3',
         ]);
 
+        if ($validator->fails()) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        if (rand(1, 0)) {
+            /** @var \App\Models\User $usuario */
+            $usuario = Auth::user();
+            $cliente = $usuario->obtenerCliente();
+            $cliente->agregarSaldo($request->amount, 'Carga de saldo');
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Carga realizada con éxito'
+                ]);
+            }
+
+            return redirect()->route('inicio')->with('success', 'Carga realizada con éxito');
+        }
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo cargar el saldo. Intente nuevamente.'
+            ]);
+        }
+
+        return redirect()->back()->with('error', 'No se pudo cargar el saldo. Intente nuevamente.')->withInput();
+    }
+
+    public function verPerfilCliente(Request $request)
+    {
         /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
-        if (rand(0, 1)) {
-            $monto = floatval($request->monto);
-            $motivo = 'Carga de saldo';
-            $cliente->agregarSaldo($monto, $motivo);
+        return view('cliente.perfil', compact('cliente', 'usuario'));
+    }
 
-            return redirect()->route('inicio')
-                ->with('success', 'Se ha cargado satisfactoriamente su saldo.');
-        } else {
-            return redirect()->route('cargar-saldo.index')
-                ->with('error', 'Ha ocurrido un error al procesar su pago.')
-                ->withInput();
-        }
+    public function mostrarCargarSaldoModal()
+    {
+        $vista_html = view('cliente.cargar-saldo-modal')->render();
+        return response()->json([[
+            'success' => true,
+            'html' => $vista_html
+        ]]);
     }
 }

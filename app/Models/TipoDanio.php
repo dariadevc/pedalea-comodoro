@@ -13,6 +13,10 @@ class TipoDanio extends Model
     protected $primaryKey = 'id_tipo_danio';
     public $timestamps = false;
 
+    public const RECUPERABLE = 1;
+    public const NO_RECUPERABLE = 2;
+
+
     // Los atributos que pueden modificarse
     protected $fillable = [
         'descripcion',
