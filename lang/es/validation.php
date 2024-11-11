@@ -276,5 +276,10 @@ return [
         'winner'                   => 'ganador',
         'work'                     => 'trabajo',
         'year'                     => 'año',
+        'amount' => 'monto',
+        'cardNumber' => 'número de tarjeta',
+        'cardName' => 'nombre en la tarjeta',
+        'expiryDate' => 'fecha de expiración',
+        'cvv' => 'CVV',
     ],
 ];

@@ -45,6 +45,20 @@ class Cliente extends Model
         return $this->reservaReservo->whereIn('id_estado', [EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->first();
     }
 
+    /**
+     * Obtener una reserva alquilada, si no existe devuelve null.
+     * 
+     * @return \App\Models\Reserva|null
+     */
+    public function obtenerReservaAlquilada(): ?Reserva
+    {
+        return $this->reservaReservo->where('id_estado', EstadoReserva::ALQUILADA)->first();
+    }
+
+    public function obtenerReserva()
+    {
+        return $this->reservaReservo->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->first();
+    }
 
     /**
      * Pagar con el saldo del cliente.
@@ -191,20 +205,7 @@ class Cliente extends Model
         $this->save();
     }
 
-    /**
-     * 
-     */
-    public function reiniciarMultasSuspensionHechasPorDia()
-    {
-        foreach ($this->rangosPuntos as $rango_puntos) {
 
-            if ($rango_puntos->pivot) {
-                $rango_puntos->pivot->desactivarMultaHechaPorDia();
-                $rango_puntos->pivot->desactivarSuspensionHechaPorDia();
-                $rango_puntos->pivot->save();
-            }
-        }
-    }
 
     /**
      * Cambia el estado del cliente.
@@ -218,6 +219,34 @@ class Cliente extends Model
         $this->id_estado_cliente = $id_estado;
         $this->save();
     }
+
+    public function crearRangosPuntos()
+    {
+        $clientes_rangos_puntos = [];
+        $id_rangos_puntos = RangoPuntos::pluck('id_rango_puntos')->toArray();
+
+        foreach ($id_rangos_puntos as $id_rango_puntos) {
+            if ($id_rango_puntos == 3) {
+                $clientes_rangos_puntos[] = [
+                    'id_usuario' => $this->id_usuario,
+                    'id_rango_puntos' => $id_rango_puntos,
+                    'multa_hecha_por_dia' => false,
+                    'suspension_hecha_por_dia' => false,
+                    'cantidad_veces' => 3,
+                ];
+            } else {
+                $clientes_rangos_puntos[] = [
+                    'id_usuario' => $this->id_usuario,
+                    'id_rango_puntos' => $id_rango_puntos,
+                    'multa_hecha_por_dia' => false,
+                    'suspension_hecha_por_dia' => false,
+                    'cantidad_veces' => 0,
+                ];
+            }
+        }
+        ClienteRangoPuntos::insert($clientes_rangos_puntos);
+    }
+
 
     /**
      * Relación con el estado del cliente.

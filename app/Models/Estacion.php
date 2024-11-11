@@ -105,6 +105,34 @@ class Estacion extends Model
             })->exists();
     }
 
+    /**
+     * Genera una nueva calificación para la estación.
+     *
+     * @param int $id_tipo_calificacion
+     * @return void
+     */
+    public function generarCalificacion(int $id_tipo_calificacion): void
+    {
+        $this->calificaciones()->create([
+            'id_tipo_calificacion' => $id_tipo_calificacion,
+        ]);
+    }
+    
+    /**
+     * Calcula y actualiza el promedio de todas las calificaciones de la estación.
+     *
+     * @return void
+     */
+    public function actualizarPromedio(): void
+    {
+        $promedio = $this->calificaciones()
+            ->join('tipos_calificacion', 'calificaciones.id_tipo_calificacion', '=', 'tipos_calificacion.id_tipo_calificacion')
+            ->avg('tipos_calificacion.cantidad_estrellas');
+
+        $this->calificacion = $promedio ?? 0;
+        $this->save();
+    }
+
 
     /**
      * FUNCIONES QUE RELACIONAN A OTROS MODELOS
@@ -161,18 +189,4 @@ class Estacion extends Model
         return $this->hasMany(Reserva::class, 'id_estacion_devolucion', 'id_estacion');
     }
 
-    /**
-     * Calcula y actualiza el promedio de todas las calificaciones de la estación.
-     *
-     * @return void
-     */
-    public function actualizarPromedio(): void
-    {
-        $promedio = $this->calificaciones()
-            ->join('tipos_calificacion', 'calificaciones.id_tipo_calificacion', '=', 'tipos_calificacion.id_tipo_calificacion')
-            ->avg('tipos_calificacion.cantidad_estrellas');
-
-        $this->calificacion = $promedio ?? 0;
-        $this->save();
-    }
 }

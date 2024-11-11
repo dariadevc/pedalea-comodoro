@@ -140,50 +140,36 @@ class EstacionController extends Controller
 
     /**
      * Obtener las estaciones disponibles con sus bicicletas disponibles.
+     * Se utiliza una consulta sql y devuelve una colección de estaciones.
      * 
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Estacion>
      */
-    public function getEstacionesMapa(): JsonResponse
+    public function getEstacionesDisponiblesParaVerMapa()
     {
-        // CONSULTA SQL PARA TENER LAS ESTACIONES CON BICICLETAS DISPONIBLES
-
-        //         SELECT
-        //     e.nombre AS nombre_estacion,
-        //     e.latitud,
-        //     e.longitud,
-        //     COUNT(b.id_bicicleta) AS cantidad_bicicletas_disponibles
-        // FROM
-        //     estaciones e
-        // LEFT JOIN bicicletas b ON
-        //     b.id_estacion_actual = e.id_estacion
-        // LEFT JOIN reservas r ON
-        //     r.id_bicicleta = b.id_bicicleta AND r.id_estado IN(1, 2, 5, 6) -- Estados: Alquilada, Activa, Reasignada, Modificada
-        // WHERE
-        //     e.id_estado = 1
-        //  AND r.id_bicicleta IS NULL -- Excluir bicicletas en reservas activas
-        // GROUP BY
-        //     e.id_estacion,
-        //     e.nombre;
-
-        $estacionesConBicicletasDisponibles = DB::table('estaciones as e')
-            ->select(
-                'e.nombre',
-                'e.latitud',
-                'e.longitud',
-                DB::raw('COUNT(b.id_bicicleta) - COUNT(r.id_bicicleta) AS cantidad_bicicletas_disponibles')
-            )
-            ->leftJoin('bicicletas as b', 'b.id_estacion_actual', '=', 'e.id_estacion')
-            ->leftJoin('reservas as r', function ($join) {
-                $join->on('r.id_bicicleta', '=', 'b.id_bicicleta')
-                    ->whereIn('r.id_estado', [1, 2, 5, 6]);
-            })
-            ->where('e.id_estado', 1)
-            ->groupBy('e.id_estacion', 'e.nombre', 'e.latitud', 'e.longitud')
+        $estacionesConBicicletasDisponibles = Estacion::where('id_estado', 1)
+            ->select('nombre', 'latitud', 'longitud')
+            ->withCount(['bicicletas as cantidad_bicicletas_disponibles' => function ($query) {
+                $query->where('id_estado', 1)
+                    ->whereDoesntHave('reservas', function ($subQuery) {
+                        $subQuery->whereIn('id_estado', [1, 2, 5, 6]);
+                    });
+            }])
             ->get();
 
-        return response()->json($estacionesConBicicletasDisponibles);
+
+        return $estacionesConBicicletasDisponibles;
     }
 
+    /**
+     * Muestra el mapa de estaciones.
+     * 
+     * @return \Illuminate\View\View
+     */
+    public function verMapaCliente(): View
+    {
+        $estaciones = $this->getEstacionesDisponiblesParaVerMapa();
+        return view('cliente.ver-mapa', compact('estaciones'));
+    }
 
     /**
      * Obtener estaciones en el horario de retiro seleccionado.
