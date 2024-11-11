@@ -67,11 +67,11 @@ class ClienteController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Pago realizado con éxito'
+                'message' => 'Carga realizada con éxito'
             ]);
         }
 
-        return redirect()->route('inicio')->with('success', 'Pago realizado con éxito');
+        return redirect()->route('inicio')->with('success', 'Carga realizada con éxito');
     }
 
     public function verPerfilCliente(Request $request)

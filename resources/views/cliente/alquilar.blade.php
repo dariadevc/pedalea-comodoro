@@ -115,7 +115,7 @@
             <h2 class="text-lg font-semibold text-gray-700 mb-4">Saldo insuficiente para pagar el alquiler. ¿Quiere cargar
                 saldo en su cuenta?</h2>
             <div class="flex gap-4 justify-center">
-                <button onclick="irCargarSaldo()"
+                <button onclick="mostrarCargarSaldo()"
                     class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50">
                     Si
                 </button>
@@ -125,16 +125,30 @@
                 </button>
             </div>
         </div>
+    </div>
 
-    @endsection
+    <div id="overlay" class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 invisible">
+        <div id="tarjeta_cargar_saldo"
+            class="flex flex-col p-8 gap-2 bg-gray-50 border-blue-500 border-4 rounded-3xl shadow-lg w-3/4 max-w-md">
+            <button id="cerrar_tarjeta" class="place-self-end" onclick="ocultarBusqueda()">
+                <svg xmlns="http://www.w3.org/2000/svg" height="25px" width="25px" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" class="text-gray-800">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            @include('cliente.partials.pasarela-de-pago')
+        </div>
+    </div>
 
-    @section('scripts')
-        @vite('resources/js/alquilar.js')
-        @vite('resources/js/cargar-saldo.js')
-        <script>
-            var urlBiciDisponible = "{{ route('alquilar.bici-disponible') }}";
-            var urlBiciNoDisponible = "{{ route('alquilar.bici-no-disponible') }}";
-            var urlPagar = "{{ route('alquilar.pagar-alquiler') }}";
-            var urlGuardarCargarSaldo = "{{ route('guardar-url-ir-cargar-saldo') }}";
-        </script>
-    @endsection
+@endsection
+
+@section('scripts')
+    @vite('resources/js/alquilar.js')
+    @vite('resources/js/cargar-saldo.js')
+    <script>
+        var urlBiciDisponible = "{{ route('alquilar.bici-disponible') }}";
+        var urlBiciNoDisponible = "{{ route('alquilar.bici-no-disponible') }}";
+        var urlPagar = "{{ route('alquilar.pagar-alquiler') }}";
+        var urlGuardarCargarSaldo = "{{ route('guardar-url-ir-cargar-saldo') }}";
+    </script>
+@endsection
