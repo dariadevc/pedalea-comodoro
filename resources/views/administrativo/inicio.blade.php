@@ -17,7 +17,7 @@
             <div class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full lg:w-1/2 p-4 shadow-md rounded-xl">
                 <div class="bg-white shadow-md rounded-lg p-6">
                     <h2 class="text-lg font-semibold">Tarifa Actual: <span
-                            class="font-bold text-pc-rojo text-xl">$1000</span></h2>
+                            class="font-bold text-pc-rojo text-xl">${{ $tarifa }}</span></h2>
                     <p class="mt-2">Gestioná la tarifa del sistema.</p>
                     <div class="mt-4 flex flex-col gap-2">
                         <a href="{{ route('administrativo.editTarifa') }}"

@@ -69,7 +69,7 @@
                     <div class="text-sm">
                         <ul>
                             <x-item-sidebar ruta="inicio" @click="open = false">Inicio</x-item-sidebar>
-                            <x-item-sidebar ruta="informes.menu" @click="open = false">Informes</x-item-sidebar>
+                            <x-item-sidebar ruta="informes" @click="open = false">Informes</x-item-sidebar>
                         </ul>
                     </div>
                     <hr>
@@ -105,49 +105,6 @@
         </aside>
     </div>
 
-    {{-- * Para vista sm (MOBILE) * --}}
-    {{-- NAVBAR INFERIOR --}}
-    <div>
-        <nav class="bg-gray-50 fixed bottom-0 left-0 w-screen h-20 md:hidden shadow-[0_-2px_4px_0_rgba(0,0,0,0.05)]"
-            x-transition:enter="transition-transform transform duration-500"
-            x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
-            x-transition:leave="transition-transform transform duration-500" x-transition:leave-start="translate-x-0"
-            x-transition:leave-end="-translate-x-full">
-
-            {{-- BOTONES DEL NAV MOBILE --}}
-            <div class="h-full px-8 flex justify-between items-center text-sm">
-                {{-- INICIO --}}
-                {{-- TODO: Cuando estas en una sección el color del fondo del icono cambia de color y la fuente pasa a bold --}}
-                <a id="inicio"
-                    class=" flex flex-col justify-center items-center gap-1 p-1 @if (Request::routeIs('inicio')) bg-pc-rojo text-white font-bold hover:bg-transparent hover:text-current @endif"
-                    href="{{ route('inicio') }}">
-                    <x-icon-casa-oscura height="30px" width="30px" />
-                    <p class="font-semibold text-pc-texto-p">Inicio</p>
-                </a>
-                {{-- RESERVAR/ALQUILAR --}}
-                <a id="reservar"
-                    class=" flex flex-col justify-center items-center gap-1 p-1 @if (Request::routeIs('reservar')) bg-pc-rojo text-white font-bold hover:bg-transparent hover:text-current @endif"
-                    href="{{ route('reservar') }}">
-                    <x-icon-bicicleta-oscura height="30px" width="30px" />
-                    <p class="font-semibold text-pc-texto-p ">Reservar</p>
-                </a>
-                {{-- ESTACIONES --}}
-                <a id="estaciones"
-                    class=" flex flex-col justify-center items-center gap-1 p-1 @if (Request::routeIs('ver_estaciones')) bg-pc-rojo text-white font-bold hover:bg-transparent hover:text-current @endif"
-                    href="{{ route('ver_estaciones') }}">
-                    <x-icon-mapa-oscuro height="30px" width="30px" />
-                    <p class="font-semibold text-pc-texto-p">Estaciones</p>
-                </a>
-                {{-- MÁS OPCIONES --}}
-                <a id="más"
-                    class=" flex flex-col justify-center items-center gap-1 p-1 @if (Request::routeIs('mas')) bg-pc-rojo text-white font-bold hover:bg-transparent hover:text-current @endif"
-                    href="{{ route('mas') }}">
-                    <x-icon-puntos-oscuros height="30px" width="30px" />
-                    <p class="font-semibold text-pc-texto-p">Más</p>
-                </a>
-            </div>
-        </nav>
-    </div>
 
 
     {{-- CONTENIDO PRINCIPAL --}}

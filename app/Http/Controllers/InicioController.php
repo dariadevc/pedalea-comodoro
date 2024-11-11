@@ -1,8 +1,9 @@
 <?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\View\View;
+use App\Models\Configuracion;
 use Illuminate\Support\Facades\Auth;
 
 class InicioController extends Controller
@@ -41,7 +42,8 @@ class InicioController extends Controller
             'nombre' => $usuario->nombre,
             'apellido' => $usuario->apellido,
         ];
-        return view('administrativo.inicio', compact('datos'));
+        $tarifa = Configuracion::where('clave', 'tarifa')->value('valor');
+        return view('administrativo.inicio', compact('datos', 'tarifa'));
     }
 
     /**
