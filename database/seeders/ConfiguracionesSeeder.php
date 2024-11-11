@@ -18,7 +18,7 @@ class ConfiguracionesSeeder extends Seeder
                 'clave' => 'tarifa',
                 'valor' => '1000.00',
             ], [
-                'clave' => 'fecha_modificacion_tarifa',
+                'clave' => 'ultima_fecha_modificacion_tarifa',
                 'valor' => '2024-08-20',
             ], [
                 'clave' => 'limite_multiplicador_negativo',

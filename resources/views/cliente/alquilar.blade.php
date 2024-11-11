@@ -38,7 +38,7 @@
                 <div class="flex flex-col gap-1">
                     <h3 class="font-semibold text-sm text-pc-texto-h border-b-2 border-pc-azul self-start">Bicicleta
                         Asignada</h3>
-                    <p class="pl-4 text-lg">{{ $reserva['bicicleta_patente'] }}</p>
+                    <p id="bicicletaPatente" class="pl-4 text-lg">{{ $reserva['bicicleta_patente'] }}</p>
                 </div>
                 <div class="flex flex-col gap-1">
                     <h3 class="font-semibold text-sm text-pc-texto-h border-b-2 border-pc-azul self-start">Monto
@@ -119,7 +119,7 @@
                     class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50">
                     Si
                 </button>
-                <button type="button" onclick="toggleModal()"
+                <button type="button" onclick="toggleModal('modalConfirmacion')"
                     class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50">
                     No
                 </button>
@@ -137,6 +137,19 @@
                 </svg>
             </button>
             @include('cliente.partials.pasarela-de-pago')
+        </div>
+    </div>
+
+    <div id="contenedorSaldoCargado"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 invisible">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-11/12 sm:w-1/3">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Carga realizada con éxito.</h2>
+            <div class="flex gap-4 justify-center">
+                <button type="button" onclick="toggleModal('contenedorSaldoCargado')"
+                    class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50">
+                    Volver
+                </button>
+            </div>
         </div>
     </div>
 
