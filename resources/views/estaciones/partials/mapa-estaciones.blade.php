@@ -1,4 +1,3 @@
-
 <div id="map" class="w-full h-full"></div>
 
 <!-- Cargar el CSS y JS de Leaflet sin el atributo integrity -->

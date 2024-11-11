@@ -6,6 +6,7 @@ use App\Mail\MailTextoSimple;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class Multa extends Model
@@ -77,14 +78,8 @@ class Multa extends Model
         $asunto = "Multa realizada";
         $destinatario = $this->cliente->usuario->email;
 
-        /**
-         * $mensaje, $asunto HAY QUE FIJARSE QUE PONEMOS
-         * ------
-         * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE 
-         */
-
-        Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
         $this->save();
+        Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
     }
 
     /**

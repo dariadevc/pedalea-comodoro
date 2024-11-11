@@ -7,6 +7,8 @@ use App\Models\Bicicleta;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\EstadoBicicleta;
+use App\Models\EstadoEstacion;
+use App\Models\EstadoReserva;
 use Illuminate\Http\RedirectResponse;
 
 use function Laravel\Prompts\alert;
@@ -32,7 +34,7 @@ class BicicletaController extends Controller
     public function create()
     {
         $estados = EstadoBicicleta::all();
-        $estaciones = Estacion::where('id_estado', 1)->get();
+        $estaciones = Estacion::where('id_estado', EstadoEstacion::ACTIVA)->get();
         return view('bicicletas.create', compact('estados', 'estaciones'));
     }
 
@@ -67,12 +69,12 @@ class BicicletaController extends Controller
      */
     public function edit(Bicicleta $bicicleta)
     {
-        $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
         if ($existe_bicicleta_en_reservas) {
             return redirect()->route('bicicletas.index')->with('error', 'No se puede editar la bicicleta. Está asociada a una reserva.');
         } else {
             $estados = EstadoBicicleta::all();
-            $estaciones = Estacion::where('id_estado', 1)->get();
+            $estaciones = Estacion::where('id_estado', EstadoEstacion::ACTIVA)->get();
             return view('bicicletas.edit', compact('bicicleta', 'estados', 'estaciones'));
         }
     }
@@ -96,7 +98,7 @@ class BicicletaController extends Controller
         if ($request->input('estacion') == '0') {
             $id_estacion_actual = null;
         } else {
-            $estacion_inactiva = Estacion::where('id_estado', 2)->where('id_estacion', $request->estacion)->exists();
+            $estacion_inactiva = Estacion::where('id_estado', EstadoEstacion::INACTIVA)->where('id_estacion', $request->estacion)->exists();
             if ($estacion_inactiva) {
                 return redirect()->back()->with('error', 'La estación seleccionada no está habilitada.');
             }
@@ -119,7 +121,7 @@ class BicicletaController extends Controller
      */
     public function destroy(Bicicleta $bicicleta): RedirectResponse
     {
-        $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+        $existe_bicicleta_en_reservas = $bicicleta->reservas()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
 
         if ($existe_bicicleta_en_reservas) {
             return redirect()->route('bicicletas.index')->with('error', 'No se puede eliminar la bicicleta. Está asociada a una reserva.');

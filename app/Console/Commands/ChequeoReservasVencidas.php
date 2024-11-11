@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Carbon\Carbon;
 use App\Models\Reserva;
 use App\Models\Cliente;
+use App\Models\EstadoReserva;
 use Illuminate\Console\Command;
 
 class ChequeoReservasVencidas extends Command
@@ -32,7 +33,7 @@ class ChequeoReservasVencidas extends Command
     {
         $puntosADescontar = 5;
 
-        $reservas = Reserva::where('id_estado', 2)->get();
+        $reservas = Reserva::whereIn('id_estado', [EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->get();
 
         foreach ($reservas as $reserva) {
             $horaDevolucion = Carbon::parse($reserva->fecha_hora_devolucion);

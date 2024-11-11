@@ -33,6 +33,7 @@ $(document).ready(function () {
     $(document).on('submit', '#paymentForm', function (event) {
         event.preventDefault();
 
+        $('#errorCarga').addClass('invisible');
         $('#paymentForm .text-red-500').addClass('hidden').text('');
 
         $.ajax({
@@ -44,12 +45,16 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success) {
+                    window.ocultarBusqueda();
                     $('#idSaldo').empty();
                     $('#idSaldo').text('Saldo actual disponible: $' + response.saldo + '.00');
-                    window.ocultarBusqueda();
-                    alert(response.message);
+                    $('#contenedorSaldoCargado h2').empty();
+                    $('#contenedorSaldoCargado h2').text(response.mensaje);
+                    $('#contenedorSaldoCargado').removeClass('invisible');
                 } else {
-                    alert(response.message);
+                    $('#errorCarga').empty();
+                    $('#errorCarga').text(response.mensaje);
+                    $('#errorCarga').removeClass('invisible');
                 }
             },
             error: function (xhr) {
