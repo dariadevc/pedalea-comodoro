@@ -102,20 +102,14 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     Route::get('/perfil', [ClienteController::class, 'verPerfilCliente'])->name('perfil');
 
-    Route::get('/movimientos_saldo', function () {
-        return view('cliente.movimientos_saldo');  // Renderiza la vista 'Movimientos del Saldo'
-    })->name('mov_saldo');
 
+    Route::get('/movimiento_saldo', [HistorialController::class, 'historialMovimientos'])->name('mov_saldo');
 
     Route::get('/actividad', [HistorialController::class, 'historialReservas'])->name('actividad');
 
-    Route::get('/historial_multas', function () {
-        return view('cliente.historial_multas');  // Renderiza la vista 'Historial de Multas'
-    })->name('his_multas');
+    Route::get('/historial_multas', [HistorialController::class, 'historialMultas'])->name('his_multas');
 
-    Route::get('/historial_suspensiones', function () {
-        return view('cliente.historial_suspensiones');  // Renderiza la vista 'Historial de Suspensiones'
-    })->name('his_suspensiones');
+    Route::get('/historial_suspenciones', [HistorialController::class, 'historialSuspensiones'])->name('his_suspensiones');
 
     Route::get('/estaciones-ver-mapa', [EstacionController::class, 'verMapaCliente'])->name('ver-mapa');
 
@@ -135,8 +129,6 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::post('/rechazar-modificacion', [ReservaController::class, 'rechazarModificacion'])->name('reservas.rechazarModificacion');
     
     //Prueba para los historiales:
-    Route::get('/historial-multa',[HistorialController::class, 'historialMultas'])->name('historiales.multas');
-    Route::get('/historial-suspension',[HistorialController::class, 'historialSuspensiones'])->name('historiales.suspensiones');
     Route::get('/historial-movimiento',[HistorialController::class, 'historialMovimientos'])->name('historiales.movimientos');
 
 

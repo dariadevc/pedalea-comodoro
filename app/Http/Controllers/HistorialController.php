@@ -68,7 +68,7 @@ class HistorialController extends Controller
             $multas = [];
         }
     
-        return view('historiales.multasHistorial', compact('multas', 'fechaInicio', 'fechaFin'));
+        return view('cliente.historial_multas', compact('multas', 'fechaInicio', 'fechaFin'));
     }
 
     //Historial de Suspensiones:
@@ -87,12 +87,12 @@ class HistorialController extends Controller
                 ->where('suspensiones.id_usuario', $cliente->id_usuario)
                 ->whereBetween('suspensiones.fecha_desde', [$fechaInicio, $fechaFin])
                 ->whereIn('suspensiones.id_estado', [1, 2])
-                ->paginate(1); //Muestra los primeros 10 resultados 
+                ->paginate(10); //Muestra los primeros 10 resultados 
         } else {
             $suspensiones = [];
         }
     
-        return view('historiales.suspensionesHistorial', compact('suspensiones', 'fechaInicio', 'fechaFin'));
+        return view('cliente.historial_suspensiones', compact('suspensiones', 'fechaInicio', 'fechaFin'));
     }
 
     //Historial Movimientos:
@@ -112,7 +112,7 @@ class HistorialController extends Controller
             $movimientos = [];
         }
     
-        return view('historiales.saldoHistorial', compact('movimientos'));
+        return view('cliente.movimientos_saldo', compact('movimientos'));
     }
 }
 
