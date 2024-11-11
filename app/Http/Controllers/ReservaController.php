@@ -70,10 +70,10 @@ class ReservaController extends Controller
         if ($fecha_hora_actual->lessThan($reserva->fecha_hora_retiro->copy()->subMinutes(15))) {
             return 'Todavía no puede alquilar la bicicleta. 15 minutos antes de la hora de retiro puede retirar.';
         }
-    
+
         return null;
     }
-    
+
 
     /**
      * Redirecciona al inicio con un mensaje según la clave.
@@ -752,7 +752,11 @@ class ReservaController extends Controller
      */
     public function mostrarCalificacion(): string
     {
-        return view('cliente.partials.devolver.formulario-calificacion')->render();
+        /** @var Reserva $reserva */
+        $reserva = session('reserva_devolver');
+        $estacion_retiro = $reserva->estacionRetiro->nombre;
+        $estacion_devolucion = $reserva->estacionDevolucion->nombre;
+        return view('cliente.partials.devolver.formulario-calificacion', compact('estacion_retiro', 'estacion_devolucion'))->render();
     }
 
     /**

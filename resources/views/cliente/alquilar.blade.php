@@ -87,7 +87,7 @@
     {{-- PAGAR ALQUILER --}}
     <div id="contenedorPagarAlquiler" class="flex flex-col gap-4 mt-5 w-full lg:w-1/3 hidden">
         <!-- Mostrar el saldo aquí -->
-        <p class="text-pc-texto-p text-base border-l-4 border-l-pc-azul pl-2">
+        <p id="idSaldo" class="text-pc-texto-p text-base border-l-4 border-l-pc-azul pl-2">
             Saldo actual disponible: ${{ $saldo_actual }} <!-- Asegúrate de tener $saldo_actual disponible -->
         </p>
 

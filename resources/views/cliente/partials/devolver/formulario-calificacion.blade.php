@@ -3,7 +3,9 @@
     <div class="flex flex-col gap-4">
         <div class="">
             <p class="text-pc-texto-p text-lg border-l-4 border-l-pc-azul pl-2">Califique la Estación de Retiro</p>
+            <p class="text-lg font-bold text-pc-azul border-l-4 border-l-pc-azul pl-2">{{ $estacion_retiro }}</p>
         </div>
+        
         <div id="error-calificacion_retiro"
             class="error-message text-black-500 text-sm border-l-4 border-l-pc-rojo pl-2 hidden"></div>
         <div id="calificacionRetiro"
@@ -28,6 +30,7 @@
 
         <div class="">
             <p class="text-pc-texto-p text-lg border-l-4 border-l-pc-azul pl-2">Califique la Estación de Devolución</p>
+            <p class="text-lg font-bold text-pc-azul border-l-4 border-l-pc-azul pl-2">{{ $estacion_devolucion }}</p>
         </div>
         <div id="error-calificacion_devolucion"
             class="error-message text-black-500 text-sm border-l-4 border-l-pc-rojo pl-2 hidden"></div>

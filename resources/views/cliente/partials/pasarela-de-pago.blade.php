@@ -1,4 +1,9 @@
 <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+    @if (session('error'))
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2" role="alert">
+        <span class="block sm:inline">{{ session('error') }}</span>
+    </div>
+    @endif
     <h2 class="text-2xl font-bold text-red-600 mb-4">Cargar Saldo</h2>
     <form id="paymentForm" action="{{ route('cargar-saldo.store') }}" method="POST" class="space-y-4">
         @csrf
