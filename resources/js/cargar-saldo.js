@@ -44,7 +44,11 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success) {
+                    $('#idSaldo').empty();
+                    $('#idSaldo').text('Saldo actual disponible: $' + response.saldo + '.00');
                     window.ocultarBusqueda();
+                    alert(response.message);
+                } else {
                     alert(response.message);
                 }
             },

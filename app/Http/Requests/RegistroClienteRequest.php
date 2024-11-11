@@ -27,7 +27,7 @@ class RegistroClienteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'dni' => ['required', 'numeric', 'between:20000000,99999999', 'digits:8', 'unique:'.Cliente::class],
+            'dni' => ['required', 'numeric', 'between:20000000,99999999', 'digits:8', 'unique:'.User::class],
             'nombre' => ['required', 'string', 'max:255'],
             'apellido' => ['required', 'string', 'max:255'],
             'numero_telefono' => ['required', 'regex:/^\+54[0-9]{10}$/'],
