@@ -18,27 +18,28 @@
     <div class="container mx-auto mt-6">
         @if(isset($rutas) && count($rutas) > 0)
             <h1 class="text-2xl font-bold mb-4 text-black title-section">Listado de Rutas</h1>
-            <table class="min-w-full border-collapse block md:table">
-                <thead class="block md:table-header-group">
-                    <tr class="border border-grey-500 md:border-none block md:table-row absolute -top-full md:top-auto -left-full md:left-auto md:relative">
-                        <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Estacion Retiro</th>
-                        <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Estacion Devolucion</th>
-                        <th class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">Cantidad de veces utilizadas</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($rutas as $ruta)
-                        <tr class="bg-sky-50 border border-grey-500 md:border-none block md:table-row">
-                            <td class="p-2 md:border md:border-black text-left block md:table-cell">{{ $ruta->nombreR}}</td>
-                            <td class="p-2 md:border md:border-black text-left block md:table-cell">{{ $ruta->nombreD }}</td>
-                            <td class="p-2 md:border md:border-black text-left block md:table-cell">{{ $ruta->total }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            <canvas id="rutasChart"  width="400" height="200"></canvas>
         @else
             <p class="mt-6 text-center text-gray-500">No hay datos disponibles para el rango de fechas seleccionado.</p>
         @endif
     </div>
     <br>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <script>
+        var ctx = document.getElementById('rutasChart').getContext('2d'); 
+        var alquilerChart = new Chart(ctx, { 
+            type: 'bar', 
+            data: { labels: {!! json_encode($rutas->pluck('rutas')) !!}, 
+            datasets: [{ label: 'Cantidad de Veces', 
+            data: {!! json_encode($rutas->pluck('total')) !!}, 
+            backgroundColor: 'rgba(54, 162, 235, 0.2)', 
+            borderColor: 'rgba(54, 162, 235, 1)', borderWidth: 3 }] }, 
+            options: { scales: {
+                 x: {display:false},
+                 y: { beginAtZero: true } 
+                               } 
+                     } 
+                }
+            ); 
+    </script>
 @endsection
