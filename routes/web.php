@@ -56,14 +56,10 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
 
     //Ruta para el menu de informes:
     Route::get('/Informes', [InformeController::class, 'informe'])->name('informes');
-    //Multas realizadas
-    Route::get('/multas', [InformeController::class, 'informeMultas'])->name('informes.multas');
-    //Estaciones utilizadas
-    Route::get('/estacionesInforme', [InformeController::class, 'informeEstaciones'])->name('informes.estaciones');
-    //Rutas utilizadas
-    Route::get('/rutasInforme', [InformeController::class, 'informeRutas'])->name('informes.rutas');
-    //Tiempo de alquileres solicitados y horarios con mas demanda:
-    Route::get('/alquiler-tiempo-horario', [InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
+    Route::get('/informe/multas', [InformeController::class, 'informeMultas'])->name('informes.multas');
+    Route::get('/informe/estaciones', [InformeController::class, 'informeEstaciones'])->name('informes.estaciones');
+    Route::get('/informe/rutas', [InformeController::class, 'informeRutas'])->name('informes.rutas');
+    Route::get('/informe/alquiler', [InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
 });
 
 //* CLIENTE

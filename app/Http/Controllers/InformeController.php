@@ -33,7 +33,11 @@ class InformeController extends Controller
 
             $multas = [];
         }
-        return view('administrativo.informes.multas', compact('multas'));
+        // return view('administrativo.informes.multas', compact('multas'));
+        if ($request->ajax()) {
+            return view('administrativo.informes.multas', compact('multas'));
+        }
+        return view('administrativo.informes', compact('multas'));
     }
 
     //De la otra forma con la lista y el validatte, tendria que probar con date_format, no con date solo.
@@ -55,7 +59,11 @@ class InformeController extends Controller
         } else {
             $estaciones = [];
         }
-        return view('administrativo.informes.estacionesInforme', compact('estaciones'));
+        // return view('administrativo.informes.estacionesInforme', compact('estaciones'));
+        if ($request->ajax()) {
+            return view('administrativo.informes.estacionesInforme', compact('estaciones'));
+        }
+        return view('administrativo.informes', compact('estaciones'));
     }
 
     public function informeRutas(Request $request)
@@ -77,7 +85,11 @@ class InformeController extends Controller
 
             $rutas = [];
         }
-        return view('administrativo.informes.rutasInforme', compact('rutas'));
+        // return view('administrativo.informes.rutasInforme', compact('rutas'));
+        if ($request->ajax()) {
+            return view('administrativo.informes.rutasInforme', compact('rutas'));
+        }
+        return view('administrativo.informes', compact('rutas'));
     }
 
     public function informeTiempoAlquilerHorarioDemanda(Request $request)
@@ -111,6 +123,10 @@ class InformeController extends Controller
             $alquileresTimeHor = [];
             $alquileresTime = [];
         }
-        return view('administrativo.informes.alquilerInforme', compact('alquileresTime', 'alquileresHor'));
+        // return view('administrativo.informes.alquilerInforme', compact('alquileresTime', 'alquileresHor'));
+        if ($request->ajax()) {
+            return view('administrativo.informes.alquilerInforme', compact('alquileresTime', 'alquileresHor'));
+        }
+        return view('administrativo.informes', compact('alquileresTime', 'alquileresHor'));
     }
 }
