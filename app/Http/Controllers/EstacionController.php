@@ -146,7 +146,7 @@ class EstacionController extends Controller
      * 
      * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Estacion>
      */
-    public function getEstacionesDisponiblesParaVerMapa()
+    public static function getEstacionesDisponiblesParaVerMapa()
     {
         $estacionesConBicicletasDisponibles = Estacion::where('id_estado', EstadoEstacion::ACTIVA)
             ->select('nombre', 'latitud', 'longitud')

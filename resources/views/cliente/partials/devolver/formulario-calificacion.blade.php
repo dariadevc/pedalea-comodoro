@@ -27,7 +27,6 @@
                 </div>
             @endfor
         </div>
-
         <div class="">
             <p class="text-pc-texto-p text-lg border-l-4 border-l-pc-azul pl-2">Califique la Estación de Devolución</p>
             <p class="text-lg font-bold text-pc-azul border-l-4 border-l-pc-azul pl-2">{{ $estacion_devolucion }}</p>

@@ -26,13 +26,14 @@ class LandingController extends Controller
         $cantidad_clientes = Cliente::count();
         $cantidad_reservas = Reserva::where('id_estado', EstadoReserva::FINALIZADA)->count();
         $tarifa = Configuracion::where('clave', 'tarifa')->value('valor');
-
+        $estaciones = EstacionController::getEstacionesDisponiblesParaVerMapa();
         return view('invitado.landing', compact(
             'cantidad_estaciones',
             'cantidad_bicicletas',
             'cantidad_clientes',
             'cantidad_reservas',
-            'tarifa'
+            'tarifa',
+            'estaciones'
         ));
     }
 }
