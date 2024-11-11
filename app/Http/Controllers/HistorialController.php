@@ -32,17 +32,18 @@ class HistorialController extends Controller
                 'estacion_retiro.nombre as estacion_retiro_nombre', 
                 'estacion_devolucion.nombre as estacion_devolucion_nombre', 
                 'estados_reserva.nombre as estado', 
-                'reservas.puntaje_obtenido as puntaje'
+                'reservas.puntaje_obtenido as puntaje', 'estados_reserva.nombre as estadoNombre'
             )
             ->where('reservas.id_cliente_reservo', $cliente->id_usuario)
             ->whereBetween('reservas.fecha_hora_retiro', [$fechaInicio, $fechaFin])
             ->whereIn('reservas.id_estado', [1, 2, 3, 4])
+            ->orderBy('fecha_hora_devolucion', "desc")
             ->paginate(10);
         } else {
             $reservas = collect(); // Colección vacía si no hay fechas válidas
         }
 
-        return view('historiales.reservasHistorial', compact('reservas', 'fechaInicio', 'fechaFin'));
+        return view('cliente.historial_reservas', compact('reservas', 'fechaInicio', 'fechaFin'));
 }
 
 
