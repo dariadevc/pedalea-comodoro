@@ -44,7 +44,7 @@
     <!-- Contenedor de Pagar Reserva -->
     <div id="contenedorPagarReserva" class="flex flex-col gap-4 mt-5 w-full lg:w-1/3">
         <!-- Mostrar el saldo aquí -->
-        <p class="text-pc-texto-p text-base border-l-4 border-l-pc-rojo pl-2">
+        <p id="idSaldo" class="text-pc-texto-p text-base border-l-4 border-l-pc-rojo pl-2">
             Saldo actual disponible: ${{ $saldo_actual }} <!-- Asegúrate de tener $saldo_actual disponible -->
         </p>
 

@@ -45,7 +45,7 @@ class ClienteController extends Controller
             'expiryDate' => 'required|regex:/^\d{2}\/\d{2}$/',
             'cvv' => 'required|digits:3',
         ]);
-        
+
         if ($validator->fails()) {
             if ($request->ajax()) {
                 return response()->json([
@@ -58,20 +58,28 @@ class ClienteController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-        /** @var \App\Models\User $usuario */
-        $usuario = Auth::user();
-        $cliente = $usuario->obtenerCliente();
-        $cliente->agregarSaldo($request->amount, 'Carga de saldo');
+        if (rand(1, 0)) {
+            /** @var \App\Models\User $usuario */
+            $usuario = Auth::user();
+            $cliente = $usuario->obtenerCliente();
+            $cliente->agregarSaldo($request->amount, 'Carga de saldo');
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Carga realizada con éxito'
+                ]);
+            }
 
-
+            return redirect()->route('inicio')->with('success', 'Carga realizada con éxito');
+        }
         if ($request->ajax()) {
             return response()->json([
-                'success' => true,
-                'message' => 'Pago realizado con éxito'
+                'success' => false,
+                'message' => 'No se pudo cargar el saldo. Intente nuevamente.'
             ]);
         }
 
-        return redirect()->route('inicio')->with('success', 'Pago realizado con éxito');
+        return redirect()->back()->with('error', 'No se pudo cargar el saldo. Intente nuevamente.')->withInput();
     }
 
     public function verPerfilCliente(Request $request)
