@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Models\EstadoBicicleta;
 use Illuminate\Http\RedirectResponse;
 
+use function Laravel\Prompts\alert;
+
 class BicicletaController extends Controller
 {
     /**
@@ -125,5 +127,39 @@ class BicicletaController extends Controller
             $bicicleta->delete();
             return redirect()->route('bicicletas.index')->with('success', 'Bicicleta eliminada correctamente');
         }
+    }
+    public function deshabilitar(Request $request)
+{
+    $request->validate([
+        'patente' => 'required|string',
+    ]);
+
+    // Buscar la bicicleta por patente
+    $bicicleta = Bicicleta::where('patente', $request->input('patente'))->first();
+
+    if (!$bicicleta) {
+        return redirect()->back()->with('error', 'La bicicleta no fue encontrada.');
+    }
+
+    if ($bicicleta->id_estado == 2)
+    {
+        return redirect()->back()->with('error', 'La bicicleta ya está deshabilitada.');
+    }
+    $existe_bicicletas_en_reserva = $bicicleta->reservas()->whereIn('id_estado', [1, 2, 5, 6])->exists();
+    if ($existe_bicicletas_en_reserva == true)
+    {
+        return redirect()->route('inspector.bicicletas')->with('error', 'No se puede deshabilitar la bicicleta. Está asociada a una reserva.');
+    }
+    else
+    {
+        $estadoDeshabilitado = 2; // Asegúrate de que este ID sea correcto
+        $bicicleta->id_estado = $estadoDeshabilitado;
+        $bicicleta->save();
+        return redirect()->route('inspector.bicicletas')->with('success', 'Bicicleta deshabilitada correctamente.');
+    }
+}
+    public function vistaDeshabilitar()
+    {
+        return view('inspector.bicicletas');
     }
 }
