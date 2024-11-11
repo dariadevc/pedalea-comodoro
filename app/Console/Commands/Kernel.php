@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         // Registrar el comando
         Commands\ChequeoReservasVencidas::class,
+        Commands\PremiarBuenaConducta::class,
     ];
 
     /**
@@ -22,6 +23,8 @@ class Kernel extends ConsoleKernel
     {
         // Programar el comando para que se ejecute diariamente
         $schedule->command('app:chequeo-reservas-vencidas')->daily();
+
+        $schedule->command('app:premiar-buena-conducta')->everySixMonths();
     }
 
     /**
