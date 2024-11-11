@@ -106,9 +106,8 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
         return view('cliente.movimientos_saldo');  // Renderiza la vista 'Movimientos del Saldo'
     })->name('mov_saldo');
 
-    Route::get('/actividad', function () {
-        return view('cliente.historial_reservas');  // Renderiza la vista 'Historial de Reservas'
-    })->name('actividad');
+
+    Route::get('/actividad', [HistorialController::class, 'historialReservas'])->name('actividad');
 
     Route::get('/historial_multas', function () {
         return view('cliente.historial_multas');  // Renderiza la vista 'Historial de Multas'
@@ -136,7 +135,6 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::post('/rechazar-modificacion', [ReservaController::class, 'rechazarModificacion'])->name('reservas.rechazarModificacion');
     
     //Prueba para los historiales:
-    Route::get('/historial-reserva',[HistorialController::class, 'historialReservas'])->name('historiales.reservas');
     Route::get('/historial-multa',[HistorialController::class, 'historialMultas'])->name('historiales.multas');
     Route::get('/historial-suspension',[HistorialController::class, 'historialSuspensiones'])->name('historiales.suspensiones');
     Route::get('/historial-movimiento',[HistorialController::class, 'historialMovimientos'])->name('historiales.movimientos');
