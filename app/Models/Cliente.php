@@ -62,6 +62,11 @@ class Cliente extends Model
         return $this->reservaReservo->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->first();
     }
 
+    public function obtenerUltimaReserva()
+    {
+        return $this->reservaReservo()->orderBy('fecha_hora_retiro', 'desc')->first();
+    }
+
     /**
      * Pagar con el saldo del cliente.
      * 

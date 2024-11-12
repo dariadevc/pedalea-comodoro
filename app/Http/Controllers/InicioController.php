@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\View\View;
 use App\Models\Configuracion;
+use App\Models\Cliente;
+use App\Models\Reserva;
 use Illuminate\Support\Facades\Auth;
 
 class InicioController extends Controller
@@ -61,7 +63,10 @@ class InicioController extends Controller
             'saldo' => $cliente->saldo,
             'puntaje' => $cliente->puntaje,
         ];
-        return view('cliente.inicio', compact('datos'));
+        $reserva = $cliente->obtenerUltimaReserva();
+        $estado = $reserva->getNombreEstadoReserva();
+        $reserva = $reserva->formatearDatosActiva();
+        return view('cliente.inicio', compact('datos', 'estado', 'reserva'));
     }
 
     /**
