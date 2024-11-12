@@ -46,11 +46,15 @@ class ReservaController extends Controller
         if ($reserva) {
             $mensajeError = $this->validarHorarioReserva($reserva, Carbon::now());
             if ($mensajeError) {
-                return redirect()->back()->with('error', $mensajeError);
+                if ($mensajeError[0]) {
+                    $reserva->cerrarAlquiler();
+                    return redirect()->route('inicio')->with('error', $mensajeError[1]);
+                } else {
+                    return redirect()->back()->with('error', $mensajeError[1]);
+                }
             }
             return $this->mostrarFormularioAlquilar($reserva, $cliente);
         }
-
         return redirect()->back()->with('error', 'No hay ningun alquiler activo.');
     }
 
@@ -65,12 +69,11 @@ class ReservaController extends Controller
     protected function validarHorarioReserva(Reserva $reserva, Carbon $fecha_hora_actual)
     {
         if ($fecha_hora_actual->greaterThan($reserva->fecha_hora_retiro->copy()->addMinutes(15))) {
-            return 'Ya pasó el horario de retiro de la bicicleta.';
+            return [true, 'Ya pasó el horario de retiro de la bicicleta. Se cerro correctamente su reserva.'];
         }
         if ($fecha_hora_actual->lessThan($reserva->fecha_hora_retiro->copy()->subMinutes(15))) {
-            return 'Todavía no puede alquilar la bicicleta. 15 minutos antes de la hora de retiro puede retirar.';
+            return [false, 'Todavía no puede alquilar la bicicleta. 15 minutos antes de la hora de retiro puede retirar.'];
         }
-
         return null;
     }
 
@@ -667,13 +670,26 @@ class ReservaController extends Controller
      */
     public function cancelar(Request $request): RedirectResponse
     {
-        $reserva = Reserva::findOrFail($request->id_reserva);
-        if (!$reserva) {
-            return redirect()->route('reserva_actual')->with('error', 'Reserva no encontrada.');
-        }
+        // $reserva = Reserva::findOrFail($request->id_reserva);
+        /** @var \App\Models\User $usuario */
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
 
-        $mensaje = $reserva->cancelar();
-        return $this->redireccionarInicio('success', $mensaje);
+        /** @var \App\Models\Reserva $reserva */
+        $reserva = $cliente->obtenerReservaActivaModificada();
+
+        if ($reserva) {
+            $mensajeError = $this->validarHorarioReserva($reserva, Carbon::now());
+            if ($mensajeError) {
+                if ($mensajeError[0]) {
+                    $reserva->cerrarAlquiler();
+                    return redirect()->route('inicio')->with('error', $mensajeError[1]);
+                }
+            }
+            $mensaje = $reserva->cancelar();
+            return $this->redireccionarInicio('success', $mensaje);
+        }
+        return redirect()->back()->with('error', 'No hay ningun alquiler activo.');
     }
 
     /**

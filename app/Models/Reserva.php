@@ -227,12 +227,11 @@ class Reserva extends Model
     public function cerrarAlquiler(): void
     {
         $this->cambiarEstado(EstadoReserva::FINALIZADA);
-
-        /**
-         * TODO
-         * FALTA REALIZAR LA LOGICA DE CERRAR EL ALQUILER Y DESCONTAR PUNTOS
-         *
-         */
+        $this->puntaje_obtenido = -25;
+        
+        /** @var Cliente $cliente */
+        $cliente = $this->clienteReservo;
+        $cliente->actualizarPuntaje($this->puntaje_obtenido);
 
         $this->save();
     }
