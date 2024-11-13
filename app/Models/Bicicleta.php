@@ -32,11 +32,11 @@ class Bicicleta extends Model
      * Editar el estado y la estación actual.
      * 
      * @param int $id_estado
-     * @param int $id_estacion
+     * @param int|null $id_estacion
      * 
      * @return void
      */
-    public function editar(int $id_estado, int $id_estacion_actual): void
+    public function editar(int $id_estado, $id_estacion_actual): void
     {
         $this->id_estado = $id_estado;
         $this->id_estacion_actual = $id_estacion_actual;

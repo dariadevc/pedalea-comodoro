@@ -23,8 +23,8 @@ class EstacionController extends Controller
      */
     public function index(): View
     {
-        $estaciones = Estacion::with(['estado'])->get();
-        return view('estaciones.index', compact('estaciones'));
+        $estaciones = Estacion::with(['estado'])->withCount('bicicletas')->get();
+        return view('administrativo.estaciones.index', ['estaciones' => $estaciones]);
     }
 
 
@@ -36,7 +36,7 @@ class EstacionController extends Controller
     public function create(): View
     {
         $estados = EstadoEstacion::all();
-        return view('estaciones.create', compact('estados'));
+        return view('administrativo.estaciones.create', compact('estados'));
     }
 
     /**
@@ -55,15 +55,14 @@ class EstacionController extends Controller
             'estado' => 'required|integer',
         ]);
 
-        Estacion::create([
+        $estacion = Estacion::create([
             'nombre' => $request->input('nombre'),
             'latitud' => $request->input('latitud'),
             'longitud' => $request->input('longitud'),
             'id_estado' => $request->input('estado'),
             'calificacion' => 0.00,
         ]);
-
-        return redirect()->route('estaciones.index')->with('success', 'Estación creada correctamente.');
+        return redirect()->route('estaciones.index')->with('success', "Estación {$estacion->nombre} creada correctamente.");
     }
 
 
@@ -80,10 +79,10 @@ class EstacionController extends Controller
         $existe_reservas_retiro_en_estacion = $estacion->reservasRetiro()->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
 
         if ($existe_reservas_devolucion_en_estacion || $existe_reservas_retiro_en_estacion) {
-            return redirect()->back()->with('error', 'No se puede deshabilitar la estación. Está asociada a reservas.');
+            return redirect()->back()->with('error', "No se puede deshabilitar la estación {$estacion->nombre}. Está asociada a reservas.");
         } else {
             $estados = EstadoEstacion::all();
-            return view('estaciones.edit', compact('estacion', 'estados'));
+            return view('administrativo.estaciones.edit', compact('estacion', 'estados'));
         }
     }
 
@@ -110,7 +109,7 @@ class EstacionController extends Controller
         $estacion->id_estado = $request->input('estado');
 
         $estacion->save();
-        return redirect()->route('estaciones.index')->with('success', 'Estación actualizada correctamente');
+        return redirect()->route('estaciones.index')->with('success', "Estación {$estacion->nombre} actualizada correctamente");
     }
 
     /**
@@ -132,11 +131,11 @@ class EstacionController extends Controller
         });
 
         if ($tiene_reservas_con_devolucion || $tiene_reservas_con_retiro || $bicicletas_con_reservas->isNotEmpty()) {
-            return redirect()->back()->with('error', 'No se puede eliminar la estación. Tiene reservas activas o bicicletas asociadas con reservas.');
+            return redirect()->back()->with('error', "No se puede eliminar la estación {$estacion->nombre}. Está asociada a reservas.");
         }
 
         $estacion->delete();
-        return redirect()->route('estaciones.index')->with('success', 'Estación eliminada correctamente.');
+        return redirect()->route('estaciones.index')->with('success', "Estación {$estacion->nombre} eliminada correctamente.");
     }
 
 

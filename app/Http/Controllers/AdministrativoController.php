@@ -2,46 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use Illuminate\View\View;
-use Illuminate\Http\Request;
 use App\Models\Configuracion;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdministrativoController extends Controller
 {
 
-    /**
-     * Muestra el formulario para editar la tarifa.
-     * 
-     * @return \Illuminate\View\View
-     */
-    public function editTarifa(): View
+
+    public function editTarifa()
     {
-        $tarifa = Configuracion::where('clave', 'tarifa')
-            ->orWhere('clave', 'ultima_fecha_modificacion_tarifa')
-            ->get();
-
-        return view('administrativo.editTarifa', compact('tarifa'));
+        $monto_tarifa = Configuracion::where('clave', 'tarifa')->value('valor');
+        $ultima_fecha_modificacion_tarifa = Configuracion::where('clave', 'ultima_fecha_modificacion_tarifa')->value('valor');
+        
+        return view('administrativo.editTarifa', compact('monto_tarifa', 'ultima_fecha_modificacion_tarifa'));
     }
-
-    /**
-     * Actualiza la tarifa en la base de datos.
-     * 
-     * @param Request $request
-     * 
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function updateTarifa(Request $request): RedirectResponse
+    public function updateTarifa(Request $request)
     {
         $request->validate([
             'monto' => 'required|numeric',
         ]);
 
-        $fecha_actual = Carbon::now()->format('Y-m-d');
+        // Obtener la fecha actual
+        $fecha_actual = now()->format('Y-m-d');
+
 
         Configuracion::where('clave', 'ultima_fecha_modificacion_tarifa')->update(['valor' => $fecha_actual]);
 
+        // Actualizar el monto de la tarifa en la tabla de configuraciones
         Configuracion::where('clave', 'tarifa')->update(['valor' => $request->monto]);
 
         return redirect()->route('inicio')->with('message', 'Tarifa actualizada con éxito.');

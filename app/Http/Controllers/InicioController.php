@@ -1,8 +1,11 @@
 <?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\View\View;
+use App\Models\Configuracion;
+use App\Models\Cliente;
+use App\Models\Reserva;
 use Illuminate\Support\Facades\Auth;
 
 class InicioController extends Controller
@@ -21,7 +24,7 @@ class InicioController extends Controller
             case $usuario->hasRole('cliente'):
                 return $this->clienteInicio($usuario);
             case $usuario->hasRole('administrativo'):
-                return $this->administrativoInicio();
+                return $this->administrativoInicio($usuario);
             case $usuario->hasRole('inspector'):
                 return $this->inspectorInicio();
             default:
@@ -34,9 +37,15 @@ class InicioController extends Controller
      * 
      * @return \Illuminate\View\View
      */
-    protected function administrativoInicio(): View
+    protected function administrativoInicio($usuario): View
     {
-        return view('administrativo.inicio');
+        $admin = $usuario->obtenerCliente();
+        $datos = [
+            'nombre' => $usuario->nombre,
+            'apellido' => $usuario->apellido,
+        ];
+        $tarifa = Configuracion::where('clave', 'tarifa')->value('valor');
+        return view('administrativo.inicio', compact('datos', 'tarifa'));
     }
 
     /**
@@ -54,7 +63,10 @@ class InicioController extends Controller
             'saldo' => $cliente->saldo,
             'puntaje' => $cliente->puntaje,
         ];
-        return view('cliente.inicio', compact('datos'));
+        $reserva = $cliente->obtenerUltimaReserva();
+        $estado = $reserva->getNombreEstadoReserva();
+        $reserva = $reserva->formatearDatosActiva();
+        return view('cliente.inicio', compact('datos', 'estado', 'reserva'));
     }
 
     /**
