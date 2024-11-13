@@ -106,13 +106,13 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/perfil', [ClienteController::class, 'verPerfilCliente'])->name('perfil');
 
 
-    Route::get('/movimiento_saldo', [HistorialController::class, 'historialMovimientos'])->name('mov_saldo');
+    // Route::get('/movimiento_saldo', [HistorialController::class, 'historialMovimientos'])->name('mov_saldo');
 
-    Route::get('/actividad', [HistorialController::class, 'historialReservas'])->name('actividad');
+    // Route::get('/actividad', [HistorialController::class, 'historialReservas'])->name('actividad');
 
-    Route::get('/historial_multas', [HistorialController::class, 'historialMultas'])->name('his_multas');
+    // Route::get('/historial_multas', [HistorialController::class, 'historialMultas'])->name('his_multas');
 
-    Route::get('/historial_suspenciones', [HistorialController::class, 'historialSuspensiones'])->name('his_suspensiones');
+    // Route::get('/historial_suspenciones', [HistorialController::class, 'historialSuspensiones'])->name('his_suspensiones');
 
     Route::get('/estaciones-ver-mapa', [EstacionController::class, 'verMapaCliente'])->name('ver-mapa');
 
