@@ -90,7 +90,7 @@ class InformeController extends Controller
 
         if ($fechaInicio && $fechaFin) {
             $rutas = DB::table('reservas')
-                ->select(DB::raw('CONCAT(reservas.id_estacion_retiro, " -> ", reservas.id_estacion_devolucion) as rutas, r.nombre as nombreR,d.nombre as nombreD , COUNT(*) as total'))
+                ->select(DB::raw('CONCAT(r.nombre, " -> ", d.nombre) as rutas, COUNT(*) as total'))
                 ->join('estaciones as r', 'reservas.id_estacion_retiro', "=", 'r.id_estacion')
                 ->join('estaciones as d', 'reservas.id_estacion_devolucion', "=", 'd.id_estacion')
                 ->whereBetween(DB::raw('DATE(fecha_hora_devolucion)'), [$fechaInicio, $fechaFin])

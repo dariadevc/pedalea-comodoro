@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\EstacionController;
+use App\Http\Controllers\InfraccionController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\InformeController;
 use App\Http\Controllers\LandingController;
@@ -64,6 +65,16 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     Route::get('/rutasInforme', [InformeController::class, 'informeRutas'])->name('informes.rutas');
     //Tiempo de alquileres solicitados y horarios con mas demanda:
     Route::get('/alquiler-tiempo-horario', [InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
+});
+Route::middleware(['auth', 'role:inspector'])->group(function () {
+
+    // Rutas para gestión de bicicletas
+    Route::get('/bicicletas', [BicicletaController::class, 'vistaDeshabilitar'])->name('inspector.bicicletas');
+    Route::get('/infraccion', [InfraccionController::class, 'index'])->name('inspector.infraccion');
+    Route::post('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
+    Route::put('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
+    Route::get('/inspector', function () {return view('inspector.inicio');})->name('inspector.inicio');
+    Route::post('/generar-infraccion', [InfraccionController::class, 'generarInfraccion'])->name('infraccion.generar');
 });
 
 //* CLIENTE

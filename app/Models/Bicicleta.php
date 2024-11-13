@@ -52,7 +52,7 @@ class Bicicleta extends Model
     {
         return $this->reservas()->whereIn('id_estado', [EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->exists();
     }
-    
+
     /**
      * Obtiene el alquiler actual de la bicicleta, si no existe devuelve null.
      *
@@ -62,8 +62,38 @@ class Bicicleta extends Model
     {
         return $this->reservas()->whereIn('id_estado', [EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->first();
     }
-    
-    
+
+    /**
+     * Deshabilita la bicicleta.
+     *
+     * @return void
+     */
+    public function deshabilitar(): void
+    {
+        $this->id_estado = EstadoBicicleta::DESHABILITADA;
+        $this->save();
+    }
+
+    /**
+     * Habilita la bicicleta.
+     *
+     * @return void
+     */
+    public function habilitar(): void
+    {
+        $this->id_estado = EstadoBicicleta::DISPONIBLE;
+        $this->save();
+    }
+
+    /**
+     * Verifica si la bicicleta esta disponible.
+     * 
+     * @return bool
+     */
+    public function estoyDisponible(): bool
+    {
+        return $this->id_estado == EstadoBicicleta::DISPONIBLE;
+    }
     /**
      * Establece el comportamiento de eventos del modelo al inicializarse.
      *
@@ -89,13 +119,12 @@ class Bicicleta extends Model
     public static function generateNextPatente(): string
     {
         return DB::transaction(function () {
-            $ultimaPatente = self::orderBy('patente', 'desc')->lockForUpdate()->value('patente'); // Obtener la última patente y bloquear la tabla para lectura y escritura
+            $ultimaPatente = self::withTrashed()->orderBy('patente', 'desc')->lockForUpdate()->value('patente');
 
             if (!$ultimaPatente) {
                 return 'A00';
             }
 
-            // Descomponer la última patente
             $letra = substr($ultimaPatente, 0, 1);
             $numero = intval(substr($ultimaPatente, 1, 2));
 
@@ -106,10 +135,9 @@ class Bicicleta extends Model
                 if ($letra === 'Z') {
                     throw new \Exception('Se ha alcanzado el límite máximo de patentes.');
                 }
-                $letra = chr(ord($letra) + 1); // Incrementar la letra
+                $letra = chr(ord($letra) + 1);
             }
 
-            // Formatear la nueva patente
             return sprintf('%s%02d', $letra, $numero);
         });
     }
@@ -153,6 +181,4 @@ class Bicicleta extends Model
     {
         return $this->hasMany(Reserva::class, 'id_bicicleta', 'id_bicicleta');
     }
-
-
 }

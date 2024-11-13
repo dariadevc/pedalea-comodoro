@@ -142,7 +142,6 @@ class ReservaController extends Controller
         $reserva_actual = $cliente->obtenerReservaActivaModificada();
 
         if (!$reserva_actual || !isset($reserva_actual->id_reserva)) {
-
             return response()->json([
                 'success' => false,
                 'mensaje' => 'Reserva no encontrada.'
@@ -151,11 +150,17 @@ class ReservaController extends Controller
 
         $estacion_retiro = $reserva_actual->estacionRetiro;
         $nueva_bicicleta = $estacion_retiro->getBicicletaDisponibleAhora();
+
         if ($nueva_bicicleta) {
+            /** @var \App\Models\Bicicleta $bicicleta */
+            $bicicleta = $reserva_actual->bicicleta;
+            $bicicleta->deshabilitar();
+
             $reserva_actual->asignarNuevaBicicleta($nueva_bicicleta);
             return response()->json([
                 'success' => true,
-                'mensaje' => 'Se le asigno una nueva bicicleta de la estación'
+                'mensaje' => 'Se le asigno una nueva bicicleta de la estación',
+                'patente_nueva_bicicleta' => $nueva_bicicleta->patente,
             ]);
         }
 
@@ -394,7 +399,7 @@ class ReservaController extends Controller
             $request->input('estacion_retiro'),
             Auth::user()->id_usuario,
         );
-        session(['reserva_pendiente' => $reserva_pendiente]);
+        session()->put('reserva_pendiente', $reserva_pendiente);
 
         return response()->json([
             'success' => true,
@@ -453,22 +458,23 @@ class ReservaController extends Controller
         /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
+
         /** @var \App\Models\Reserva $reserva */
         $reserva = session('reserva_pendiente');
 
-        // falta si la reserva no existe, esto:
-        // if (!reserva) {}
+        if (!$reserva) {
+        }
+
 
         if ($reserva->reservar($cliente, $usuario)) {
             session()->forget('reserva_pendiente');
-
             return response()->json([
                 'success' => true,
                 'mensaje' => 'Reserva realizada correctamente.',
                 'redirect' => route('inicio')
             ]);
         }
-        return response()->json(['success' => false, 'mensaje' => 'No se pudo realizar la reserva.']);
+        return response()->json(['success' => false, 'mensaje' => 'Monto insuficiente para pagar la reserva.']);
     }
 
     /**

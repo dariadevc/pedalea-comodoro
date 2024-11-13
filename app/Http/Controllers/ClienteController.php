@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Validator;
@@ -63,10 +63,12 @@ class ClienteController extends Controller
             $usuario = Auth::user();
             $cliente = $usuario->obtenerCliente();
             $cliente->agregarSaldo($request->amount, 'Carga de saldo');
+            $saldo = $cliente->saldo;
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Carga realizada con éxito'
+                    'mensaje' => "Carga realizada con éxito. Su saldo actual es de \${$saldo}",
+                    'saldo' => $saldo,
                 ]);
             }
 
@@ -75,7 +77,7 @@ class ClienteController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'success' => false,
-                'message' => 'No se pudo cargar el saldo. Intente nuevamente.'
+                'mensaje' => 'No se pudo cargar el saldo. Intente nuevamente.'
             ]);
         }
 

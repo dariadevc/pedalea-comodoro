@@ -24,7 +24,7 @@
             <div class="mb-4">
                 <label class="block text-gray-700 font-bold mb-2">Fecha de Modificación:</label>
                 <p class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                    {{ $tarifa->where('clave', 'fecha_modificacion_tarifa')->first()->valor }}
+                    {{ $tarifa->where('clave', 'ultima_fecha_modificacion_tarifa')->first()->valor }}
                 </p>
             </div>
             
