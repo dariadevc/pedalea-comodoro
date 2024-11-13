@@ -31,7 +31,7 @@
             <button type="submit" class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">
                 Deshabilitar Bicicleta
             </button>
-            <button type="button" onclick="window.location.href='{{ route('inspector.inicio') }}';"
+            <button type="button" onclick="window.location.href='{{ route('inicio') }}';"
                 class="py-2 px-4 rounded-full font-semibold bg-gray-50 shadow-sm">
                 Volver al inicio
             </button>

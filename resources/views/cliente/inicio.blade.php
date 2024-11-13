@@ -65,9 +65,9 @@
                     Reserva
                 </h2>
                 <p class="mt-4 text-left text-slate-50">Retirá tu bicicleta en la estación <span
-                        class="font-semibold">{{ $reserva['estacion_retiro_nombre'] }}</span> a partir
-                    de las
-                    <span class="font-semibold">{{ $reserva['fecha_hora_retiro'] }}hs</span>.
+                        class="font-semibold">{{ $reserva['estacion_retiro_nombre'] }}</span> desde las
+                    <span class="font-semibold">{{ $hora_retiro_reserva_15_menos }}hs</span> hasta las 
+                    <span class="font-semibold">{{ $hora_retiro_reserva_15_mas }}hs</span>.
                 </p>
                 <p class="mt-4 text-left text-slate-50 text-sm">Para <span class="font-semibold">alquilar</span>, clickea en
                     el botón de abajo.</p>
@@ -84,8 +84,8 @@
                     Alquiler
                 </h2>
                 <p class="mt-4 text-left text-slate-50">Devolvé tu bicicleta en la estación <span
-                        class="font-semibold">{{ $reserva['estacion_devolucion_nombre'] }}</span>, tenes tiempos hasta las
-                    <span class="font-semibold">{{ $reserva['fecha_hora_devolucion'] }}hs</span>.
+                        class="font-semibold">{{ $reserva['estacion_devolucion_nombre'] }}</span>, tenes tiempo hasta las
+                    <span class="font-semibold">{{ $hora_devolucion_reserva_15_mas }}hs</span>.
                 </p>
                 <p class="mt-4 text-left text-slate-50 text-sm">Para <span class="font-semibold">devolver</span>, clickea en
                     el botón de abajo.</p>
