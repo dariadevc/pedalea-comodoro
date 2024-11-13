@@ -1,31 +1,23 @@
 <?php
 
-use App\Http\Controllers\DevolverController;
+
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ClienteController;
-use App\Http\Controllers\EstacionController;
-use App\Http\Controllers\InfraccionController;
 use App\Http\Controllers\InicioController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\InformeController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\BicicletaController;
-use App\Http\Controllers\AdministrativoController;
-use App\Http\Controllers\HistorialController;
 use App\Http\Controllers\ReservaController;
-use App\Models\Reserva;
-use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\EstacionController;
+use App\Http\Controllers\BicicletaController;
+use App\Http\Controllers\HistorialController;
+use App\Http\Controllers\InfraccionController;
+use App\Http\Controllers\AdministrativoController;
+
 
 // Vista principal
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 
-// NO ELIMINAR, cuando hagamos la parte del perfil nos puede ayudar
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
 Route::middleware('auth')->group(function () {
     Route::get('/inicio', [InicioController::class, 'index'])->name('inicio');
 });
