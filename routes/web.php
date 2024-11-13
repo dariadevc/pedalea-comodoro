@@ -1,31 +1,23 @@
 <?php
 
-use App\Http\Controllers\DevolverController;
+
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ClienteController;
-use App\Http\Controllers\EstacionController;
-use App\Http\Controllers\InfraccionController;
 use App\Http\Controllers\InicioController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\InformeController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\BicicletaController;
-use App\Http\Controllers\AdministrativoController;
-use App\Http\Controllers\HistorialController;
 use App\Http\Controllers\ReservaController;
-use App\Models\Reserva;
-use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\EstacionController;
+use App\Http\Controllers\BicicletaController;
+use App\Http\Controllers\HistorialController;
+use App\Http\Controllers\InfraccionController;
+use App\Http\Controllers\AdministrativoController;
+
 
 // Vista principal
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 
-// NO ELIMINAR, cuando hagamos la parte del perfil nos puede ayudar
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
 Route::middleware('auth')->group(function () {
     Route::get('/inicio', [InicioController::class, 'index'])->name('inicio');
 });
@@ -56,24 +48,24 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     //Rutas para la gestion de informes:
 
     //Ruta para el menu de informes:
-    Route::get('/menuInformes', [InformeController::class, 'informeMenu'])->name('informes.menu');
-    //Multas realizadas
-    Route::get('/multas', [InformeController::class, 'informeMultas'])->name('informes.multas');
-    //Estaciones utilizadas
-    Route::get('/estacionesInforme', [InformeController::class, 'informeEstaciones'])->name('informes.estaciones');
-    //Rutas utilizadas
-    Route::get('/rutasInforme', [InformeController::class, 'informeRutas'])->name('informes.rutas');
-    //Tiempo de alquileres solicitados y horarios con mas demanda:
-    Route::get('/alquiler-tiempo-horario', [InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
+    Route::get('/Informes', [InformeController::class, 'informe'])->name('informes');
+    Route::get('/informe/multas', [InformeController::class, 'informeMultas'])->name('informes.multas');
+    Route::get('/informe/estaciones', [InformeController::class, 'informeEstaciones'])->name('informes.estaciones');
+    Route::get('/informe/rutas', [InformeController::class, 'informeRutas'])->name('informes.rutas');
+    Route::get('/informe/alquiler', [InformeController::class, 'informeTiempoAlquilerHorarioDemanda'])->name('informes.tiempoHorario');
 });
+
+//* INSPECTOR
 Route::middleware(['auth', 'role:inspector'])->group(function () {
 
     // Rutas para gestión de bicicletas
-    Route::get('/bicicletas', [BicicletaController::class, 'vistaDeshabilitar'])->name('inspector.bicicletas');
+    Route::get('/deshabilitar-bicicleta', [BicicletaController::class, 'vistaDeshabilitar'])->name('inspector.bicicletas');
     Route::get('/infraccion', [InfraccionController::class, 'index'])->name('inspector.infraccion');
     Route::post('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
     Route::put('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
-    Route::get('/inspector', function () {return view('inspector.inicio');})->name('inspector.inicio');
+    Route::get('/inspector', function () {
+        return view('inspector.inicio');
+    })->name('inspector.inicio');
     Route::post('/generar-infraccion', [InfraccionController::class, 'generarInfraccion'])->name('infraccion.generar');
 });
 
@@ -138,20 +130,12 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/modificar-reserva', [ReservaController::class, 'modificarReservaC'])->name('reservas.modificar');
     Route::post('/confirmar-modificacion', [ReservaController::class, 'confirmarModificacionReserva'])->name('reservar.confirmarModificacion');
     Route::post('/rechazar-modificacion', [ReservaController::class, 'rechazarModificacion'])->name('reservas.rechazarModificacion');
-    
+
     //Prueba para los historiales:
-    Route::get('/historial-movimiento',[HistorialController::class, 'historialMovimientos'])->name('historiales.movimientos');
-
-
-    // DEVOLVER
-    Route::get('/devolver', [ReservaController::class, 'indexDevolver'])->name('devolver.index');
-    Route::post('/devolver-mostrar-danios', [ReservaController::class, 'mostrarDanios'])->name('devolver.mostrar-danios');
-    Route::post('/devolver-guardar-danios', [ReservaController::class, 'guardarDanios'])->name('devolver.guardar-danios');
-    Route::post('/devolver-sin-danios', [ReservaController::class, 'sinDanios'])->name('devolver.sin-danios');
-    Route::post('/devolver-mostrar-calificacion', [ReservaController::class, 'mostrarCalificacion'])->name('devolver.mostrar-calificacion');
-    Route::post('/devolver-guardar-calificacion', [ReservaController::class, 'guardarCalificacion'])->name('devolver.guardar-calificacion');
-    Route::post('/devolver-mostrar-devolver-bicicleta', [ReservaController::class, 'mostrarDevolverBicicleta'])->name('devolver.mostrar-devolver-bicicleta');
-    Route::post('/devolver', [ReservaController::class, 'devolverConfirmar'])->name('devolver.confirmar');
+    Route::get('/historial-reserva', [HistorialController::class, 'historialReservas'])->name('historiales.reservas');
+    Route::get('/historial-multa', [HistorialController::class, 'historialMultas'])->name('historiales.multas');
+    Route::get('/historial-suspension', [HistorialController::class, 'historialSuspensiones'])->name('historiales.suspensiones');
+    Route::get('/historial-movimiento', [HistorialController::class, 'historialMovimientos'])->name('historiales.movimientos');
 });
 
 

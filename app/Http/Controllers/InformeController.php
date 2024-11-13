@@ -2,34 +2,22 @@
 
 namespace App\Http\Controllers;
 
-
-use Illuminate\View\View;
+use App\Models\Multa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use PHPUnit\Framework\Constraint\Count;
 
 class InformeController extends Controller
 {
 
-    /**
-     * Muestra el menu para los informes.
-     * 
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function informeMenu(): View
+
+    public function informe(Request $request)
     {
-        return view('informes.menuInformes');
+
+        return view('administrativo.informes');
     }
 
-
-    /**
-     * Muestra el informe de multas.
-     * 
-     * @param Request $request
-     * 
-     * @return \Illuminate\View\View
-     */
-    public function informeMultas(Request $request): View
+    public function informeMultas(Request $request)
     {
         $fechaInicio = $request->input('fecha_inicio') . ' 00:00:00';  //Pongo de esta forma la hora para que me tome todo el dia
         $fechaFin = $request->input('fecha_fin') . ' 23:59:59';        //Si no ponia la misma fecha de inicio y de fin y no me filtraba por el cambio de horario
@@ -42,21 +30,19 @@ class InformeController extends Controller
                 ->whereBetween('multas.fecha_hora', [$fechaInicio, $fechaFin])
                 ->get();
         } else {
+
             $multas = [];
         }
-        return view('informes.multas', compact('multas'));
+        // return view('administrativo.informes.multas', compact('multas'));
+        if ($request->ajax()) {
+            return view('administrativo.informes.multas', compact('multas'));
+        }
+        return view('administrativo.informes', compact('multas'));
     }
 
-
     //De la otra forma con la lista y el validatte, tendria que probar con date_format, no con date solo.
-    /**
-     * Muestra el informe de estaciones.
-     * 
-     * @param Request $request
-     * 
-     * @return \Illuminate\View\View
-     */
-    public function informeEstaciones(Request $request): View
+
+    public function informeEstaciones(Request $request)
     {
         $fechaInicio = $request->input('fecha_inicio') . ' 00:00:00';
         $fechaFin = $request->input('fecha_fin') . ' 23:59:59';
@@ -73,17 +59,14 @@ class InformeController extends Controller
         } else {
             $estaciones = [];
         }
-        return view('informes.estacionesInforme', compact('estaciones'));
+        // return view('administrativo.informes.estacionesInforme', compact('estaciones'));
+        if ($request->ajax()) {
+            return view('administrativo.informes.estacionesInforme', compact('estaciones'));
+        }
+        return view('administrativo.informes', compact('estaciones'));
     }
 
-    /**
-     * Muestra el informe de rutas.
-     * 
-     * @param Request $request
-     * 
-     * @return \Illuminate\View\View
-     */
-    public function informeRutas(Request $request): View
+    public function informeRutas(Request $request)
     {
         $fechaInicio = $request->input('fecha_inicio') . ' 00:00:00';
         $fechaFin = $request->input('fecha_fin') . ' 23:59:59';
@@ -99,20 +82,17 @@ class InformeController extends Controller
                 ->where('reservas.id_estado', 3)
                 ->get();
         } else {
+
             $rutas = [];
         }
-        return view('informes.rutasInforme', compact('rutas'));
+        // return view('administrativo.informes.rutasInforme', compact('rutas'));
+        if ($request->ajax()) {
+            return view('administrativo.informes.rutasInforme', compact('rutas'));
+        }
+        return view('administrativo.informes', compact('rutas'));
     }
 
-
-    /**
-     * Muestra el informe del tiempo de alquiler de mayor demanda y el horario de retiro de mayor demanda.
-     * 
-     * @param Request $request
-     * 
-     * @return \Illuminate\View\View
-     */
-    public function informeTiempoAlquilerHorarioDemanda(Request $request): View
+    public function informeTiempoAlquilerHorarioDemanda(Request $request)
     {
         $fechaInicio = $request->input('fecha_inicio') . ' 00:00:00';
         $fechaFin = $request->input('fecha_fin') . ' 23:59:59';
@@ -143,6 +123,10 @@ class InformeController extends Controller
             $alquileresTimeHor = [];
             $alquileresTime = [];
         }
-        return view('informes.alquilerInforme', compact('alquileresTime', 'alquileresHor'));
+        // return view('administrativo.informes.alquilerInforme', compact('alquileresTime', 'alquileresHor'));
+        if ($request->ajax()) {
+            return view('administrativo.informes.alquilerInforme', compact('alquileresTime', 'alquileresHor'));
+        }
+        return view('administrativo.informes', compact('alquileresTime', 'alquileresHor'));
     }
 }
