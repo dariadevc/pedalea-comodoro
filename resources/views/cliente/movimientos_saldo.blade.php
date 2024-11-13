@@ -21,7 +21,6 @@
         <div>
             <section class="bg-gray-50 rounded-xl shadow-md p-4">
                 <div style="text-align: center;">
-                    <img src="img/bicicleta.png" alt="" style="display: block; margin: 0 auto;" class="h-14 w-14">
                     <h2>Movimientos de Saldo</h2>
                 </div>
             @if($movimientos->count() > 0)

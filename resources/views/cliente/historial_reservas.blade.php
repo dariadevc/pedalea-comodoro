@@ -6,7 +6,6 @@
     <div class="flex flex-col w-full md:w-3/4 gap-4">
         {{-- FORMULARIO DE FECHAS --}}
         <section class="flex gap-2 bg-gray-50 py-2 px-6 rounded-full text-sm items-center border-2">
-            <img src="img/bicicleta.png" alt="" class="h-14 w-14">
             <form method="GET" action="{{ route('actividad') }}" class="flex w-full">
                 <div class="flex gap-2 w-full">
                     <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control text-sm border-none bg-gray-50 focus:outline-none focus:ring-0 w-full" required value="{{ $fechaInicio ?? '' }}">
