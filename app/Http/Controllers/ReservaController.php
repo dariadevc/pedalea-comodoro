@@ -175,7 +175,7 @@ class ReservaController extends Controller
             return response()->json([
                 'success' => false,
                 'mensaje' => 'La bicicleta no está disponible en la estación.',
-                'redirectUrl' => route('reservas.modificar')
+                'html' => $this->modificarReservaC()
             ]);
         }
         $nueva_bicicleta = $estacion_retiro->bicicletas()->whereNull('id_estacion_actual')->first();
@@ -193,7 +193,7 @@ class ReservaController extends Controller
         return response()->json([
             'success' => false,
             'mensaje' => 'No hay bicicletas disponibles en esta estación.',
-            'redirectUrl' => route('reservas.modificar')
+            'html' => $this->modificarReservaC()
         ]);
     }
 
@@ -512,11 +512,9 @@ class ReservaController extends Controller
     /**
      * Muestra el formulario para modificar una reserva.
      * 
-     * @param Request $request
-     * 
      * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
      */
-    public function modificarReservaC(Request $request)
+    public function modificarReservaC()
     {
         /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
@@ -551,7 +549,7 @@ class ReservaController extends Controller
         $nuevaBicicleta = $nuevaEstacionYBicicleta['bicicleta'];
         $nuevoHoraDevolucion = $reserva->fecha_hora_devolucion->addMinutes(15);
 
-        return view('cliente.modificar_reserva', compact('reserva', 'nuevaEstacion', 'nuevaBicicleta', 'nuevoHoraRetiro', 'nuevoHoraDevolucion'));
+        return view('cliente.partials.modal-modificar-reserva', compact('reserva', 'nuevaEstacion', 'nuevaBicicleta', 'nuevoHoraRetiro', 'nuevoHoraDevolucion'))->render();
     }
 
 

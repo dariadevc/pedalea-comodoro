@@ -42,7 +42,8 @@ window.mandarFormularioBiciNoDisponible = function () {
                 window.ocultarDisponible();
                 window.mostrarPagarAlquiler();
             } else {
-                window.location.href = response.redirectUrl;
+                $('#contenidoModalModificarReserva').html(response.html);
+                $('#modalModificarReserva').removeClass('invisible');
             }
         },
         error: function (xhr, status, error) {

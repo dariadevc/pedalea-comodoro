@@ -2,14 +2,6 @@
 
 @section('content')
     {{-- CONTENEDOR PRINCIPAL PARA CENTRAR TODO --}}
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
     <div class="flex flex-col items-center justify-center gap-4 w-full max-w-4xl mx-auto">
         {{-- CONTENEDOR DE TITULO Y DATOS --}}
         <div class="w-full max-w-2xl mx-auto">
