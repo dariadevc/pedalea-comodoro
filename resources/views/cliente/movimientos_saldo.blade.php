@@ -5,7 +5,7 @@
 @section('contenido')
     <div class="flex flex-col w-full md:w-3/4 gap-4">
         {{-- FORMULARIO DE FECHAS --}}
-        <section class="flex gap-2 bg-gray-50 py-2 px-6 rounded-full text-sm items-center border-2">
+        <!--<section class="flex gap-2 bg-gray-50 py-2 px-6 rounded-full text-sm items-center border-2">
             <p>icono</p>
             <form method="GET" action="{{ route('mov_saldo') }}" class="flex w-full">
                 <div class="flex gap-2 w-full">
@@ -15,6 +15,7 @@
                 <x-btn-rojo-blanco type="submit" class="capitalize">Buscar</x-btn-rojo-blanco>
             </form>
         </section>
+    -->
 
         {{-- HISTORIAL --}}
         <section class="bg-gray-50 rounded-xl shadow-md p-4">
