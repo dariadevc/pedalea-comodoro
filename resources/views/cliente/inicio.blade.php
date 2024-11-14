@@ -119,29 +119,38 @@
 
     </div>
 
-    {{-- TODO: Que se cargue la actividad reciente --}}
-    <div class="grid auto-rows-max gap-2 bg-gray-50 rounded-xl shadow-md w-full md:w-1/2 md:place-self-start">
-        {{-- SUBTÍTULO --}}
-        <div class="border-b-2 w-full p-4">
-            <h2 class="font-semibold text-pc-texto-h">Actividad Reciente</h2>
-        </div>
-        {{-- LISTA DE ACTIVIDADES --}}
-        {{-- TODO: Actualizar tarjetas a medida que realiza nuevas reservas, cada href vincula a la reserva/alquiler correspondiente --}}
-        <ul class="">
-            <li class="flex box-border">
-                <a href="#" class="p-4 hover:bg-gray-100 w-full">
-                    {{-- INFO DE LA ACTIVIDAD --}}
-                    <div class="flex flex-col gap-1 items-start">
-                        <p>Aún no realizaste ninguna reserva.</p>
-                    </div>
-                </a>
-            </li>
-        </ul>
-        <a href="{{ route('actividad') }}" class="px-4 py-2 border-t-2 text-pc-azul hover:text-pc-rojo hover:shadow-inner">
-            <div class="flex items-center justify-between">
-                <p>Ver toda tu actividad</p>
-                <x-icon-flecha-der-oscura width=30px height=30px />
+    <div class="container mx-auto mt-6">
+        {{-- ACTIVIDAD RECIENTE --}}
+        <div class="grid auto-rows-max gap-2 bg-gray-50 rounded-xl w-1/2 shadow-md">
+            {{-- SUBTÍTULO --}}
+            <div class="border-b-2 w-full p-4">
+                <h2 class="font-semibold text-pc-texto-h">Actividad Reciente</h2>
             </div>
-        </a>
+            {{-- LISTA DE ACTIVIDADES --}}
+            <ul class="">
+                @forelse ($datos['reservasRecientes'] as $reserva)
+                    <li class="flex box-border">
+                        <a href="#" class="p-4 hover:bg-gray-100 w-full">
+                            {{-- INFO DE LA ACTIVIDAD --}}
+                            <div class="flex flex-col gap-1 items-start">
+                                <h2>Reserva</h2>
+                                <p>{{ $reserva->estado }}</p>
+                                <p>{{ $reserva->fecha_hora_retiro }}</p>
+                            </div>
+                        </a>
+                    </li>
+                @empty
+                    <li class="flex box-border">
+                        <p class="p-4 w-full">No hay actividades recientes.</p>
+                    </li>
+                @endforelse
+            </ul>
+            <a href="{{ route('actividad') }}" class="px-4 py-2 border-t-2">
+                <div class="flex items-center justify-between">
+                    <p>Ver toda tu actividad</p>
+                    <x-icon-flecha-der-oscura width="30px" height="30px" />
+                </div>
+            </a>
+        </div>
     </div>
 @endsection
