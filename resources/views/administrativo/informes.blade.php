@@ -51,24 +51,28 @@
     {{-- TODO: Conectar para que se muestre bien el informe en el contenedor!! Capaz es mejor usar jquery que alpinejs --}}
     <div x-data="{ informeActual: '' }" class="w-full flex flex-col gap-4">
         <div class="flex justify-around p-1 py-2 rounded-full">
-            <button @click="informeActual = 'multas'; cargarInforme('multas')"
+            <button @click="informeActual = 'multas'"
                 :class="informeActual === 'multas' ? 'bg-pc-rojo text-white font-bold' : 'bg-white text-current'"
-                class="py-1 px-3 rounded-full hover:shadow-md border-2 border-pc-rojo">
+                class="informes-btn py-1 px-3 rounded-full hover:shadow-md border-2 border-pc-rojo"
+                data-url="{{ route('informes.multas') }}">
                 Multas Realizadas
             </button>
-            <button @click="informeActual = 'estaciones'; cargarInforme('estaciones')"
+            <button @click="informeActual = 'estaciones'"
                 :class="informeActual === 'estaciones' ? 'bg-pc-rojo text-white font-bold' : 'bg-white text-current'"
-                class="py-1 px-3 rounded-full hover:shadow-md border-2 border-pc-rojo">
+                class="informes-btn py-1 px-3 rounded-full hover:shadow-md border-2 border-pc-rojo"
+                data-url="{{ route('informes.estaciones') }}">
                 Estaciones Utilizadas
             </button>
-            <button @click="informeActual = 'rutas'; cargarInforme('rutas')"
+            <button @click="informeActual = 'rutas'"
                 :class="informeActual === 'rutas' ? 'bg-pc-rojo text-white font-bold' : 'bg-white text-current'"
-                class="py-1 px-3 rounded-full hover:shadow-md border-2 border-pc-rojo">
+                class="informes-btn py-1 px-3 rounded-full hover:shadow-md border-2 border-pc-rojo"
+                data-url="{{ route('informes.rutas') }}">
                 Rutas Utilizadas
             </button>
-            <button @click="informeActual = 'alquiler'; cargarInforme('alquiler')"
+            <button @click="informeActual = 'alquiler'"
                 :class="informeActual === 'alquiler' ? 'bg-pc-rojo text-white font-bold' : 'bg-white text-current'"
-                class="py-1 px-3 rounded-full hover:shadow-md border-2 border-pc-rojo">
+                class="informes-btn py-1 px-3 rounded-full hover:shadow-md border-2 border-pc-rojo"
+                data-url="{{ route('informes.tiempoHorario') }}">
                 Alquiler Tiempo/Hora
             </button>
             <!-- Agrega más botones para los otros informes -->
@@ -76,22 +80,7 @@
 
         <div id="contenedor-informe" class="place-self-center bg-gray-50 w-full p-4 rounded-lg shadow-md">
             <p class="text-center" x-show="!informeActual">Seleccione el informe al que desea acceder.</p>
-            <div x-show="informeActual" x-html="contenidoInforme"></div>
         </div>
     </div>
 
-    <script>
-        function cargarInforme(informe) {
-            fetch(`/informe/${informe}`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.text())
-                .then(html => {
-                    document.querySelector('#contenedor-informe').innerHTML = html;
-                })
-                .catch(error => console.error('Error al cargar el informe:', error));
-        }
-    </script>
 @endsection
