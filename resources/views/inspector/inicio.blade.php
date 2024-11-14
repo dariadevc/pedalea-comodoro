@@ -8,8 +8,8 @@
     <div class="flex flex-col items-center gap-1">
 
         <img src="img/bicicleta.png" alt="" class="h-14 w-14">
-        <p class="text-xl font-semibold text-pc-texto-h">¡Hola Inspector <span class="font-bold text-pc-rojo">
-                {{ Auth::user()->nombre }}</span>!</p>
+        <p class="text-xl font-semibold text-pc-texto-h">¡Hola <span class="font-bold text-pc-rojo">
+                {{ Auth::user()->nombre }} {{ Auth::user()->apellido }}</span>!</p>
     </div>
     <div class="grid grid-cols-2 gap-6">
         @if (session('success'))
@@ -44,5 +44,16 @@
             </svg>
             <h3 class="text-center">Generar infracciones</h3>
         </a>
+    </div>
+    <div class="p-8 place-self-center">
+
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit"
+                class="text-center text-base py-2 px-4 text-pc-texto-h font-medium rounded-full bg-gray-200 hover:bg-white hover:shadow-md my-1">
+                {{ __('Log Out') }}
+            </button>
+        </form>
+
     </div>
 @endsection

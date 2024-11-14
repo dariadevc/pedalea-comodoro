@@ -18,15 +18,10 @@
                         Sesión</a>
                 @endif
 
-                {{-- Si inició sesión le va a permitir cerrar sesión --}}
+                {{-- Si inició sesión le va a permitir ir al inicio --}}
                 @if (Auth::user())
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit"
-                            class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover:outline-slate-50">
-                            {{ __('Log Out') }}
-                        </button>
-                    </form>
+                    <a href="{{ route('inicio') }}"
+                        class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50">Inicio</a>
                 @endif
 
             </ul>
@@ -68,13 +63,8 @@
 
                             {{-- Si inicio sesión le va a permitir cerrar sesión --}}
                             @if (Auth::user())
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit"
-                                        class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 mt-5 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover:outline-slate-50 sm:hidden">
-                                        {{ __('Log Out') }}
-                                    </button>
-                                </form>
+                                <a href="{{ route('inicio') }}"
+                                    class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 mt-5 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50 sm:hidden">Inicio</a>
                             @endif
                         </ul>
                     </nav>
@@ -236,9 +226,9 @@
             </div>
             <!-- Contenedor para el mapa interactivo -->
             <div
-            class="w-full md:w-3/4 lg:w-2/3 h-[600px] mx-auto rounded-lg overflow-hidden shadow-lg border border-gray-200">
-            @include('estaciones.partials.mapa-estaciones', ['estaciones' => $estaciones])
-        </div>
+                class="w-full md:w-3/4 lg:w-2/3 h-[600px] mx-auto rounded-lg overflow-hidden shadow-lg border border-gray-200">
+                @include('estaciones.partials.mapa-estaciones', ['estaciones' => $estaciones])
+            </div>
         </div>
     </section>
     <!-- MAPA INTERACTIVO  -->

@@ -182,7 +182,7 @@
 
     {{-- CONTENIDO PRINCIPAL --}}
     <main id="main"
-        class="flex flex-col md:flex-row gap-6 mt-14 mb-20 p-8 lg:ml-64 overflow-y-auto justify-center items-center">
+        class="flex flex-col md:flex-row gap-6 mt-14 mb-20 p-8 lg:ml-64 overflow-y-auto overflow-x-hidden justify-center items-center">
         @yield('contenido')
     </main>
 
