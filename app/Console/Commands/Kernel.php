@@ -25,6 +25,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:chequeo-reservas-vencidas')->daily();
 
         $schedule->command('app:premiar-buena-conducta')->everySixMonths();
+
+        $schedule->command('app:regalar-saldo')->monthlyOn(28, '23:59');
     }
 
     /**
