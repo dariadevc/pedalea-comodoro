@@ -1,13 +1,14 @@
 <div id="contenedorReserva" class="flex flex-col lg:flex-row gap-6 mt-5 w-full">
+    <div class="">
+        <p id="parrafoInformacion" class="text-pc-texto-h text-base font-bold border-l-4 border-l-pc-rojo pl-2">
+            Datos de la reserva
+        </p>
+
+    </div>
     <div id="contenedorDatosReserva"
         class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full lg:w-2/3 p-4 shadow-md rounded-xl flex flex-col gap-6">
         <!-- Información de la reserva -->
-        <div class="">
-            <p id="parrafoInformacion" class="text-pc-texto-h text-base font-bold border-l-4 border-l-pc-rojo pl-2">
-                Datos de la reserva
-            </p>
-            
-        </div>
+
         <div class="flex flex-col gap-2 py-2 px-4 bg-gray-50 rounded-xl shadow-sm">
             <label class="font-semibold text-wrap text-pc-texto-h border-b-2 border-b-pc-texto-h self-start">Estación de
                 retiro</label>
@@ -48,7 +49,8 @@
     </div>
 
     <div class="flex flex-col lg:w-1/3 gap-4 justify-center">
-        <p class="text-pc-texto-p text-base border-l-4 border-l-pc-rojo pl-2">¿Los datos de la reserva son correctos?</p>
+        <p class="text-pc-texto-p text-base border-l-4 border-l-pc-rojo pl-2">¿Los datos de la reserva son correctos?
+        </p>
         <div class="flex gap-6 self-center">
             <form id="formularioDatosCorrectos" action="{{ route('reservar.datos-correctos') }}" method="POST"
                 class="row-auto">

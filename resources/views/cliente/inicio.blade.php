@@ -126,7 +126,7 @@
         </div>
 
         {{-- ACTIVIDAD RECIENTE --}}
-        <div class="grid auto-rows-max gap-2 bg-gray-50 rounded-xl w-full md:w-1/2 shadow-md">
+        <div class="grid auto-rows-max bg-gray-50 rounded-xl w-full md:w-1/2 shadow-md">
             {{-- SUBTÍTULO --}}
             <div class="border-b-2 w-full p-4">
                 <h2 class="font-semibold text-pc-texto-h">Actividad Reciente</h2>
@@ -135,14 +135,20 @@
             <ul class="">
                 @forelse ($datos['reservasRecientes'] as $reserva)
                     <li class="flex box-border">
-                        <a href="#" class="p-4 hover:bg-gray-100 w-full">
-                            {{-- INFO DE LA ACTIVIDAD --}}
-                            <div class="flex flex-col gap-1 items-start">
-                                <h2>Reserva</h2>
-                                <p>{{ $reserva->estado }}</p>
-                                <p>{{ $reserva->fecha_hora_retiro }}</p>
-                            </div>
-                        </a>
+                        {{-- INFO DE LA ACTIVIDAD --}}
+                        <div class="flex flex-col gap-1 items-start p-4 hover:bg-gray-100 w-full border-b-2">
+                            <h2 class="text-sm font-semibold">Reserva</h2>
+                            @if ($reserva->estado == 'Cancelada')
+                                <p class="text-pc-rojo font-semibold">{{ $reserva->estado }}</p>
+                            @elseif ($reserva->estado == 'Activa')
+                                <p class="text-pc-azul font-semibold">{{ $reserva->estado }}</p>
+                            @else
+                                <p class="text-gray-400 font-semibold">{{ $reserva->estado }}</p>
+                            @endif
+                            <p class="text-sm font-semibold">Fecha</p>
+                            <p>{{ ucfirst(\Carbon\Carbon::parse($reserva->fecha_hora_retiro)->locale('es')->translatedFormat('l, d \d\e F Y \a \l\a\s h:i')) }}
+                            </p>
+                        </div>
                     </li>
                 @empty
                     <li class="flex box-border">
@@ -151,7 +157,7 @@
                 @endforelse
             </ul>
             <a href="{{ route('actividad') }}"
-                class="text-pc-texto-p px-4 py-2 border-t-2 hover:shadow-inner hover:font-semibold hover:px-5">
+                class="text-pc-texto-p px-4 py-2 hover:shadow-inner hover:font-semibold hover:px-5 h-full">
                 <div class="flex items-center justify-between">
                     <p>Ver toda tu actividad</p>
                     <x-icon-flecha-der-oscura width="30px" height="30px" />
