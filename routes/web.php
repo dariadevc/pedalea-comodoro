@@ -67,9 +67,6 @@ Route::middleware(['auth', 'role:inspector'])->group(function () {
     Route::get('/infraccion', [InfraccionController::class, 'index'])->name('inspector.infraccion');
     Route::post('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
     Route::put('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
-    Route::get('/inspector', function () {
-        return view('inspector.inicio');
-    })->name('inspector.inicio');
     Route::post('/generar-infraccion', [InfraccionController::class, 'generarInfraccion'])->name('infraccion.generar');
 });
 
@@ -86,6 +83,15 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/alquiler-actual',  [ReservaController::class, 'indexAlquilerActual'])->name('alquiler_actual');
     Route::post('/alquiler-actual/buscar-usuario', [])->name('alquiler_actual.buscar-usuario');
 
+    // * DEVOLVER
+    Route::get('/devolver', [ReservaController::class, 'indexDevolver'])->name('devolver.index');
+    Route::post('/devolver-mostrar-danios', [ReservaController::class, 'mostrarDanios'])->name('devolver.mostrar-danios');
+    Route::post('/devolver-guardar-danios', [ReservaController::class, 'guardarDanios'])->name('devolver.guardar-danios');
+    Route::post('/devolver-sin-danios', [ReservaController::class, 'sinDanios'])->name('devolver.sin-danios');
+    Route::post('/devolver-mostrar-calificacion', [ReservaController::class, 'mostrarCalificacion'])->name('devolver.mostrar-calificacion');
+    Route::post('/devolver-guardar-calificacion', [ReservaController::class, 'guardarCalificacion'])->name('devolver.guardar-calificacion');
+    Route::post('/devolver-mostrar-devolver-bicicleta', [ReservaController::class, 'mostrarDevolverBicicleta'])->name('devolver.mostrar-devolver-bicicleta');
+    Route::post('/devolver', [ReservaController::class, 'devolverConfirmar'])->name('devolver.confirmar');
 
 
 

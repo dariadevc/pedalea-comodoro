@@ -3,10 +3,13 @@
     <form method="GET" action="{{ route('informes.multas') }}"
         class="border-2 border-gray-100 p-6 rounded-lg shadow-md flex justify-center items-center gap-4">
         <label for="fecha_inicio">Desde:</label>
-        <input type="date" id="fecha_inicio" name="fecha_inicio" required>
+        <input type="date" id="fecha_inicio" name="fecha_inicio"
+            value="{{ old('fecha_inicio', request('fecha_inicio')) }}" required>
 
         <label for="fecha_fin">Hasta:</label>
-        <input type="date" id="fecha_fin" name="fecha_fin" required>
+        <input type="date" id="fecha_fin" name="fecha_fin" value="{{ old('fecha_fin', request('fecha_fin')) }}"
+            required>
+
         <button type="submit" class="bg-pc-azul hover:bg-pc-celeste text-white font-bold py-2 px-4 rounded">Generar
             Informe</button>
     </form>
@@ -25,10 +28,16 @@
                         Cliente</th>
                     <th
                         class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">
+                        DNI</th>
+                    <th
+                        class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">
                         Monto</th>
                     <th
                         class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">
-                        Fecha y Hora</th>
+                        Estado</th>
+                    <th
+                        class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">
+                        Fecha</th>
                     <th
                         class="bg-sky-100 p-2 text-black font-bold md:border md:border-black text-left block md:table-cell">
                         Descripción</th>
@@ -38,9 +47,15 @@
                 @foreach ($multas as $multa)
                     <tr class="bg-sky-50 border border-grey-500 md:border-none block md:table-row">
                         <td class="p-2 md:border md:border-black text-left block md:table-cell">
-                            {{ $multa->nombre_usuario }}</td>
-                        <td class="p-2 md:border md:border-black text-left block md:table-cell">{{ $multa->monto }}</td>
-                        <td class="p-2 md:border md:border-black text-left block md:table-cell">{{ $multa->fecha_hora }}
+                            {{ $multa->nombre_usuario }} {{ $multa->apellido_usuario }}</td>
+                        <td class="p-2 md:border md:border-black text-left block md:table-cell">
+                            {{ $multa->dni_usuario }}</td>
+                        <td class="p-2 md:border md:border-black text-left block md:table-cell">${{ $multa->monto }}
+                        </td>
+                        <td class="p-2 md:border md:border-black text-left block md:table-cell">{{ $multa->estado }}
+                        </td>
+                        <td class="p-2 md:border md:border-black text-left block md:table-cell">
+                            {{ \Carbon\Carbon::parse($multa->fecha_hora)->format('d/m/Y') }}
                         </td>
                         <td class="p-2 md:border md:border-black text-left block md:table-cell">
                             {{ $multa->descripcion }}</td>

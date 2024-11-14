@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bicicleta;
+use App\Models\EstadoReserva;
 use App\Models\Infraccion;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -24,16 +25,6 @@ class InfraccionController extends Controller
      */
     public function generarInfraccion(Request $request)
     {
-        // ----------------------------
-        // ----------------------------
-        // ----------------------------
-
-        // LORENZO RETORNA JSON CUANDO TRABAJES CON AJAX, SINO NO
-        // AHORA TENES QUE RETORNAR UNA VISTA O REDIRIGIR A OTRA RUTA
-
-        // ----------------------------
-        // ----------------------------
-        // ----------------------------
 
         $request->validate([
             'patente' => 'required|string',
@@ -43,65 +34,28 @@ class InfraccionController extends Controller
 
         $bicicleta = Bicicleta::where('patente', $request->patente)->first();
         if (!$bicicleta) {
-            return response()->json(['error' => 'Bicicleta no encontrada'], 404);
+            return redirect()->back()->with('error', 'Bicicleta no encontrada')->withInput();
         }
 
-        $reserva = $bicicleta->reservas()->whereIn('id_estado', [2, 6])->first();
+        $reserva = $bicicleta->reservas()->whereIn('id_estado', [EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->first();
 
         if (!$reserva) {
-            return response()->json(['error' => 'No se encontró una reserva activa para esta bicicleta'], 404);
+            return redirect()->back()->with('error', 'No se encontró una reserva activa para esta bicicleta')->withInput();
         }
+        if ($request->puntos > 0) {
+            $puntos_a_restar = $request->puntos * -1;
+        }
+
         /** @var \App\Models\Cliente $cliente */
         $cliente = $reserva->clienteReservo;
         $cliente->infracciones()->create([
             'id_reserva' => $reserva->id_reserva,
             'id_usuario_inspector' => Auth::user()->id_usuario,
             'motivo' => $request->motivo,
-            'cantidad_puntos'=> $request->puntos,
+            'cantidad_puntos'=> $puntos_a_restar,
             'fecha_hora'=> Carbon::now(),
         ]);
-        $puntaje_a_restar = $request->puntos * -1;
-        $cliente->actualizarPuntaje($puntaje_a_restar);
-        return response()->json(['success' => 'Infracción creada exitosamente.'], 201);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $cliente->actualizarPuntaje($puntos_a_restar);
+        return redirect()->route('inicio')->with('success', 'Infracción creada exitosamente.');
     }
 }

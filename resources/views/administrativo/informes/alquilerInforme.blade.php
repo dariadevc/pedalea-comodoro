@@ -3,9 +3,13 @@
     <form method="GET" action="{{ route('informes.tiempoHorario') }}"
         class="border-2 border-gray-100 p-6 rounded-lg shadow-md flex justify-center items-center gap-4">
         <label for="fecha_inicio">Desde:</label>
-        <input type="date" id="fecha_inicio" name="fecha_inicio" required value="{{ $fechaInicio ?? '' }}">
+        <input type="date" id="fecha_inicio" name="fecha_inicio"
+            value="{{ old('fecha_inicio', request('fecha_inicio')) }}" required>
+
         <label for="fecha_fin">Hasta:</label>
-        <input type="date" id="fecha_fin" name="fecha_fin" required value="{{ $fechaFin ?? '' }}">
+        <input type="date" id="fecha_fin" name="fecha_fin" value="{{ old('fecha_fin', request('fecha_fin')) }}"
+            required>
+
         <button type="submit" class="bg-pc-azul hover:bg-pc-celeste text-white font-bold py-2 px-4 rounded">Generar
             Informe</button>
     </form>

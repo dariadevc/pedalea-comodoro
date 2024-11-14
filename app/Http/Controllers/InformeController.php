@@ -24,9 +24,10 @@ class InformeController extends Controller
 
         if ($fechaInicio && $fechaFin) {
             $multas = DB::table('multas') //Tengo que hacer esta consulta para obtener el nombre de cada cliente que esta en la clase padre user. 
-                ->select('multas.*', 'usuarios.nombre as nombre_usuario')
+                ->select('multas.*', 'usuarios.nombre as nombre_usuario', 'usuarios.apellido as apellido_usuario', 'usuarios.dni as dni_usuario', 'estados_multa.nombre as estado')
                 ->join('clientes', 'multas.id_usuario', '=', 'clientes.id_usuario')
                 ->join('usuarios', 'clientes.id_usuario', '=', 'usuarios.id_usuario')
+                ->join('estados_multa', 'multas.id_estado', '=', 'estados_multa.id_estado')
                 ->whereBetween('multas.fecha_hora', [$fechaInicio, $fechaFin])
                 ->get();
         } else {

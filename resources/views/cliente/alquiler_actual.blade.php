@@ -3,6 +3,12 @@
 @section('nombre_seccion', 'Alquiler Actual')
 
 @section('contenido')
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+
     <div x-data="{ mostrarBusqueda: false }" x-on:cerrar-tarjeta.window="mostrarBusqueda = false"
         class="w-full flex flex-col md:flex-row gap-6 justify-center items-center">
         {{-- MOSTRAR DATOS DE RESERVA --}}
@@ -64,12 +70,24 @@
             </div>
         @endif
 
-        <div x-show="mostrarBusqueda" class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
+        <div x-show="mostrarBusqueda" x-cloak class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
             <div id="tarjeta_reasignar" @click.away="mostrarBusqueda = false"
                 class="flex flex-col p-8 gap-2 bg-gray-50 border-pc-azul border-4 rounded-3xl shadow-lg w-3/4 max-w-md">
                 @include('cliente.partials.buscar_usuario_reasignar')
             </div>
         </div>
+
+        {{-- ------------------------------------------------ --}}
+        {{-- CUALQUIER COSA SI NO FUNCIONA USAR ESTE DE ABAJO --}}
+        {{-- ------------------------------------------------ --}}
+
+        {{-- <div x-show="mostrarBusqueda" class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
+            <div id="tarjeta_reasignar" @click.away="mostrarBusqueda = false"
+                class="flex flex-col p-8 gap-2 bg-gray-50 border-pc-azul border-4 rounded-3xl shadow-lg w-3/4 max-w-md">
+                @include('cliente.partials.buscar_usuario_reasignar')
+            </div>
+        </div> --}}
+        
     </div>
 @endsection
 

@@ -14,7 +14,7 @@ class AdministrativoController extends Controller
     {
         $monto_tarifa = Configuracion::where('clave', 'tarifa')->value('valor');
         $ultima_fecha_modificacion_tarifa = Configuracion::where('clave', 'ultima_fecha_modificacion_tarifa')->value('valor');
-        
+
         return view('administrativo.editTarifa', compact('monto_tarifa', 'ultima_fecha_modificacion_tarifa'));
     }
     public function updateTarifa(Request $request)
