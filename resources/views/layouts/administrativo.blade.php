@@ -63,8 +63,6 @@
                     </div>
 
                     {{-- BOTONES DEL SIDEBAR --}}
-                    {{-- TODO: Que cambie el color de fondo del enlace seleccionado --}}
-                    {{-- TODO: El botón de inicio sigue recargando la página, cuando no debería hacer eso!! --}}
                     {{-- USUARIO --}}
                     <div class="text-sm">
                         <ul>
@@ -79,26 +77,35 @@
                         <ul>
                             <x-item-sidebar ruta="bicicletas.index" @click="open = false">Bicicletas</x-item-sidebar>
                             <x-item-sidebar ruta="estaciones.index" @click="open = false">Estaciones</x-item-sidebar>
-                            {{-- TODO: Si tiene reserva muestra el item reserva actual, si tiene alquiler muestra el item alquiler actual --}}
                             <x-item-sidebar ruta="administrativo.editTarifa"
                                 @click="open = false">Tarifa</x-item-sidebar>
                         </ul>
                     </div>
 
                 </div>
-                {{-- LOGOUT --}}
-                <div class="p-8 place-self-center">
-                    <ul>
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit"
-                                    class="text-center text-base py-2 px-4 text-pc-texto-h font-medium rounded-full bg-gray-200 hover:bg-white hover:shadow-md my-1">
-                                    {{ __('Log Out') }}
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
+                <div class="flex flex-col gap-2 justify-center items-center p-8">
+                    <div class="relative group">
+                        <a href="{{ route('manual.descargar', ['archivo' => 'manual_administrativo']) }}"
+                            class="p-2 inline-flex justify-center items-center rounded-full hover:shadow-md hover:border-2 hover:border-pc-rojo"
+                            target="_blank">
+                            <x-icon-manual-oscuro class="w-8 h-8" />
+                        </a>
+                        <span
+                            class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 hidden group-hover:flex items-center justify-center text-white bg-pc-rojo text-sm rounded px-2 py-1 z-10"">
+                            Descargar Manual de Usuario
+                        </span>
+                    </div>
+                    {{-- LOGOUT --}}
+                    <div class="place-self-center">
+
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                class="text-center text-base py-2 px-4 text-pc-texto-h font-medium rounded-full bg-gray-200 hover:bg-white hover:shadow-md my-1">
+                                {{ __('Log Out') }}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
