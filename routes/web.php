@@ -12,14 +12,18 @@ use App\Http\Controllers\BicicletaController;
 use App\Http\Controllers\HistorialController;
 use App\Http\Controllers\InfraccionController;
 use App\Http\Controllers\AdministrativoController;
+use App\Http\Controllers\ManualController;
 
 
 // Vista principal
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
+// Ruta para descargar el manual de usuario
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/inicio', [InicioController::class, 'index'])->name('inicio');
+    Route::get('manual/{archivo}', [ManualController::class, 'descargarManual'])->name('manual.descargar');
 });
 
 
