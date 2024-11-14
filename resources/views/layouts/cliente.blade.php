@@ -53,75 +53,86 @@
                     <x-icon-cruz-oscura height="20px" width="20px" />
                 </button>
             </div>
-            <div class="flex flex-col gap-4 p-8 text-lg font-medium">
-                {{-- LOGO --}}
-                <div
-                    class="py-1 flex flex-col items-center gap-4 text-pc-texto-h uppercase text-lg font-bold text-center">
-                    <img src="{{ asset('img/bicicleta.png') }}" alt="" class="h-12">
-                    <h2 class="">Pedalea Comodoro</h2>
-                </div>
+            <div class="flex flex-col justify-between h-full p-8">
+                <div class="flex flex-col gap-4text-lg font-medium">
+                    {{-- LOGO --}}
+                    <div
+                        class="py-1 flex flex-col items-center gap-4 text-pc-texto-h uppercase text-lg font-bold text-center">
+                        <img src="{{ asset('img/bicicleta.png') }}" alt="" class="h-12">
+                        <h2 class="">Pedalea Comodoro</h2>
+                    </div>
 
-                {{-- BOTONES DEL SIDEBAR --}}
-                {{-- TODO: Que cambie el color de fondo del enlace seleccionado --}}
-                {{-- TODO: El botón de inicio sigue recargando la página, cuando no debería hacer eso!! --}}
-                {{-- USUARIO --}}
-                <div class="text-sm">
-                    <ul>
-                        <x-item-sidebar ruta="inicio" @click="open = false">Inicio</x-item-sidebar>
-                        <x-item-sidebar ruta="perfil" @click="open = false">Perfil</x-item-sidebar>
-                        <x-item-sidebar ruta="cargar-saldo.index" @click="open = false">Cargar
-                            Saldo</x-item-sidebar>
-                    </ul>
-                </div>
-                <hr>
-                {{-- SECCIONES --}}
-                <div class="text-sm">
-                    <p class="text-pc-rojo mt-2">Reservas y Alquileres</p>
-                    <ul>
-                        <x-item-sidebar ruta="actividad" @click="open = false">Actividad</x-item-sidebar>
-                        @php
-                            $tieneReserva = isset($reserva);
-                            $estadoReserva = $tieneReserva ? $reserva->id_estado : null;
-                        @endphp
+                    {{-- * BOTONES DEL SIDEBAR --}}
+                    {{-- USUARIO --}}
+                    <div class="text-sm">
+                        <ul>
+                            <x-item-sidebar ruta="inicio" @click="open = false">Inicio</x-item-sidebar>
+                            <x-item-sidebar ruta="perfil" @click="open = false">Perfil</x-item-sidebar>
+                            <x-item-sidebar ruta="cargar-saldo.index" @click="open = false">Cargar
+                                Saldo</x-item-sidebar>
+                        </ul>
+                    </div>
+                    <hr>
+                    {{-- SECCIONES --}}
+                    <div class="text-sm">
+                        <p class="text-pc-rojo mt-2">Reservas y Alquileres</p>
+                        <ul>
+                            <x-item-sidebar ruta="actividad" @click="open = false">Actividad</x-item-sidebar>
+                            @php
+                                $tieneReserva = isset($reserva);
+                                $estadoReserva = $tieneReserva ? $reserva->id_estado : null;
+                            @endphp
 
-                        @if ($tieneReserva)
-                            @if ($estadoReserva == 1 || $estadoReserva == 5)
-                                {{-- 1 = activa, 5 = modificada --}}
-                                <x-item-sidebar ruta="reserva_actual" @click="open = false">Reserva
-                                    Actual</x-item-sidebar>
-                            @elseif ($estadoReserva == 2 || $estadoReserva == 6)
-                                {{-- 2 = alquilada, 6 = reasignada --}}
-                                <x-item-sidebar ruta="alquiler_actual" @click="open = false">Alquiler
-                                    Actual</x-item-sidebar>
+                            @if ($tieneReserva)
+                                @if ($estadoReserva == 1 || $estadoReserva == 5)
+                                    {{-- 1 = activa, 5 = modificada --}}
+                                    <x-item-sidebar ruta="reserva_actual" @click="open = false">Reserva
+                                        Actual</x-item-sidebar>
+                                @elseif ($estadoReserva == 2 || $estadoReserva == 6)
+                                    {{-- 2 = alquilada, 6 = reasignada --}}
+                                    <x-item-sidebar ruta="alquiler_actual" @click="open = false">Alquiler
+                                        Actual</x-item-sidebar>
+                                @else
+                                    <x-item-sidebar ruta="reservar" @click="open = false">Reservar
+                                        Bicicleta</x-item-sidebar>
+                                @endif
                             @else
                                 <x-item-sidebar ruta="reservar" @click="open = false">Reservar
                                     Bicicleta</x-item-sidebar>
                             @endif
-                        @else
-                            <x-item-sidebar ruta="reservar" @click="open = false">Reservar
-                                Bicicleta</x-item-sidebar>
-                        @endif
-                        <x-item-sidebar ruta="ver-mapa" @click="open = false"> Estaciones</x-item-sidebar>
-                    </ul>
-                </div>
-                <hr>
-                {{-- HISTORIALES --}}
-                <div class="text-sm">
-                    <p class="text-pc-rojo mt-2">Historiales</p>
-                    <ul>
-                        <x-item-sidebar ruta="mov_saldo" @click="open = false">Movimientos del
-                            Saldo</x-item-sidebar>
-                        {{-- TODO: Que el texto de esta sección se marque de rojo o tenga un puntito si tiene una multa pendiente de pago --}}
-                        <x-item-sidebar ruta="his_multas" @click="open = false">Multas</x-item-sidebar>
-                        <x-item-sidebar ruta="his_suspensiones" @click="open = false">Suspensiones</x-item-sidebar>
-                    </ul>
+                            <x-item-sidebar ruta="ver-mapa" @click="open = false"> Estaciones</x-item-sidebar>
+                        </ul>
+                    </div>
+                    <hr>
+                    {{-- HISTORIALES --}}
+                    <div class="text-sm">
+                        <p class="text-pc-rojo mt-2">Historiales</p>
+                        <ul>
+                            <x-item-sidebar ruta="mov_saldo" @click="open = false">Movimientos del
+                                Saldo</x-item-sidebar>
+                            {{-- TODO: Que el texto de esta sección se marque de rojo o tenga un puntito si tiene una multa pendiente de pago --}}
+                            <x-item-sidebar ruta="his_multas" @click="open = false">Multas</x-item-sidebar>
+                            <x-item-sidebar ruta="his_suspensiones" @click="open = false">Suspensiones</x-item-sidebar>
+                        </ul>
+                    </div>
+
                 </div>
 
-            </div>
-            {{-- LOGOUT --}}
-            <div class="p-8 place-self-center">
-                <ul>
-                    <li>
+                <div class="flex flex-col gap-2 justify-center items-center">
+                    <div class="relative group">
+                        <a href="{{ route('manual.descargar', ['archivo' => 'manual_cliente']) }}"
+                            class="p-2 inline-flex justify-center items-center rounded-full hover:shadow-md hover:border-2 hover:border-pc-rojo"
+                            target="_blank">
+                            <x-icon-manual-oscuro class="w-8 h-8" />
+                        </a>
+                        <span
+                            class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 hidden group-hover:flex items-center justify-center text-white bg-pc-rojo text-sm rounded px-2 py-1 z-10"">
+                            Descargar Manual de Usuario
+                        </span>
+                    </div>
+                    {{-- LOGOUT --}}
+                    <div class="place-self-center">
+
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
@@ -129,8 +140,8 @@
                                 {{ __('Log Out') }}
                             </button>
                         </form>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </aside>
     </div>

@@ -46,7 +46,8 @@ class InicioController extends Controller
             'apellido' => $usuario->apellido,
         ];
         $tarifa = Configuracion::where('clave', 'tarifa')->value('valor');
-        return view('administrativo.inicio', compact('datos', 'tarifa'));
+        $archivo = 'manual_administrativo';
+        return view('administrativo.inicio', compact('datos', 'tarifa', 'archivo'));
     }
     /**
      * Muestra la vista del inicio para el rol cliente.
@@ -77,7 +78,8 @@ class InicioController extends Controller
         $reserva = $cliente->obtenerUltimaReserva();
         $estado = $reserva->getNombreEstadoReserva();
         $reserva = $reserva->formatearDatosActiva();
-        return view('cliente.inicio', compact('datos', 'estado', 'reserva'));
+        $archivo = 'manual_cliente';
+        return view('cliente.inicio', compact('datos', 'estado', 'reserva', 'cliente', 'archivo'));
     }
 
 
@@ -90,6 +92,7 @@ class InicioController extends Controller
      */
     protected function inspectorInicio(): View
     {
-        return view('inspector.inicio');
+        $archivo = 'manual_inspector';
+        return view('inspector.inicio', compact('archivo'));
     }
 }
