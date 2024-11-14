@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Container\Attributes\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Log as FacadesLog;
@@ -24,8 +23,11 @@ class Cliente extends Model
         'puntaje',
         'saldo',
         'fecha_nacimiento',
-
     ];
+
+    protected $casts = [
+        'fecha_nacimiento' => 'date',
+    ]; 
 
     /**
      * Obtener una reserva activa o modificada, si no existe devuelve null.

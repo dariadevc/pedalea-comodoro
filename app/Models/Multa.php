@@ -27,6 +27,27 @@ class Multa extends Model
     ];
 
     /**
+     * Accesor para obtener y parsear la fecha/hora de devolución.
+     *
+     * @param string $valor
+     * @return Carbon
+     */
+    public function getFechaHoraAttribute($valor): Carbon
+    {
+        return Carbon::parse($valor);
+    }
+
+    public function pagar(Cliente $cliente)
+    {
+        if ($cliente->pagar($this->monto, 'Pago de multa')) {
+            $this->cambiarEstado(EstadoMulta::PAGADA);
+            $this->save();
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Crea una nueva multa para un usuario.
      *
      * @param int $id_usuario ID del usuario asociado a la multa
