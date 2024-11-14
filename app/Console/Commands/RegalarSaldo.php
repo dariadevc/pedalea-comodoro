@@ -27,8 +27,8 @@ class RegalarSaldo extends Command
     public function handle()
     {
 
-        $puntosRequeridos = 100; 
-        $saldoRecompensa = 50; 
+        $puntosRequeridos = 400; 
+        $saldoRecompensa = 100; 
 
         $clientes = Cliente::where('puntaje', '>', $puntosRequeridos)->get();
 
