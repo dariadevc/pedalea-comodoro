@@ -184,10 +184,6 @@
                     <p>en tu estación de preferencia</p>
                 </div>
             </div>
-            <div class="text-center mt-4">
-                {{-- TODO: Agregar link al manual de usuario (Cliente) --}}
-                <p>Descargá el manual de usuario</p>
-            </div>
         </div>
     </section>
 
