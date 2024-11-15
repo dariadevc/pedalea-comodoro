@@ -65,12 +65,13 @@
                     class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50 text-center">Devolver
                     Bicicleta</a>
                 <button type="button" @click="mostrarBusqueda=!mostrarBusqueda"
-                    class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-gray-400 text-gray-400 hover:bg-gray-400 hover:text-slate-50">Reasignar
+                    class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-rojo text-pc-rojo hover:bg-pc-rojo hover:text-slate-50">Reasignar
                     Devolución</button>
             </div>
         @endif
 
-        <div x-show="mostrarBusqueda" x-cloak class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
+        <div x-show="mostrarBusqueda" x-cloak
+            class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
             <div id="tarjeta_reasignar" @click.away="mostrarBusqueda = false"
                 class="flex flex-col p-8 gap-2 bg-gray-50 border-pc-azul border-4 rounded-3xl shadow-lg w-3/4 max-w-md">
                 @include('cliente.partials.buscar_usuario_reasignar')
@@ -87,7 +88,7 @@
                 @include('cliente.partials.buscar_usuario_reasignar')
             </div>
         </div> --}}
-        
+
     </div>
 @endsection
 
