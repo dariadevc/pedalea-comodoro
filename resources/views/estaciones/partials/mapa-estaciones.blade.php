@@ -20,7 +20,8 @@
                 .addTo(map)
                 .bindPopup(`
                     <strong>{{ $estacion->nombre }}</strong><br>
-                    Bicicletas disponibles: {{ $estacion->cantidad_bicicletas_disponibles ?? 0 }}
+                    Bicicletas disponibles: {{ $estacion->cantidad_bicicletas_disponibles ?? 0 }}<br>
+                    Calificacion: {{ $estacion->calificacion }} / 5
                 `);
         @endforeach
     });

@@ -4,6 +4,10 @@
 
 @section('contenido')
     <div class="flex flex-col w-full md:w-3/4 gap-4">
+        {{-- HISTORIAL --}}
+        <div class="text-2xl font-bold text-gray-700 mb-4 text-center">
+            <h2>Actividades realizadas</h2>
+        </div>
         {{-- FORMULARIO DE FECHAS --}}
         <section class="flex gap-2 bg-gray-50 py-2 px-6 rounded-full text-sm items-center border-2">
             <form method="GET" action="{{ route('actividad') }}" class="flex w-full gap-2">
@@ -21,6 +25,27 @@
                 <x-btn-rojo-blanco type="submit" class="capitalize">Buscar</x-btn-rojo-blanco>
             </form>
         </section>
+
+        {{-- FILTRAR --}}
+        <!-- <section class="flex bg-gray-50 p-4 justify-between items-center text-sm rounded-md shadow-sm">
+                <div class="flex gap-2">
+                     <div>
+                        <button class="flex gap-4 items-center px-2 py-1" type="button">
+                            <span class="">Período</span>
+                            <x-icon-flecha-abajo-oscura width="15px" height="15px" />
+                        </button>
+                    </div>
+                    <div>
+                        <button class="flex gap-4 items-center px-2 py-1" type="button">
+                            <span class="">Estados</span>
+                            <x-icon-flecha-abajo-oscura width="15px" height="15px" />
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="text-gray-400">Borrar filtros</button>
+                </div>
+            </section> -->
 
         {{-- HISTORIAL --}}
         <section class="grid auto-rows-max gap-2 bg-gray-50 rounded-xl shadow-md">

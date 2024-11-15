@@ -129,7 +129,7 @@ class Reserva extends Model
      */
     public function alquilar(Cliente $cliente, User $usuario): bool
     {
-        $motivo = 'Pagar un alquiler';
+        $motivo = 'Pago de alquiler';
         if ($cliente->pagar($this->calcularMontoRestante(), $motivo)) {
             $this->cambiarEstado(EstadoReserva::ALQUILADA);
 
@@ -161,7 +161,7 @@ class Reserva extends Model
      */
     public function reservar(Cliente $cliente, User $usuario): bool
     {
-        $motivo = 'Pagar una reserva';
+        $motivo = 'Pago de reserva';
         if ($cliente->pagar($this->senia, $motivo)) {
             $this->cambiarEstado(EstadoReserva::ACTIVA);
 

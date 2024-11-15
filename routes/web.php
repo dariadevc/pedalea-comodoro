@@ -13,7 +13,7 @@ use App\Http\Controllers\HistorialController;
 use App\Http\Controllers\InfraccionController;
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\ManualController;
-
+use App\Http\Controllers\MultaController;
 
 // Vista principal
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -146,6 +146,8 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/historial-multa', [HistorialController::class, 'historialMultas'])->name('historiales.multas');
     Route::get('/historial-suspension', [HistorialController::class, 'historialSuspensiones'])->name('historiales.suspensiones');
     Route::get('/historial-movimiento', [HistorialController::class, 'historialMovimientos'])->name('historiales.movimientos');
+
+    Route::post('multas/pagar/{multa}', [MultaController::class, 'pagar'])->name('multas.pagar');
 });
 
 
