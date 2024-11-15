@@ -26,27 +26,6 @@
             </form>
         </section>
 
-        {{-- FILTRAR --}}
-        <!-- <section class="flex bg-gray-50 p-4 justify-between items-center text-sm rounded-md shadow-sm">
-                <div class="flex gap-2">
-                     <div>
-                        <button class="flex gap-4 items-center px-2 py-1" type="button">
-                            <span class="">Período</span>
-                            <x-icon-flecha-abajo-oscura width="15px" height="15px" />
-                        </button>
-                    </div>
-                    <div>
-                        <button class="flex gap-4 items-center px-2 py-1" type="button">
-                            <span class="">Estados</span>
-                            <x-icon-flecha-abajo-oscura width="15px" height="15px" />
-                        </button>
-                    </div>
-                </div>
-                <div>
-                    <button type="button" class="text-gray-400">Borrar filtros</button>
-                </div>
-            </section> -->
-
         {{-- HISTORIAL --}}
         <section class="grid auto-rows-max gap-2 bg-gray-50 rounded-xl shadow-md">
             {{-- LISTA DE ACTIVIDADES --}}
