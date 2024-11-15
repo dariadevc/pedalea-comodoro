@@ -4,7 +4,7 @@
 
 @section('contenido')
     <div class="p-6 bg-white shadow rounded-lg">
-        <h2 class="text-2xl font-bold text-gray-700 mb-4">Perfil</h2>
+        <h2 class="text-2xl font-bold text-gray-700 mb-5 text-center">Perfil</h2>
         <div class="space-y-4">
             <div class="flex items-center">
                 <span class="font-medium text-gray-600 w-48">Nombre</span>
@@ -28,10 +28,14 @@
             </div>
             <div class="flex items-center">
                 <span class="font-medium text-gray-600 w-48">Puntaje Actual</span>
-                <span class="text-red-500 font-semibold">{{ $cliente->puntaje }}</span>
+                @if ($cliente->puntaje < 0)
+                    <span class="text-red-500 font-semibold">{{ $cliente->puntaje }}</span>
+                    @else
+                    <span class="text-green-500 font-semibold">{{ $cliente->puntaje }}</span>
+                @endif
             </div>
         </div>
     </div>
-    
-    
+
+
 @endsection

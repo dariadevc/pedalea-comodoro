@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,6 +22,22 @@ class HistorialSaldo extends Model
         'monto',
         'motivo',
     ];
+
+    protected $casts = [
+        'fecha_hora' => 'datetime',
+    ];
+
+    /**
+     * Accesor para obtener y parsear la fecha/hora de devolución.
+     *
+     * @param string $valor
+     * @return Carbon
+     */
+    public function getFechaHoraDevolucionAttribute($valor): Carbon
+    {
+        return Carbon::parse($valor);
+    }
+
 
     /**
      * Devuelve el cliente asociado al historial de saldo.

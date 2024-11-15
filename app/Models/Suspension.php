@@ -26,6 +26,27 @@ class Suspension extends Model
         'descripcion',
     ];
 
+        /**
+     * Accesor para obtener y parsear la fecha/hora de devolución.
+     *
+     * @param string $valor
+     * @return Carbon
+     */
+    public function getFechaDesdeAttribute($valor): Carbon
+    {
+        return Carbon::parse($valor);
+    }
+
+        /**
+     * Accesor para obtener y parsear la fecha/hora de devolución.
+     *
+     * @param string $valor
+     * @return Carbon
+     */
+    public function getFechaHastaAttribute($valor): Carbon
+    {
+        return Carbon::parse($valor);
+    }
     /**
      * Crea una nueva suspensión para un cliente.
      *

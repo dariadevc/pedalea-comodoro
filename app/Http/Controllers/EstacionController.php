@@ -148,7 +148,7 @@ class EstacionController extends Controller
     public static function getEstacionesDisponiblesParaVerMapa()
     {
         $estacionesConBicicletasDisponibles = Estacion::where('id_estado', EstadoEstacion::ACTIVA)
-            ->select('nombre', 'latitud', 'longitud')
+            ->select('nombre', 'latitud', 'longitud', 'calificacion')
             ->withCount(['bicicletas as cantidad_bicicletas_disponibles' => function ($query) {
                 $query->where('id_estado', EstadoBicicleta::DISPONIBLE)
                     ->whereDoesntHave('reservas', function ($subQuery) {

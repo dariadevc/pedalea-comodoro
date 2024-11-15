@@ -31,21 +31,13 @@ class ChequeoReservasVencidas extends Command
      */
     public function handle()
     {
-        $puntosADescontar = 5;
-
         $reservas = Reserva::whereIn('id_estado', [EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->get();
 
         foreach ($reservas as $reserva) {
-            $horaDevolucion = Carbon::parse($reserva->fecha_hora_devolucion);
-
             
-            if ($horaDevolucion->addHours(24)->isPast()) {
-                $cliente = Cliente::find($reserva->id_cliente_reservo);
-                $cliente->puntaje -= $puntosADescontar;
-                $cliente->save();
-
-                $reserva->id_estado = 3;
-                $reserva->save();
+            /** @var Reserva $reserva */
+            if ($reserva->fecha_hora_devolucion->copy()->addHours(24)->isPast()) {
+                $reserva->cerrarAlquiler();
             }
         }
     }
