@@ -3,9 +3,9 @@
 @section('nombre_seccion', 'Actividad')
 
 @section('contenido')
-    <div class="flex flex-col w-full md:w-3/4 gap-4 items-center">
+    <div class="flex flex-col w-full md:w-3/4 gap-4 items-center ">
         {{-- HISTORIAL --}}
-        <div class="text-2xl font-bold text-gray-700 mb-4 text-center">
+        <div class="text-2xl font-bold text-gray-700 mb-4 text-center hidden lg:block">
             <h2>Actividades realizadas</h2>
         </div>
         {{-- FORMULARIO DE FECHAS --}}

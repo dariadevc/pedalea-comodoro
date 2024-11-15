@@ -25,12 +25,13 @@
                 @endif
 
             </ul>
-            <div class="flex flex-1 justify-end">
-                <div x-data="{ open: false }">
+            <div class="flex flex-1 justify-end ">
+                <div x-data="{ open: false }" class="z-50">
                     <button @click="open = ! open">
                         <x-icon-hmenu-claro height="30px" width="30px" />
                     </button>
-                    <nav x-show=open @click.away="open = false" class="absolute top-full left-0 w-full bg-pc-rojo py-4">
+                    <nav x-show=open @click.away="open = false"
+                        class="absolute top-full left-0 w-full bg-pc-rojo py-4 z-50">
                         <ul
                             class="flex flex-col justify-end items-center gap-1 text-slate-50 uppercase text-sm font-semibold text-center">
                             <li>
@@ -222,7 +223,7 @@
             </div>
             <!-- Contenedor para el mapa interactivo -->
             <div
-                class="w-full md:w-3/4 lg:w-2/3 h-[600px] mx-auto rounded-lg overflow-hidden shadow-lg border border-gray-200">
+                class="w-full md:w-3/4 lg:w-2/3 h-[600px] mx-auto rounded-lg overflow-hidden shadow-lg border border-gray-200 -z-10">
                 @include('estaciones.partials.mapa-estaciones', ['estaciones' => $estaciones])
             </div>
         </div>
