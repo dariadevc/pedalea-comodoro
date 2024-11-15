@@ -46,17 +46,24 @@
             {{-- * La información de esta tarjeta se actualiza, si no tiene reserva lo va a mandar a reservar, si tiene reserva en curso muestra algunos datos y te manda a consultar reserva, si tiene alquiler en curso muestra algunos datos y te manda a consultar alquiler * --}}
 
             {{-- TODO: Actualizar la tarjeta si el usuario tiene alguna reserva o alquiler en curso, reserva = rojo, alquiler = azul --}}
-            @if ($estado == 'Finalizada' || $estado == 'Cancelada')
-                <div class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full p-4 shadow-md rounded-xl flex flex-col">
+            @if ($estado == 'Reasignada')
+                <div class="bg-gradient-to-br from-pc-celeste to-pc-azul w-full p-4 shadow-md rounded-xl flex flex-col">
                     <h2
                         class="text-sm text-left uppercase font-semibold text-slate-50 tracking-wider border-b-2 border-slate-50">
-                        Reserva
+                        Reasignado
                     </h2>
-                    <p class="mt-4 text-left text-slate-50">No te olvides de...</p>
-                    <button class="mt-6 text-center">
-                        <a href="{{ route('reservar') }}"
-                            class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Reservar tu
-                            bicicleta</a>
+                    <p class="mt-4 text-left text-slate-50">La bicicleta fue reasignada, el cliente a devolver tiene tiempo
+                        hasta las
+                        <span class="font-semibold">{{ $hora_devolucion_reserva_15_mas }}hs</span> para entregarla en la
+                        estación <span class="font-semibold">{{ $reserva['estacion_devolucion_nombre'] }}</span>.
+                    </p>
+                    <p class="mt-4 text-left text-slate-50 text-sm">Para ver tu <span class="font-semibold">alquiler</span>,
+                        clickea en
+                        el botón de abajo.</p>
+                    <button class="mt-3 text-center">
+                        <a href="{{ route('alquiler_actual') }}"
+                            class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Ver
+                            Alquiler Actual</a>
                     </button>
                 </div>
             @elseif ($estado == 'Activa' || $estado == 'Modificada')
@@ -100,23 +107,16 @@
                     </button>
                 </div>
             @else
-                <div class="bg-gradient-to-br from-pc-celeste to-pc-azul w-full p-4 shadow-md rounded-xl flex flex-col">
+                <div class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full p-4 shadow-md rounded-xl flex flex-col">
                     <h2
                         class="text-sm text-left uppercase font-semibold text-slate-50 tracking-wider border-b-2 border-slate-50">
-                        Reasignado
+                        Reserva
                     </h2>
-                    <p class="mt-4 text-left text-slate-50">La bicicleta fue reasignada, el cliente a devolver tiene tiempo
-                        hasta las
-                        <span class="font-semibold">{{ $hora_devolucion_reserva_15_mas }}hs</span> para entregarla en la
-                        estación <span class="font-semibold">{{ $reserva['estacion_devolucion_nombre'] }}</span>.
-                    </p>
-                    <p class="mt-4 text-left text-slate-50 text-sm">Para ver tu <span class="font-semibold">alquiler</span>,
-                        clickea en
-                        el botón de abajo.</p>
-                    <button class="mt-3 text-center">
-                        <a href="{{ route('alquiler_actual') }}"
-                            class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Ver
-                            Alquiler Actual</a>
+                    <p class="mt-4 text-left text-slate-50">No te olvides de...</p>
+                    <button class="mt-6 text-center">
+                        <a href="{{ route('reservar') }}"
+                            class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Reservar tu
+                            bicicleta</a>
                     </button>
                 </div>
             @endif
@@ -126,7 +126,7 @@
         </div>
 
         {{-- ACTIVIDAD RECIENTE --}}
-        <div class="grid auto-rows-max gap-2 bg-gray-50 rounded-xl w-full md:w-1/2 shadow-md">
+        <div class="grid auto-rows-max bg-gray-50 rounded-xl w-full md:w-1/2 shadow-md">
             {{-- SUBTÍTULO --}}
             <div class="border-b-2 w-full p-4">
                 <h2 class="font-semibold text-pc-texto-h">Actividad Reciente</h2>
@@ -135,14 +135,21 @@
             <ul class="">
                 @forelse ($datos['reservasRecientes'] as $reserva)
                     <li class="flex box-border">
-                        <a href="#" class="p-4 hover:bg-gray-100 w-full">
-                            {{-- INFO DE LA ACTIVIDAD --}}
-                            <div class="flex flex-col gap-1 items-start">
-                                <h2>Reserva</h2>
-                                <p>{{ $reserva->estado }}</p>
-                                <p>{{ $reserva->fecha_hora_retiro }}</p>
-                            </div>
-                        </a>
+                        {{-- INFO DE LA ACTIVIDAD --}}
+                        <div class="flex flex-col gap-1 items-start p-4 hover:bg-gray-100 w-full border-b-2">
+                            <h2 class="text-sm font-semibold">Reserva</h2>
+                            @if ($reserva->estado == 'Cancelada')
+                                <p class="text-pc-rojo font-semibold">{{ $reserva->estado }}</p>
+                            @elseif ($reserva->estado == 'Activa')
+                                <p class="text-pc-azul font-semibold">{{ $reserva->estado }}</p>
+                            @else
+                                <p class="text-gray-400 font-semibold">{{ $reserva->estado }}</p>
+                            @endif
+                            <p class="text-sm font-semibold">Fecha de creación</p>
+                            <p class="text-sm">
+                                {{ ucfirst(\Carbon\Carbon::parse($reserva->created_at)->locale('es')->translatedFormat('l, d \d\e F Y \a \l\a\s H:i')) }}
+                            </p>
+                        </div>
                     </li>
                 @empty
                     <li class="flex box-border">
@@ -151,7 +158,7 @@
                 @endforelse
             </ul>
             <a href="{{ route('actividad') }}"
-                class="text-pc-texto-p px-4 py-2 border-t-2 hover:shadow-inner hover:font-semibold hover:px-5">
+                class="text-pc-texto-p px-4 py-2 hover:shadow-inner hover:font-semibold hover:px-5 h-full">
                 <div class="flex items-center justify-between">
                     <p>Ver toda tu actividad</p>
                     <x-icon-flecha-der-oscura width="30px" height="30px" />
