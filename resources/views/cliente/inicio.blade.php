@@ -145,8 +145,9 @@
                             @else
                                 <p class="text-gray-400 font-semibold">{{ $reserva->estado }}</p>
                             @endif
-                            <p class="text-sm font-semibold">Fecha</p>
-                            <p>{{ ucfirst(\Carbon\Carbon::parse($reserva->fecha_hora_retiro)->locale('es')->translatedFormat('l, d \d\e F Y \a \l\a\s h:i')) }}
+                            <p class="text-sm font-semibold">Fecha de retiro</p>
+                            <p class="text-sm">
+                                {{ ucfirst(\Carbon\Carbon::parse($reserva->fecha_hora_retiro)->locale('es')->translatedFormat('l, d \d\e F Y \a \l\a\s h:i')) }}
                             </p>
                         </div>
                     </li>
