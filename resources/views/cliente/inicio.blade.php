@@ -46,17 +46,24 @@
             {{-- * La información de esta tarjeta se actualiza, si no tiene reserva lo va a mandar a reservar, si tiene reserva en curso muestra algunos datos y te manda a consultar reserva, si tiene alquiler en curso muestra algunos datos y te manda a consultar alquiler * --}}
 
             {{-- TODO: Actualizar la tarjeta si el usuario tiene alguna reserva o alquiler en curso, reserva = rojo, alquiler = azul --}}
-            @if ($estado == 'Finalizada' || $estado == 'Cancelada')
-                <div class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full p-4 shadow-md rounded-xl flex flex-col">
+            @if ($estado == 'Reasignada')
+                <div class="bg-gradient-to-br from-pc-celeste to-pc-azul w-full p-4 shadow-md rounded-xl flex flex-col">
                     <h2
                         class="text-sm text-left uppercase font-semibold text-slate-50 tracking-wider border-b-2 border-slate-50">
-                        Reserva
+                        Reasignado
                     </h2>
-                    <p class="mt-4 text-left text-slate-50">No te olvides de...</p>
-                    <button class="mt-6 text-center">
-                        <a href="{{ route('reservar') }}"
-                            class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Reservar tu
-                            bicicleta</a>
+                    <p class="mt-4 text-left text-slate-50">La bicicleta fue reasignada, el cliente a devolver tiene tiempo
+                        hasta las
+                        <span class="font-semibold">{{ $hora_devolucion_reserva_15_mas }}hs</span> para entregarla en la
+                        estación <span class="font-semibold">{{ $reserva['estacion_devolucion_nombre'] }}</span>.
+                    </p>
+                    <p class="mt-4 text-left text-slate-50 text-sm">Para ver tu <span class="font-semibold">alquiler</span>,
+                        clickea en
+                        el botón de abajo.</p>
+                    <button class="mt-3 text-center">
+                        <a href="{{ route('alquiler_actual') }}"
+                            class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Ver
+                            Alquiler Actual</a>
                     </button>
                 </div>
             @elseif ($estado == 'Activa' || $estado == 'Modificada')
@@ -100,23 +107,16 @@
                     </button>
                 </div>
             @else
-                <div class="bg-gradient-to-br from-pc-celeste to-pc-azul w-full p-4 shadow-md rounded-xl flex flex-col">
+                <div class="bg-gradient-to-br from-pc-naranja to-pc-rojo w-full p-4 shadow-md rounded-xl flex flex-col">
                     <h2
                         class="text-sm text-left uppercase font-semibold text-slate-50 tracking-wider border-b-2 border-slate-50">
-                        Reasignado
+                        Reserva
                     </h2>
-                    <p class="mt-4 text-left text-slate-50">La bicicleta fue reasignada, el cliente a devolver tiene tiempo
-                        hasta las
-                        <span class="font-semibold">{{ $hora_devolucion_reserva_15_mas }}hs</span> para entregarla en la
-                        estación <span class="font-semibold">{{ $reserva['estacion_devolucion_nombre'] }}</span>.
-                    </p>
-                    <p class="mt-4 text-left text-slate-50 text-sm">Para ver tu <span class="font-semibold">alquiler</span>,
-                        clickea en
-                        el botón de abajo.</p>
-                    <button class="mt-3 text-center">
-                        <a href="{{ route('alquiler_actual') }}"
-                            class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Ver
-                            Alquiler Actual</a>
+                    <p class="mt-4 text-left text-slate-50">No te olvides de...</p>
+                    <button class="mt-6 text-center">
+                        <a href="{{ route('reservar') }}"
+                            class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Reservar tu
+                            bicicleta</a>
                     </button>
                 </div>
             @endif

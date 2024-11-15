@@ -30,7 +30,7 @@
                     <legend class="font-semibold text-lg pr-2 text-pc-texto-h my-4">Información Personal</legend>
                     <div class="flex flex-col gap-2">
                         <label for="nombre">Nombre</label>
-                        <x-text-input type="text" name="nombre" id='nombre' placeholder="Jane"
+                        <x-text-input type="text" name="nombre" id='nombre' placeholder="Jane" maxlength="25"
                             value="{{ old('nombre') }}" required autofocus autocomplete="nombre" />
                         @error('nombre')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -39,7 +39,7 @@
 
                     <div class="flex flex-col gap-2">
                         <label for="apellido">Apellido</label>
-                        <x-text-input type="text" name="apellido" id='apellido' placeholder="Doe"
+                        <x-text-input type="text" name="apellido" id='apellido' placeholder="Doe" maxlength="25"
                             value="{{ old('apellido') }}" required autocomplete="apellido" />
                         @error('apellido')
                             <span class="text-red-500 text-sm">{{ $message }}</span>

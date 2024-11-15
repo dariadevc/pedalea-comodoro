@@ -95,7 +95,7 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function cliente(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function cliente()
     {
         return $this->hasOne(Cliente::class, 'id_usuario', 'id_usuario');
     }
