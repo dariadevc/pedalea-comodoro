@@ -155,7 +155,7 @@ class Reserva extends Model
              * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE
              */
 
-            // Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
+            Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
             $this->save();
 
             return true;
@@ -187,7 +187,7 @@ class Reserva extends Model
              * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE
              */
 
-            // Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
+            Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
             $this->save();
 
             return true;
