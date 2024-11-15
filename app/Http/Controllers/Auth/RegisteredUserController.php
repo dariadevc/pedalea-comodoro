@@ -22,6 +22,7 @@ class RegisteredUserController extends Controller
 
     public function store(RegistroClienteRequest $request): RedirectResponse
     {
+        /** @var \App\Models\User $user */
         $user = User::create([
             'dni' => $request->dni,
             'nombre' => $request->nombre,
@@ -32,11 +33,11 @@ class RegisteredUserController extends Controller
         ]);
 
         $user->assignRole('cliente');
+        $user->save();
 
         /** @var \App\Models\Cliente $cliente */
-        $cliente = Cliente::create([
+        $cliente = $user->cliente()->create([
             'fecha_nacimiento' => $request->fecha_nacimiento,
-            'id_usuario' => $user->id_usuario,
             'id_estado_cliente' => 1,
             'puntaje' => 0,
             'saldo' => 0.00,

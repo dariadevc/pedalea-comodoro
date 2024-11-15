@@ -27,11 +27,11 @@ class RegistroClienteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'dni' => ['required', 'numeric', 'between:20000000,99999999', 'digits:8', 'unique:'.User::class],
-            'nombre' => ['required', 'string', 'max:255'],
-            'apellido' => ['required', 'string', 'max:255'],
+            'dni' => ['required', 'numeric', 'between:20000000,99999999', 'digits:8', 'unique:' . User::class],
+            'nombre' => ['required', 'string', 'max:25', 'regex:/^[\pL\s]+$/u'],
+            'apellido' => ['required', 'string', 'max:25', 'regex:/^[\pL\s]+$/u'],
             'numero_telefono' => ['required', 'regex:/^\+54[0-9]{10}$/'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Password::defaults()],
         ];
     }
@@ -44,18 +44,26 @@ class RegistroClienteRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'email.required' => 'El correo electrónico es obligatorio.',
-            'email.email' => 'El correo electrónico debe ser una dirección de correo válida.',
-            'email.unique' => 'Este correo electrónico ya está registrado.',
             'dni.required' => 'El DNI es obligatorio.',
             'dni.digits' => 'El DNI debe tener exactamente 8 dígitos.',
             'dni.unique' => 'Este DNI ya está registrado.',
             'dni.between' => 'El DNI debe estar entre 20.000.000 y 99.999.999',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'dni.numeric' => 'El DNI debe contener solo números.',
+            'nombre.required' => 'El nombre es obligatorio.',
+            'nombre.string' => 'El nombre debe ser una cadena de texto.',
+            'nombre.max' => 'El nombre no debe exceder los 25 caracteres.',
+            'nombre.regex' => 'El nombre solo debe contener letras y espacios.',
+            'apellido.required' => 'El apellido es obligatorio.',
+            'apellido.string' => 'El apellido debe ser una cadena de texto.',
+            'apellido.max' => 'El apellido no debe exceder los 25 caracteres.',
+            'apellido.regex' => 'El apellido solo debe contener letras y espacios.',
             'numero_telefono.required' => 'El número de teléfono es obligatorio.',
             'numero_telefono.regex' => 'El número de teléfono debe comenzar con +54 seguido de 10 dígitos.',
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'El correo electrónico debe ser una dirección de correo válida.',
+            'email.unique' => 'Este correo electrónico ya está registrado.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
         ];
     }
 

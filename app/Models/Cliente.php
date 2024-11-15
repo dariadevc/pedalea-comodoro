@@ -15,6 +15,7 @@ class Cliente extends Model
     protected $table = 'clientes';
     protected $primaryKey = 'id_usuario';
     public $timestamps = false;
+    public $incrementing = false;
 
 
     protected $fillable = [
@@ -64,7 +65,12 @@ class Cliente extends Model
         return $this->reservaReservo->whereIn('id_estado', [EstadoReserva::ACTIVA, EstadoReserva::MODIFICADA, EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->first();
     }
 
-    public function obtenerUltimaReserva()
+    /**
+     * Obtener la última reserva del cliente.
+     * 
+     * @return \App\Models\Reserva|null
+     */
+    public function obtenerUltimaReserva(): ?Reserva
     {
         return $this->reservaReservo()->orderBy('created_at', 'desc')->first();
     }

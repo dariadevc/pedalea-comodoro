@@ -33,7 +33,6 @@
                             <th class="py-2 px-4 border-b text-left">Estado</th>
                             <th class="py-2 px-4 border-b text-left">Fecha Desde</th>
                             <th class="py-2 px-4 border-b text-left">Fecha Hasta</th>
-                            <th class="py-2 px-4 border-b text-left">Fecha Hora</th>
                             <th class="py-2 px-4 border-b text-left">Descripción</th>
                         </tr>
                     </thead>
