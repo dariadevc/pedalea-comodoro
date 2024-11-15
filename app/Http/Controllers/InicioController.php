@@ -64,6 +64,7 @@ class InicioController extends Controller
             ->join('estados_reserva', 'reservas.id_estado', '=', 'estados_reserva.id_estado')
             ->select('reservas.*', 'estados_reserva.nombre as estado')
             ->where('reservas.id_cliente_reservo', $cliente->id_usuario)
+            ->orderBy('reservas.created_at', 'desc')
             ->orderBy('reservas.fecha_hora_retiro', 'desc')
             ->limit(5)
             ->get();
@@ -75,12 +76,20 @@ class InicioController extends Controller
             'puntaje' => $cliente->puntaje,
             'reservasRecientes' => $reservasRecientes
         ];
+        
         $reserva = $cliente->obtenerUltimaReserva();
-        $hora_retiro_reserva_15_menos = $reserva->fecha_hora_retiro->copy()->subMinutes(15)->format('H:i');
-        $hora_retiro_reserva_15_mas = $reserva->fecha_hora_retiro->copy()->addMinutes(15)->format('H:i');
-        $hora_devolucion_reserva_15_mas = $reserva->fecha_hora_devolucion->copy()->addMinutes(15)->format('H:i');
-        $estado = $reserva->getNombreEstadoReserva();
-        $reserva = $reserva->formatearDatosActiva();
+        $hora_devolucion_reserva_15_mas = null;
+        $hora_retiro_reserva_15_menos = null;
+        $hora_retiro_reserva_15_mas = null;
+        $estado = null;
+        
+        if ($reserva) {
+            $hora_retiro_reserva_15_menos = $reserva->fecha_hora_retiro->copy()->subMinutes(15)->format('H:i');
+            $hora_retiro_reserva_15_mas = $reserva->fecha_hora_retiro->copy()->addMinutes(15)->format('H:i');
+            $hora_devolucion_reserva_15_mas = $reserva->fecha_hora_devolucion->copy()->addMinutes(15)->format('H:i');
+            $estado = $reserva->getNombreEstadoReserva();
+            $reserva = $reserva->formatearDatosActiva();
+        }
         return view('cliente.inicio', compact('datos', 'estado', 'reserva', 'hora_retiro_reserva_15_menos', 'hora_retiro_reserva_15_mas', 'hora_devolucion_reserva_15_mas'));
     }
 

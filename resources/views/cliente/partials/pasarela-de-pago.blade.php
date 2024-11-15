@@ -14,11 +14,11 @@
             <label for="amount" class="block text-lg font-medium text-gray-700">Monto</label>
             <select id="amount" name="amount"
                 class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-600">
-                <option value="1000" {{ old('amount') == '1000' ? 'selected' : '' }}>$1,000.00</option>
-                <option value="2500" {{ old('amount') == '2500' ? 'selected' : '' }}>$2,500.00</option>
-                <option value="5000" {{ old('amount') == '5000' ? 'selected' : '' }}>$5,000.00</option>
-                <option value="7500" {{ old('amount') == '7500' ? 'selected' : '' }}>$7,500.00</option>
-                <option value="10000" {{ old('amount') == '10000' ? 'selected' : '' }}>$10,000.00</option>
+                <option value="1000" {{ old('amount') == '1000' ? 'selected' : '' }}>$1.000,00</option>
+                <option value="2500" {{ old('amount') == '2500' ? 'selected' : '' }}>$2.500,00</option>
+                <option value="5000" {{ old('amount') == '5000' ? 'selected' : '' }}>$5.000,00</option>
+                <option value="7500" {{ old('amount') == '7500' ? 'selected' : '' }}>$7.500,00</option>
+                <option value="10000" {{ old('amount') == '10000' ? 'selected' : '' }}>$10.000,00</option>
             </select>
             @error('amount')
                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>

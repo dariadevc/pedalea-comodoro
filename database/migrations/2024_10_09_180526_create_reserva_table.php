@@ -30,6 +30,7 @@ return new class extends Migration
             $table->double('monto');
             $table->double('senia');
             $table->integer('puntaje_obtenido')->nullable();
+            $table->timestamp('created_at')->nullable();
         });
     }
 

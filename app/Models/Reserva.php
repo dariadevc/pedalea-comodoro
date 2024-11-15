@@ -42,7 +42,19 @@ class Reserva extends Model
     protected $dates = [
         'fecha_hora_devolucion',
         'fecha_hora_retiro',
+        'created_at'
     ];
+
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->created_at = $model->freshTimestamp();
+        });
+    }
+
 
 
 
@@ -228,7 +240,7 @@ class Reserva extends Model
     {
         $this->cambiarEstado(EstadoReserva::FINALIZADA);
         $this->puntaje_obtenido = -25;
-        
+
         /** @var Cliente $cliente */
         $cliente = $this->clienteReservo;
         $cliente->actualizarPuntaje($this->puntaje_obtenido);
@@ -412,9 +424,9 @@ class Reserva extends Model
         /** @var Estacion $estacion_devolucion */
         $estacion_devolucion = $this->estacionDevolucion;
         $estacion_devolucion->generarCalificacion($calificaciones['id_tipo_calificacion_devolucion']);
-        
+
         $puntaje_obtenido = PuntajeDevolucion::calcularPuntajeObtenido(Carbon::now(), $this->fecha_hora_devolucion->copy()->addMinutes(15), $danios_objetos);
-        
+
         /** @var Cliente $cliente_reservo */
         $cliente_reservo = $this->clienteReservo;
         $cliente_reservo->actualizarPuntaje($puntaje_obtenido);
@@ -424,7 +436,6 @@ class Reserva extends Model
         }
         $this->cambiarEstado(EstadoReserva::FINALIZADA);
         $this->save();
-
     }
 
 
