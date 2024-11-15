@@ -10,7 +10,9 @@
 
 @section('scripts')
     @vite('resources/js/reservar.js')
+    @vite('resources/js/cargar-saldo.js')
     <script>
         var urlPasos = "{{ route('reservar.pasos') }}"
+        var urlCargarSaldoModal = "{{ route('cargar-saldo.mostrar-modal') }}";
     </script>
 @endsection

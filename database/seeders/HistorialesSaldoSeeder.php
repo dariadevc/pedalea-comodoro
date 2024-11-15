@@ -43,7 +43,7 @@ class HistorialesSaldoSeeder extends Seeder
         $cliente = Cliente::find(3);
 
         $cliente->historialesSaldo()->create([
-            'motivo' => 'Cargar saldo',
+            'motivo' => 'Carga de saldo',
             'monto' => 15000.00,
             'fecha_hora' => '2024-10-10 17:46:30',
         ]);
@@ -55,7 +55,7 @@ class HistorialesSaldoSeeder extends Seeder
             Carbon::parse('2024-10-23 21:05:00'),
         ];
         $montos = [10000.00, 10000.00, -100.00, -200.00, 3500.00];
-        $motivos = ['Cargar saldo', 'Cargar saldo', 'Pagar una multa', 'Pagar una multa', 'Cargar saldo'];
+        $motivos = ['Carga de saldo', 'Carga de saldo', 'Pago de multa', 'Pago de multa', 'Carga de saldo'];
 
         $reservas = $cliente->reservaReservo()->whereIn('id_estado', [3, 4])->get();
         foreach ($reservas as $reserva) {
@@ -81,7 +81,7 @@ class HistorialesSaldoSeeder extends Seeder
             }
 
             $cliente->historialesSaldo()->create([
-                'motivo' => 'Pagar una reserva',
+                'motivo' => 'Pago de reserva',
                 'monto' => $senia * -1,
                 'fecha_hora' => $fecha_hora_historial_saldo_senia,
             ]);
@@ -101,7 +101,7 @@ class HistorialesSaldoSeeder extends Seeder
                 }
                 $monto = $reserva->calcularMontoRestante() * -1;
                 $cliente->historialesSaldo()->create([
-                    'motivo' => 'Pagar un alquiler',
+                    'motivo' => 'Pago de alquiler',
                     'monto' => $monto,
                     'fecha_hora' => $fecha_hora_historial_saldo_monto,
                 ]);

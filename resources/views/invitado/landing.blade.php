@@ -18,24 +18,20 @@
                         Sesión</a>
                 @endif
 
-                {{-- Si inició sesión le va a permitir cerrar sesión --}}
+                {{-- Si inició sesión le va a permitir ir al inicio --}}
                 @if (Auth::user())
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit"
-                            class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover:outline-slate-50">
-                            {{ __('Log Out') }}
-                        </button>
-                    </form>
+                    <a href="{{ route('inicio') }}"
+                        class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50">Inicio</a>
                 @endif
 
             </ul>
-            <div class="flex flex-1 justify-end">
-                <div x-data="{ open: false }">
+            <div class="flex flex-1 justify-end ">
+                <div x-data="{ open: false }" class="z-50">
                     <button @click="open = ! open">
                         <x-icon-hmenu-claro height="30px" width="30px" />
                     </button>
-                    <nav x-show=open @click.away="open = false" class="absolute top-full left-0 w-full bg-pc-rojo py-4">
+                    <nav x-show=open @click.away="open = false"
+                        class="absolute top-full left-0 w-full bg-pc-rojo py-4 z-50">
                         <ul
                             class="flex flex-col justify-end items-center gap-1 text-slate-50 uppercase text-sm font-semibold text-center">
                             <li>
@@ -68,13 +64,8 @@
 
                             {{-- Si inicio sesión le va a permitir cerrar sesión --}}
                             @if (Auth::user())
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit"
-                                        class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 mt-5 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover:outline-slate-50 sm:hidden">
-                                        {{ __('Log Out') }}
-                                    </button>
-                                </form>
+                                <a href="{{ route('inicio') }}"
+                                    class="btn bg-slate-50 text-pc-rojo rounded-full px-6 py-3 mt-5 uppercase hover:bg-pc-rojo hover:text-slate-50 hover:outline hover:outline-4 hover:-outline-offset-4 hover: outline-slate-50 sm:hidden">Inicio</a>
                             @endif
                         </ul>
                     </nav>
@@ -95,10 +86,18 @@
                     Pedalea Comodoro
                 </h1>
                 <p class="text-pc-texto-p text-lg text-center lg:text-left mb-6">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lobortis volutpat turpis, ac
-                    elementum massa finibus vel. Mauris sollicitudin porta venenatis. Sed tincidunt sollicitudin tincidunt.
-                    Integer eu urna nisi. Nam in luctus ante. Donec rutrum vestibulum blandit. Fusce egestas nisi arcu, eu
-                    varius ex vulputate id. Proin elementum eros nec nunc egestas, at elementum ex posuere.
+                    Con este innovador servicio, podrás disfrutar de una forma de transporte ecológica, saludable y
+                    accesible. Reservá, alquilá y devolvé las bicicletas de manera fácil y rápida, todo desde tu
+                    dispositivo.
+                </p>
+                <p class="text-pc-texto-p text-lg text-center lg:text-left mb-6">
+                    A través de <span class="font-semibold">Pedalea Comodoro</span>, no solo contribuís al cuidado del
+                    medioambiente reduciendo la emisión de CO2, sino que también mejorás tu salud al incorporar el ejercicio
+                    físico en tu día a día.
+                </p>
+                <p class="text-pc-texto-p text-lg text-center lg:text-left mb-6">
+                    ¡Sumate a la movida saludable y sustentable de la ciudad, y pedaleá por Comodoro de una manera más
+                    práctica y divertida!
                 </p>
 
                 <!-- BOTONES -->
@@ -158,29 +157,32 @@
                 <h2 class="text-pc-texto-h font-bold text-3xl sm:text-4xl capitalize">¿Cómo funciona?</h2>
             </div>
             <div class="grid justify-center content-center grid-cols-1 px-12 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-                <div class="border-2 border-solid border-pc-rojo rounded-xl p-5 text-center shadow-md">
-                    <p>icono</p>
+                <div class="border-2 border-solid border-pc-rojo rounded-xl p-5 flex flex-col items-center shadow-md">
+                    <x-icon-formulario-rojo height="100px" width="100px" class="mb-4" />
                     <p class="font-semibold text-xl">1</p>
-                    <h4 class="font-semibold text-xl mb-5">Registrate,</h4>
-                    <p>completando los datos necesarios</p>
+                    <h4 class="font-semibold text-xl mb-1">Registrate</h4>
+                    <p class="">completando los datos necesarios</p>
                 </div>
-                <div class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md">
-                    <p>icono</p>
+                <div
+                    class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md flex flex-col items-center">
+                    <x-icon-billetera-azul height="100px" width="100px" class="mb-4" />
                     <p class="font-semibold text-xl">2</p>
-                    <h4 class="font-semibold text-xl mb-5 under">Cargá saldo,</h4>
+                    <h4 class="font-semibold text-xl mb-1">Cargá saldo</h4>
                     <p>para pagar las reservas y los alquileres</p>
                 </div>
-                <div class="border-2 border-solid border-pc-rojo rounded-xl p-5 text-center shadow-md">
-                    <p>icono</p>
+                <div
+                    class="border-2 border-solid border-pc-rojo rounded-xl p-5 text-center shadow-md flex flex-col items-center">
+                    <x-icon-reloj-rojo height="100px" width="100px" class="mb-4" />
                     <p class="font-semibold text-xl">3</p>
-                    <h4 class="font-semibold text-xl mb-5 under">Reservá una bicicleta,</h4>
+                    <h4 class="font-semibold text-xl mb-1">Reservá una bicicleta</h4>
                     <p>indicando el tiempo de uso</p>
                 </div>
-                <div class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md">
-                    <p>icono</p>
+                <div
+                    class="border-2 border-solid border-pc-azul rounded-xl p-5 text-center shadow-md flex flex-col items-center">
+                    <x-icon-bicicleta-azul height="100px" width="100px" class="mb-4" />
                     <p class="font-semibold text-xl">4</p>
-                    <h4 class="font-semibold text-xl mb-5 under">Retirá tu bicicleta,</h4>
-                    <p>de tu estación de preferencia</p>
+                    <h4 class="font-semibold text-xl mb-1">Retirá la bicicleta</h4>
+                    <p>en tu estación de preferencia</p>
                 </div>
             </div>
         </div>
@@ -207,8 +209,7 @@
         </div>
     </section>
 
-    {{-- TODO: Agregar mapa real! --}}
-    <!-- MAPA INTERACTIVO  -->
+
     <section id="seccion-mapa" class="relative scroll-mt-28">
         <div class="container my-12 mt-20">
             <!-- CONTENIDO -->
@@ -221,17 +222,28 @@
                     de cada estación.</p>
             </div>
             <!-- Contenedor para el mapa interactivo -->
-            <div class="flex justify-center flex-1 mb-0 z-0" id="mapa" style="width: 100%; height: 500px;"></div>
+            <div
+                class="w-full md:w-3/4 lg:w-2/3 h-[600px] mx-auto rounded-lg overflow-hidden shadow-lg border border-gray-200 -z-10">
+                @include('estaciones.partials.mapa-estaciones', ['estaciones' => $estaciones])
+            </div>
         </div>
     </section>
+    <!-- MAPA INTERACTIVO  -->
+    {{-- <div class="flex flex-col space-y-4 p-6 bg-white shadow-md rounded-lg mx-auto w-full max-w-screen-lg">
+        <h2 class="text-2xl font-semibold text-gray-800">Mapa de estaciones</h2>
+        <div
+            class="w-full md:w-3/4 lg:w-2/3 h-[600px] mx-auto rounded-lg overflow-hidden shadow-lg border border-gray-200">
+            @include('estaciones.partials.mapa-estaciones', ['estaciones' => $estaciones])
+        </div>
+    </div> --}}
 @endsection
 
 @section('scripts')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    {{-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" /> --}}
 
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    {{-- <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script> --}}
 
-    <script src="{{ asset('js/mapa.js') }}"></script>
+    {{-- <script src="{{ asset('js/mapa.js') }}"></script> --}}
 
 
     <script>

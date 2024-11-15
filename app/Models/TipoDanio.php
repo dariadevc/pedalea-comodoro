@@ -13,17 +13,22 @@ class TipoDanio extends Model
     protected $primaryKey = 'id_tipo_danio';
     public $timestamps = false;
 
+    public const RECUPERABLE = 1;
+    public const NO_RECUPERABLE = 2;
+
+
     // Los atributos que pueden modificarse
     protected $fillable = [
         'descripcion',
     ];
 
-    // Los atributos que no pueden modificarse
-    protected $guarded = [
-        'id_tipo_danio',
-    ];
 
-    public function danios()
+    /**
+     * Define la relación de pertenencia con el modelo Danio.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function danios(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Danio::class, 'id_tipo_danio', 'id_tipo_danio');
     }

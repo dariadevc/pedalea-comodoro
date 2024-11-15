@@ -1,62 +1,63 @@
 @extends('layouts.cliente')
 
-@section('nombre_seccion', 'Multas')
+@section('nombre_seccion', 'Historial de Suspensiones')
 
 @section('contenido')
-    <div class="flex flex-col w-full md:w-3/4 gap-4">
-        {{-- BUSCAR --}}
-        <section class="flex gap-2 bg-gray-50 py-2 px-6 rounded-full text-sm items-center border-2">
-            <p>icono</p>
-            {{-- ? Debería usar un form para el buscador? Qué puede buscar? --}}
-            <input role="combobox" aria-autocomplete="list" aria-expanded="false" autocomplete="off"
-                aria-label="Buscar actividad" type="text"
-                class="text-sm border-none bg-gray-50 focus:outline-none focus:ring-0 w-full" placeholder="Buscar..."
-                inputvalue="" value="">
-            {{-- TODO: Que funcione el buscador ¿Bajo qué criterio? --}}
-            <x-btn-rojo-blanco type="submit" class="capitalize">Buscar</x-btn-rojo-blanco>
-        </section>
-        {{-- FILTRAR --}}
-        <section class="flex bg-gray-50 p-4 justify-between items-center text-sm rounded-md shadow-sm">
-            {{-- FILTROS --}}
-            <div class="flex gap-2">
-                <div>
-                    <button class="flex gap-4 items-center px-2 py-1" type="button">
-                        <span class="">Período</span>
-                        <x-icon-flecha-abajo-oscura width="15px" height="15px" />
-                    </button>
-                    {{-- TODO: Agregar dropdown --}}
-                </div>
-                <div>
-                    <button class="flex gap-4 items-center px-2 py-1" type="button">
-                        <span class="">Estados</span>
-                        <x-icon-flecha-abajo-oscura width="15px" height="15px" />
-                    </button>
-                    {{-- TODO: Agregar dropdown --}}
-                </div>
-            </div>
-            {{-- BORRAR FILTROS --}}
-            {{-- TODO: Hacer que borre los filtros (O los setee en default) se tiene que habilitar solo cuando el usuario elige filtros --}}
-            <div>
-                <button type="button" class="text-gray-400">Borrar filtros</button>
-            </div>
-        </section>
+    <div class="flex flex-col w-full md:w-3/4 gap-4 items-center">
         {{-- HISTORIAL --}}
-        <section class="grid
-                            auto-rows-max gap-2 bg-gray-50 rounded-xl shadow-md">
-            {{-- LISTA DE MULTAS --}}
-            {{-- TODO: Actualizar tarjetas a medida que realiza nuevas reservas, cada href vincula a la reserva/alquiler correspondiente --}}
-            {{-- TODO: Agrupar las reservas/alquileres por fecha --}}
-            <ul class="">
-                <li class="flex box-border">
-                    <a href="#" class="p-4 hover:bg-gray-100 w-full">
-                        {{-- INFO DE LA ACTIVIDAD --}}
-                        <div class="flex flex-col gap-1 items-start">
-                            <h2>Suspensión</h2>
-                            <p>Finalizada</p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
+        <div class="text-2xl font-bold text-gray-700 mb-4 text-center hidden lg:block">
+            <h2>Historial de Suspensiones</h2>
+        </div>
+
+        {{-- FORMULARIO DE FECHAS --}}
+        <section class="gap-2 bg-gray-50 py-2 px-6 rounded-full text-sm border-2 inline-flex w-fit">
+            <form method="GET" action="{{ route('his_suspensiones') }}" class="flex gap-2 justify-center w-fit">
+                <div class="flex gap-2 justify-center items-center">
+                    <label for="fecha_inicio">Desde:</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio"
+                        class="form-control text-sm border-none bg-gray-50 focus:outline-none focus:ring-0 w-40" required
+                        value="{{ old('fecha_inicio', request('fecha_inicio')) }}">
+
+                    <label for="fecha_fin">Hasta:</label>
+                    <input type="date" id="fecha_fin" name="fecha_fin"
+                        class="form-control text-sm border-none bg-gray-50 focus:outline-none focus:ring-0 w-40" required
+                        value="{{ old('fecha_fin', request('fecha_fin')) }}">
+                </div>
+                <x-btn-rojo-blanco type="submit" class="capitalize">Buscar</x-btn-rojo-blanco>
+            </form>
+        </section>
+
+        {{-- HISTORIAL --}}
+        <section class="bg-gray-50 rounded-xl shadow-md p-4">
+            @if ($suspensiones->count() > 0)
+                <table class="min-w-full bg-white border border-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="py-2 px-4 border-b text-left">Estado</th>
+                            <th class="py-2 px-4 border-b text-left">Fecha Desde</th>
+                            <th class="py-2 px-4 border-b text-left">Fecha Hasta</th>
+                            <th class="py-2 px-4 border-b text-left">Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($suspensiones as $suspension)
+                            <tr class="hover:bg-gray-100">
+                                <td class="py-2 px-4 border-b font-semibold">{{ $suspension->nombre_estado }}</td>
+                                <td class="text-base py-2 px-4 border-b">{{ $suspension->fecha_desde->format('d/m/Y') }}
+                                </td>
+                                <td class="text-base py-2 px-4 border-b">{{ $suspension->fecha_hasta->format('d/m/Y') }}
+                                </td>
+                                <td class="text-base py-2 px-4 border-b">{{ $suspension->descripcion }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <div class="mt-4">
+                    {{ $suspensiones->appends(['fecha_inicio' => request('fecha_inicio'), 'fecha_fin' => request('fecha_fin')])->links() }}
+                </div>
+            @else
+                <p style="text-align: center">No se encontraron suspensiones en el rango de fechas especificado.</p>
+            @endif
         </section>
     </div>
 @endsection

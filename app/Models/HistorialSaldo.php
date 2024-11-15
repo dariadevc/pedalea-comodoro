@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class HistorialSaldo extends Model
 {
-
     use HasFactory;
 
-    protected $primaryKey = ['id_usuario', 'id_historial_saldo'];
+    protected $primaryKey = 'id_usuario';
     public $incrementing = false;
 
     protected $table = 'historiales_saldo';
@@ -23,13 +23,39 @@ class HistorialSaldo extends Model
         'motivo',
     ];
 
-    public function cliente()
+    protected $casts = [
+        'fecha_hora' => 'datetime',
+    ];
+
+    /**
+     * Accesor para obtener y parsear la fecha/hora de devolución.
+     *
+     * @param string $valor
+     * @return Carbon
+     */
+    public function getFechaHoraDevolucionAttribute($valor): Carbon
+    {
+        return Carbon::parse($valor);
+    }
+
+
+    /**
+     * Devuelve el cliente asociado al historial de saldo.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cliente(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cliente::class, 'id_usuario', 'id_usuario');
     }
 
-    // Generar dependiente_id automáticamente
-    protected static function booted()
+    /**
+     * Define el comportamiento al crear un historial de saldo.
+     * Genera automáticamente el id_historial_saldo incrementando el último valor.
+     *
+     * @return void
+     */
+    protected static function booted(): void
     {
         static::creating(function ($historialSaldo) {
             $ultimoHistorialSaldo = HistorialSaldo::where('id_usuario', $historialSaldo->id_usuario)

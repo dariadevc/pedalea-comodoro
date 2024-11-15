@@ -26,40 +26,77 @@ class Suspension extends Model
         'descripcion',
     ];
 
-    // Los atributos que no pueden modificarse
-    protected $guarded = [
-        'id_suspension',
-    ];
+        /**
+     * Accesor para obtener y parsear la fecha/hora de devolución.
+     *
+     * @param string $valor
+     * @return Carbon
+     */
+    public function getFechaDesdeAttribute($valor): Carbon
+    {
+        return Carbon::parse($valor);
+    }
 
-    public static function crearSuspension($id_usuario, $tiempo_suspension_dias)
+        /**
+     * Accesor para obtener y parsear la fecha/hora de devolución.
+     *
+     * @param string $valor
+     * @return Carbon
+     */
+    public function getFechaHastaAttribute($valor): Carbon
+    {
+        return Carbon::parse($valor);
+    }
+    /**
+     * Crea una nueva suspensión para un cliente.
+     *
+     * @param int $id_usuario_cliente
+     * @param int $tiempo_suspension_dias
+     * @return Suspension
+     */
+    public static function crearSuspension(int $id_usuario_cliente, int $tiempo_suspension_dias): Suspension
     {
         $suspension = new Suspension();
-        $suspension->id_usuario = $id_usuario;
+        $suspension->id_usuario = $id_usuario_cliente;
         $suspension->fecha_desde = Carbon::now();
         $suspension->fecha_hasta = Carbon::now()->addDays($tiempo_suspension_dias);
         $suspension->fecha_hora = Carbon::now();
 
-        $suspension->cambiarEstado('Activa');
+        $suspension->cambiarEstado(EstadoSuspension::ACTIVA);
 
         return $suspension;
     }
 
-    public function cambiarEstado($nombre_estado)
+    /**
+     * Cambia el estado de la suspensión según el ID proporcionado.
+     *
+     * @param int $id_estado ID del estado
+     * @return void
+     */
+    public function cambiarEstado(int $id_estado): void
     {
-        $estado = EstadoSuspension::where('nombre', $nombre_estado)->first();
-        $this->id_estado = $estado->id_estado;
+        $this->id_estado = $id_estado;
     }
 
-    public function generarDescripcion($puntaje)
+    /**
+     * Genera la descripción de la suspensión en base al puntaje.
+     *
+     * @param int $puntaje Puntaje asociado a la suspensión
+     * @return void
+     */
+    public function generarDescripcion(int $puntaje): void
     {
         $this->descripcion = "Suspension generada por puntaje negativo acumulado: {$puntaje}";
     }
 
-    public function getDetallesSuspension()
+    /**
+     * Obtiene los detalles de la suspensión como un mensaje.
+     *
+     * @return string
+     */
+    public function getDetallesSuspension(): string
     {
-
         $tiempo_suspension_dias = (int) ($this->fecha_desde->diffInDays($this->fecha_hasta));
-
 
         $mensaje = "Estimado/a {$this->cliente->usuario->nombre},\n\n" .
             "Esperamos que te encuentres bien. Queremos informarte que se ha generado una suspensión en tu cuenta debido a un puntaje acumulado negativo.\n\n" .
@@ -74,7 +111,12 @@ class Suspension extends Model
         return $mensaje;
     }
 
-    public function guardarSuspensionCreada()
+    /**
+     * Guarda la suspensión creada y envía una notificación por correo electrónico.
+     *
+     * @return void
+     */
+    public function guardarSuspensionCreada(): void
     {
         $mensaje = $this->getDetallesSuspension();
         $asunto = "Suspensión realizada";
@@ -85,19 +127,30 @@ class Suspension extends Model
          * ------
          * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE 
          */
-        $this->cliente->cambiarEstado('Suspendido');
+        $this->cliente->cambiarEstado(EstadoCliente::SUSPENDIDO);
         Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
         
         $this->save();
     }
 
+    // Relaciones
 
-    // Relación con el estado
-    public function cliente()
+    /**
+     * Relación con el cliente asociado a la suspensión.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cliente(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cliente::class, 'id_usuario', 'id_usuario');
     }
-    public function estadoSuspension()
+
+    /**
+     * Relación con el estado de la suspensión.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function estadoSuspension(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(EstadoSuspension::class, 'id_estado', 'id_estado');
     }

@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cliente;
-use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Validator;
 
 class ClienteController extends Controller
 {
-
+    /** 
+     * Muestra la vista para r saldo o redirige si el cliente está suspendido. 
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse 
+     * */
     public function indexCargarSaldo()
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
@@ -23,49 +29,76 @@ class ClienteController extends Controller
         }
     }
 
+    /**
+     * Actualiza el saldo del cliente en la base de datos.
+     * 
+     * @param Request $request
+     * 
+     */
     public function storeCargarSaldo(Request $request)
     {
-        $request->validate([
-            'monto' => 'required|numeric'
+
+        $validator = Validator::make($request->all(), [
+            'amount' => 'required|numeric|min:100',
+            'cardNumber' => 'required|digits_between:16,19',
+            'cardName' => 'required|string|max:255',
+            'expiryDate' => 'required|regex:/^\d{2}\/\d{2}$/',
+            'cvv' => 'required|digits:3',
         ]);
 
-        // ACA TENDRIA QUE IR LA PASARELA DE PAGO
+        if ($validator->fails()) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
 
-        $usuario = Auth::user();
-        $cliente = $usuario->obtenerCliente();
-
-        if (rand(0, 1)) {
-            $monto = floatval($request->monto);
-            $cliente->agregarSaldo($monto);
-
-            return redirect()->route('inicio')
-                ->with('success', 'Se ha cargado satisfactoriamente su saldo.');
-        } else {
-            return redirect()->route('cargar-saldo.index')
-                ->with('error', 'Ha ocurrido un error al procesar su pago.')
+            return redirect()->back()
+                ->withErrors($validator)
                 ->withInput();
         }
+        if (rand(1, 0)) {
+            /** @var \App\Models\User $usuario */
+            $usuario = Auth::user();
+            $cliente = $usuario->obtenerCliente();
+            $cliente->agregarSaldo($request->amount, 'Carga de saldo');
+            $saldo = $cliente->saldo;
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'mensaje' => "Carga realizada con éxito. Su saldo actual es de \${$saldo}",
+                    'saldo' => $saldo,
+                ]);
+            }
+
+            return redirect()->route('inicio')->with('success', 'Carga realizada con éxito');
+        }
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'No se pudo cargar el saldo. Intente nuevamente.'
+            ]);
+        }
+
+        return redirect()->back()->with('error', 'No se pudo cargar el saldo. Intente nuevamente.')->withInput();
     }
 
-    public function restarPuntos()
+    public function verPerfilCliente(Request $request)
     {
-        return view('cliente.restar_puntos');
-    }
-
-    public function storeRestarPuntos(Request $request)
-    {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
-        $cliente->actualizarPuntaje($request->puntos);
-        return redirect()->route('restar-puntos')->with('success', 'Puntos restados correctamente ' . $request->puntos);
+
+        return view('cliente.perfil', compact('cliente', 'usuario'));
     }
 
-    public function restablecer_multas_hechas()
+    public function mostrarCargarSaldoModal()
     {
-        $usuario = Auth::user();
-        $cliente = $usuario->obtenerCliente();
-        $cliente->reiniciarMultasSuspensionHechasPorDia();
-        return redirect()->route('restar-puntos')->with('success', 'Multas restablecidas por dia');
-
+        $vista_html = view('cliente.cargar-saldo-modal')->render();
+        return response()->json([[
+            'success' => true,
+            'html' => $vista_html
+        ]]);
     }
 }

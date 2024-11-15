@@ -37,10 +37,13 @@ window.mandarFormularioBiciNoDisponible = function () {
         data: datos,
         success: function (response) {
             if (response.success) {
+                $('#bicicletaPatente').empty();
+                $('#bicicletaPatente').text(response.patente_nueva_bicicleta);
                 window.ocultarDisponible();
                 window.mostrarPagarAlquiler();
             } else {
-                                window.location.href = response.redirectUrl;
+                $('#contenidoModalModificarReserva').html(response.html);
+                $('#modalModificarReserva').removeClass('invisible');
             }
         },
         error: function (xhr, status, error) {
@@ -75,10 +78,9 @@ window.mandarFormularioPagar = function (valorBoton) {
         },
         success: function (response) {
             if (response.success) {
-                alert(response.mensaje);
                 window.location.href = response.redirect;
             } else {
-                alert(response.mensaje);
+                window.toggleModal('modalConfirmacion');
             }
         },
         error: function (xhr, status, error) {
@@ -98,3 +100,6 @@ window.mostrarPagarAlquiler = function () {
     $('#contenedorPagarAlquiler').removeClass('hidden');
 }
 
+window.toggleModal = function (id_contenedor) {
+    $(`#${id_contenedor}`).toggleClass('invisible');
+}
