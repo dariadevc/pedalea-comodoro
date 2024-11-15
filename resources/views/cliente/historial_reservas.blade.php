@@ -42,9 +42,10 @@
                                 @else
                                     <p class="text-gray-400 font-semibold">{{ $reserva->estado }}</p>
                                 @endif
-                                <p class="text-sm font-semibold">Fecha de retiro</p>
+                                <p class="text-sm font-semibold">Fecha de creación</p>
                                 <p class="text-sm">
-                                    {{ ucfirst(\Carbon\Carbon::parse($reserva->fecha_hora_retiro)->locale('es')->translatedFormat('l, d \d\e F Y \a \l\a\s h:i')) }}
+                                    
+                                    {{ ucfirst(\Carbon\Carbon::parse($reserva->created_at)->locale('es')->translatedFormat('l, d \d\e F Y \a \l\a\s H:i')) }}
                                 </p>
                             </div>
                             <details class="w-full">
@@ -52,12 +53,39 @@
                                     Ver Detalles
                                 </summary>
                                 <div class="mt-2">
-                                    <p>Bicicleta: {{ $reserva->bicicleta_patente }}</p>
-                                    <p>Estación de Retiro: {{ $reserva->estacion_retiro_nombre }}</p>
-                                    <p>Estación de Devolución: {{ $reserva->estacion_devolucion_nombre }}</p>
-                                    <p>Fecha de Retiro: {{ $reserva->fecha_hora_retiro }}</p>
-                                    <p>Fecha de Devolución: {{ $reserva->fecha_hora_devolucion }}</p>
-                                    <p>Puntaje Obtenido: {{ $reserva->puntaje }}</p>
+                                    <div class="flex items-center">
+                                        <span class="font-medium text-gray-600 w-48 mr-3">Fecha de Retiro</span>
+                                        <span
+                                            class="text-gray-700">{{ ucfirst(\Carbon\Carbon::parse($reserva->fecha_hora_retiro)->locale('es')->translatedFormat('l, d \d\e F Y \a \l\a\s H:i')) }}</span>
+                                    </div>
+                                    @if ($reserva->estado != 'Cancelada')
+                                        <div class="flex items-center">
+                                            <span class="font-medium text-gray-600 w-48 mr-3">Fecha de Devolución</span>
+                                            <span
+                                                class="text-gray-700">{{ ucfirst(\Carbon\Carbon::parse($reserva->fecha_hora_devolucion)->locale('es')->translatedFormat('l, d \d\e F Y \a \l\a\s H:i')) }}</span>
+                                        </div>
+                                    @endif
+                                    <div class="flex items-center">
+                                        <span class="font-medium text-gray-600 w-48 mr-3">Estación de Retiro</span>
+                                        <span class="text-gray-700">{{ $reserva->estacion_retiro_nombre }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="font-medium text-gray-600 w-48 mr-3">Estación de Devolución</span>
+                                        <span class="text-gray-700">{{ $reserva->estacion_devolucion_nombre }}</span>
+                                    </div>
+                                    @if ($reserva->puntaje)
+                                        <div class="flex items-center">
+                                            <span class="font-medium text-gray-600 w-48 mr-3">Puntaje Obtenido</span>
+                                            <span class="text-gray-700">{{ $reserva->puntaje }}</span>
+                                        </div>
+                                    @endif
+                                    @if ($reserva->nombre_usuario_devuelve && $reserva->apellido_usuario_devuelve)
+                                        <div class="flex items-center">
+                                            <span class="font-medium text-gray-600 w-48 mr-3">Cliente Devuelve</span>
+                                            <span
+                                                class="text-gray-700">{{ $reserva->apellido_usuario_devuelve . $reserva->nombre_usuario_devuelve }}</span>
+                                        </div>
+                                    @endif
                                 </div>
                             </details>
                         </li>

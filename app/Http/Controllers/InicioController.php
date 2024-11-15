@@ -64,6 +64,7 @@ class InicioController extends Controller
             ->join('estados_reserva', 'reservas.id_estado', '=', 'estados_reserva.id_estado')
             ->select('reservas.*', 'estados_reserva.nombre as estado')
             ->where('reservas.id_cliente_reservo', $cliente->id_usuario)
+            ->orderBy('reservas.created_at', 'desc')
             ->orderBy('reservas.fecha_hora_retiro', 'desc')
             ->limit(5)
             ->get();

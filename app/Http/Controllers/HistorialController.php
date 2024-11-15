@@ -24,47 +24,6 @@ class HistorialController extends Controller
 
 
         if ($fechaInicio && $fechaFin) {
-            // $reservas = $cliente->reservaReservo()
-            //     ->with([
-            //         'estacionRetiro',
-            //         'estacionDevolucion:nombre',
-            //         'estado:nombre',
-            //         'clienteDevuelve.usuario:nombre,apellido'
-            //     ])
-            //     ->whereBetween('fecha_hora_retiro', [$fechaInicio, $fechaFin])
-            //     ->orWhereIn('id_estado', [
-            //         EstadoReserva::ACTIVA,
-            //         EstadoReserva::MODIFICADA,
-            //         EstadoReserva::ALQUILADA,
-            //         EstadoReserva::REASIGNADA
-            //     ])
-            //     ->select('fecha_hora_retiro', 'fecha_hora_devolucion', 'puntaje_obtenido', 'monto')
-            //     ->orderBy('fecha_hora_retiro', 'desc')
-            //     ->paginate(10);
-            $reservas = $cliente->reservaReservo()
-                ->with([
-                    'estacionRetiro:id_estacion,nombre',
-                    'estacionDevolucion:id_estacion,nombre',
-                    'estado:id_estado,nombre',
-                    'clienteDevuelve.usuario:id_usuario,nombre,apellido'
-                ])
-                ->whereBetween('fecha_hora_retiro', [$fechaInicio, $fechaFin])
-                ->orWhereIn('id_estado', [
-                    EstadoReserva::ACTIVA,
-                    EstadoReserva::MODIFICADA,
-                    EstadoReserva::ALQUILADA,
-                    EstadoReserva::REASIGNADA
-                ])
-                ->select('id_reserva', 'fecha_hora_retiro', 'fecha_hora_devolucion', 'puntaje_obtenido', 'monto', 'id_estacion_retiro', 'id_estacion_devolucion', 'id_estado', 'id_cliente_devuelve')
-                ->orderBy('fecha_hora_retiro', 'desc')
-                ->paginate(10);
-
-
-
-
-            // dump($reservas);
-
-
             // $reservas = DB::table('reservas')
             //     ->join('bicicletas', 'reservas.id_bicicleta', '=', 'bicicletas.id_bicicleta')
             //     ->join('estaciones as estacion_retiro', 'reservas.id_estacion_retiro', '=', 'estacion_retiro.id_estacion')
@@ -86,6 +45,32 @@ class HistorialController extends Controller
             //     ->whereIn('reservas.id_estado', [1, 2, 3, 4])
             //     ->orderBy('fecha_hora_devolucion', "desc")
             //     ->paginate(10);
+            $reservas = DB::table('reservas')
+                ->join('bicicletas', 'reservas.id_bicicleta', '=', 'bicicletas.id_bicicleta')
+                ->join('estaciones as estacion_retiro', 'reservas.id_estacion_retiro', '=', 'estacion_retiro.id_estacion')
+                ->join('estaciones as estacion_devolucion', 'reservas.id_estacion_devolucion', '=', 'estacion_devolucion.id_estacion')
+                ->join('estados_reserva', 'reservas.id_estado', '=', 'estados_reserva.id_estado')
+                ->leftJoin('clientes as cliente_devuelve', 'reservas.id_cliente_devuelve', '=', 'cliente_devuelve.id_usuario')
+                ->leftJoin('usuarios', 'cliente_devuelve.id_usuario', '=', 'usuarios.id_usuario')
+                ->select(
+                    'reservas.id_reserva',
+                    'reservas.fecha_hora_retiro',
+                    'reservas.fecha_hora_devolucion',
+                    'reservas.created_at',
+                    'bicicletas.patente as bicicleta_patente',
+                    'estacion_retiro.nombre as estacion_retiro_nombre',
+                    'estacion_devolucion.nombre as estacion_devolucion_nombre',
+                    'estados_reserva.nombre as estado',
+                    'reservas.puntaje_obtenido as puntaje',
+                    'usuarios.nombre as nombre_usuario_devuelve',
+                    'usuarios.apellido as apellido_usuario_devuelve'
+                )
+                ->where('reservas.id_cliente_reservo', $cliente->id_usuario)
+                ->whereBetween('reservas.fecha_hora_retiro', [$fechaInicio, $fechaFin])
+                ->whereIn('reservas.id_estado', [1, 2, 3, 4])
+                ->orderBy('created_at', 'desc')
+                ->orderBy('fecha_hora_devolucion', 'desc')
+                ->paginate(10);
         } else {
             $reservas = []; // Colección vacía si no hay fechas válidas
         }

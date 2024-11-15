@@ -66,7 +66,7 @@ class Cliente extends Model
 
     public function obtenerUltimaReserva()
     {
-        return $this->reservaReservo()->orderBy('fecha_hora_retiro', 'desc')->first();
+        return $this->reservaReservo()->orderBy('created_at', 'desc')->first();
     }
 
     /**
