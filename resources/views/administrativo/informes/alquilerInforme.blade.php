@@ -19,6 +19,7 @@
 <div class="container mx-auto mt-6">
     @if (isset($alquileresHor) && count($alquileresHor) > 0)
         <h1 class="text-2xl font-bold mb-4 text-black title-section">Grafico de tiempos de alquiler</h1>
+        <p class="text-center text-gray-600 mb-4">Este gráfico muestra la cantidad de veces que un cierto tiempo ha sido utilizado durante el período seleccionado.</p>
         <canvas id="alquilerChart" width="400" height="200"></canvas>
         <br>
         <h1 class="text-2xl font-bold mb-4 text-black title-section">Listado de horarios de alquiler</h1>
@@ -65,7 +66,7 @@
         data: {
             labels: {!! json_encode($alquileresTime->pluck('tiempo')) !!},
             datasets: [{
-                label: 'Cantidad de Veces',
+                label: 'Cantidad de veces utilizado',
                 data: {!! json_encode($alquileresTime->pluck('cant')) !!},
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',
