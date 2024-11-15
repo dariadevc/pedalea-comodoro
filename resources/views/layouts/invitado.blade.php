@@ -13,7 +13,7 @@
 </head>
 
 <body class="antialiased font-Montserrat bg-gray-50">
-    <header class=" bg-pc-rojo sticky top-0 w-full left-0 z-10 py-1">
+    <header class=" bg-pc-rojo sticky top-0 w-full left-0 z-50 py-1">
         @yield('header')
     </header>
 
