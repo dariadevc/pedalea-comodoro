@@ -63,7 +63,7 @@
                         </li>
                     @endforeach
                 @else
-                    <p style="text-align: center">No se encontraron reservas en el rango de fechas especificado.</p>
+                    <p style="text-center">No se encontraron reservas en el rango de fechas especificado.</p>
                 @endif
             </ul>
             <div>
