@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EstadoReserva;
 use App\Models\User;
 use App\Models\Reserva;
 use Illuminate\Http\Request;
@@ -14,36 +15,79 @@ class HistorialController extends Controller
 
     public function historialReservas(Request $request)  //Metodo para el historial de reservas
     {
+        /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
 
         $fechaInicio = $request->input('fecha_inicio') . ' 00:00:00';
         $fechaFin = $request->input('fecha_fin') . ' 23:59:59';
 
+
         if ($fechaInicio && $fechaFin) {
-            $reservas = DB::table('reservas')
-                ->join('bicicletas', 'reservas.id_bicicleta', '=', 'bicicletas.id_bicicleta')
-                ->join('estaciones as estacion_retiro', 'reservas.id_estacion_retiro', '=', 'estacion_retiro.id_estacion')
-                ->join('estaciones as estacion_devolucion', 'reservas.id_estacion_devolucion', '=', 'estacion_devolucion.id_estacion')
-                ->join('estados_reserva', 'reservas.id_estado', '=', 'estados_reserva.id_estado')
-                ->select(
-                    'reservas.id_reserva',
-                    'reservas.fecha_hora_retiro',
-                    'reservas.fecha_hora_devolucion',
-                    'bicicletas.patente as bicicleta_patente',
-                    'estacion_retiro.nombre as estacion_retiro_nombre',
-                    'estacion_devolucion.nombre as estacion_devolucion_nombre',
-                    'estados_reserva.nombre as estado',
-                    'reservas.puntaje_obtenido as puntaje',
-                    'estados_reserva.nombre as estadoNombre'
-                )
-                ->where('reservas.id_cliente_reservo', $cliente->id_usuario)
-                ->whereBetween('reservas.fecha_hora_retiro', [$fechaInicio, $fechaFin])
-                ->whereIn('reservas.id_estado', [1, 2, 3, 4])
-                ->orderBy('fecha_hora_devolucion', "desc")
+            // $reservas = $cliente->reservaReservo()
+            //     ->with([
+            //         'estacionRetiro',
+            //         'estacionDevolucion:nombre',
+            //         'estado:nombre',
+            //         'clienteDevuelve.usuario:nombre,apellido'
+            //     ])
+            //     ->whereBetween('fecha_hora_retiro', [$fechaInicio, $fechaFin])
+            //     ->orWhereIn('id_estado', [
+            //         EstadoReserva::ACTIVA,
+            //         EstadoReserva::MODIFICADA,
+            //         EstadoReserva::ALQUILADA,
+            //         EstadoReserva::REASIGNADA
+            //     ])
+            //     ->select('fecha_hora_retiro', 'fecha_hora_devolucion', 'puntaje_obtenido', 'monto')
+            //     ->orderBy('fecha_hora_retiro', 'desc')
+            //     ->paginate(10);
+            $reservas = $cliente->reservaReservo()
+                ->with([
+                    'estacionRetiro:id_estacion,nombre',
+                    'estacionDevolucion:id_estacion,nombre',
+                    'estado:id_estado,nombre',
+                    'clienteDevuelve.usuario:id_usuario,nombre,apellido'
+                ])
+                ->whereBetween('fecha_hora_retiro', [$fechaInicio, $fechaFin])
+                ->orWhereIn('id_estado', [
+                    EstadoReserva::ACTIVA,
+                    EstadoReserva::MODIFICADA,
+                    EstadoReserva::ALQUILADA,
+                    EstadoReserva::REASIGNADA
+                ])
+                ->select('id_reserva', 'fecha_hora_retiro', 'fecha_hora_devolucion', 'puntaje_obtenido', 'monto', 'id_estacion_retiro', 'id_estacion_devolucion', 'id_estado', 'id_cliente_devuelve')
+                ->orderBy('fecha_hora_retiro', 'desc')
                 ->paginate(10);
+
+
+
+
+            // dump($reservas);
+
+
+            // $reservas = DB::table('reservas')
+            //     ->join('bicicletas', 'reservas.id_bicicleta', '=', 'bicicletas.id_bicicleta')
+            //     ->join('estaciones as estacion_retiro', 'reservas.id_estacion_retiro', '=', 'estacion_retiro.id_estacion')
+            //     ->join('estaciones as estacion_devolucion', 'reservas.id_estacion_devolucion', '=', 'estacion_devolucion.id_estacion')
+            //     ->join('estados_reserva', 'reservas.id_estado', '=', 'estados_reserva.id_estado')
+            //     ->select(
+            //         'reservas.id_reserva',
+            //         'reservas.fecha_hora_retiro',
+            //         'reservas.fecha_hora_devolucion',
+            //         'bicicletas.patente as bicicleta_patente',
+            //         'estacion_retiro.nombre as estacion_retiro_nombre',
+            //         'estacion_devolucion.nombre as estacion_devolucion_nombre',
+            //         'estados_reserva.nombre as estado',
+            //         'reservas.puntaje_obtenido as puntaje',
+            //         'estados_reserva.nombre as estadoNombre'
+            //     )
+            //     ->where('reservas.id_cliente_reservo', $cliente->id_usuario)
+            //     ->whereBetween('reservas.fecha_hora_retiro', [$fechaInicio, $fechaFin])
+            //     ->whereIn('reservas.id_estado', [1, 2, 3, 4])
+            //     ->orderBy('fecha_hora_devolucion', "desc")
+            //     ->paginate(10);
         } else {
-            $reservas = collect(); // Colección vacía si no hay fechas válidas
+            $reservas = []; // Colección vacía si no hay fechas válidas
         }
 
         return view('cliente.historial_reservas', compact('reservas', 'fechaInicio', 'fechaFin'));

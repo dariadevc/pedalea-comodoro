@@ -70,13 +70,13 @@
                             </details>
                         </li>
                     @endforeach
+                    <div>
+                        {{ $reservas->appends(['fecha_inicio' => request('fecha_inicio'), 'fecha_fin' => request('fecha_fin')])->links() }}
+                    </div>
                 @else
                     <p style="text-align: center">No se encontraron reservas en el rango de fechas especificado.</p>
                 @endif
             </ul>
-            <div>
-                {{ $reservas->appends(['fecha_inicio' => request('fecha_inicio'), 'fecha_fin' => request('fecha_fin')])->links() }}
-            </div>
         </section>
     </div>
 @endsection

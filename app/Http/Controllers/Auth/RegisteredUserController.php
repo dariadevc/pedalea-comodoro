@@ -33,6 +33,7 @@ class RegisteredUserController extends Controller
 
         $user->assignRole('cliente');
 
+        /** @var \App\Models\Cliente $cliente */
         $cliente = Cliente::create([
             'fecha_nacimiento' => $request->fecha_nacimiento,
             'id_usuario' => $user->id_usuario,
@@ -40,6 +41,7 @@ class RegisteredUserController extends Controller
             'puntaje' => 0,
             'saldo' => 0.00,
         ]);
+
         $cliente->crearRangosPuntos();
 
 
