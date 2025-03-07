@@ -12,7 +12,10 @@ use App\Models\EstadoReserva;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+
+use function PHPSTORM_META\type;
 
 class EstacionController extends Controller
 {
@@ -188,7 +191,6 @@ class EstacionController extends Controller
         ]);
 
         if ($validador->fails()) {
-            // Si hay errores, devolvemos los mensajes como JSON con el código de estado 422
             return response()->json(['errors' => $validador->errors()], 422);
         }
 
@@ -197,6 +199,13 @@ class EstacionController extends Controller
         $estaciones_disponibles = [];
         $estaciones_devolucion = [];
         $horario_retiro = $request->input('horario_retiro');
+
+        if ($estaciones->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'No hay estaciones disponibles actualmente. Por favor intente en unos minutos.',
+            ]);
+        }
 
         foreach ($estaciones as $estacion) {
             $estaciones_devolucion[] = [

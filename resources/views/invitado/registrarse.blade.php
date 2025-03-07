@@ -22,7 +22,8 @@
 
             {{-- FORMULARIO --}}
             {{-- TODO: Agregar mensajes de error y demás (guiarse con el register que está en auth) --}}
-            <form method="POST" action="{{ route('registrarse') }}" class="flex flex-col gap-8 my-5 items-center">
+            <form method="POST" action="{{ route('registrarse') }}" class="flex flex-col gap-8 my-5 items-center"
+                novalidate>
                 @csrf
 
                 {{-- INFORMACIÓN PERSONAL --}}
@@ -59,6 +60,9 @@
                         <label for="fecha_nacimiento">Fecha de Nacimiento</label>
                         <x-text-input type="date" name="fecha_nacimiento" id="fecha_nacimiento"
                             value="{{ old('fecha_nacimiento') }}" required autocomplete="fecha_nacimiento" />
+                        @error('fecha_nacimiento')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
                 </fieldset>
 
