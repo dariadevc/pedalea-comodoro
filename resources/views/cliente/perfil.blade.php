@@ -20,7 +20,8 @@
             </div>
             <div class="flex items-center">
                 <span class="font-medium text-gray-600 w-48">Fecha de Nacimiento</span>
-                <span class="text-gray-700">{{ $cliente->fecha_nacimiento }}</span>
+                <span
+                    class="text-gray-700">{{ ucfirst(\Carbon\Carbon::parse($cliente->fecha_nacimiento)->locale('es')->translatedFormat('d/m/Y')) }}</span>
             </div>
             <div class="flex items-center">
                 <span class="font-medium text-gray-600 w-48">Saldo</span>
@@ -30,7 +31,7 @@
                 <span class="font-medium text-gray-600 w-48">Puntaje Actual</span>
                 @if ($cliente->puntaje < 0)
                     <span class="text-red-500 font-semibold">{{ $cliente->puntaje }}</span>
-                    @else
+                @else
                     <span class="text-green-500 font-semibold">{{ $cliente->puntaje }}</span>
                 @endif
             </div>
