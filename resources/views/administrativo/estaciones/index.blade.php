@@ -71,15 +71,22 @@
                         </td>
                         <td class="p-2 md:border md:border-grey-600 text-left block md:table-cell">
                             <span class="inline-block w-1/3 md:hidden font-bold">Acciones</span>
-                            <a href="{{ route('estaciones.edit', $estacion->id_estacion) }}"
-                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 border border-blue-500 rounded">Editar</a>
-                            <form action="{{ route('estaciones.destroy', $estacion->id_estacion) }}" method="POST"
-                                style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 border border-red-500 rounded ml-2">Eliminar</button>
-                            </form>
+                            @if ($estacion->en_reserva_retiro || $estacion->en_reserva_devolucion)
+                                <button type="button"
+                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded">Editar</button>
+                                <button type="button"
+                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded ml-2">Eliminar</button>
+                            @else
+                                <a href="{{ route('estaciones.edit', $estacion->id_estacion) }}"
+                                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 border border-blue-500 rounded">Editar</a>
+                                <form action="{{ route('estaciones.destroy', $estacion->id_estacion) }}" method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 border border-red-500 rounded ml-2">Eliminar</button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

@@ -22,7 +22,21 @@ class BicicletaController extends Controller
      */
     public function index(): View
     {
-        $bicicletas = Bicicleta::with(['estado', 'estacionActual'])->get();
+        $bicicletas = Bicicleta::with(['estado', 'estacionActual'])
+            ->withCount(['reservas as en_reserva' => function ($query) {
+                $query->whereIn('id_estado', [
+                    EstadoReserva::ACTIVA,
+                    EstadoReserva::MODIFICADA,
+                    EstadoReserva::ALQUILADA,
+                    EstadoReserva::REASIGNADA
+                ]);
+            }])
+            ->get()
+            ->map(function ($bicicleta) {
+                $bicicleta->en_reserva = $bicicleta->en_reserva > 0 ? true : false;
+                return $bicicleta;
+            });
+
         return view('administrativo.bicicletas.index', compact('bicicletas'));
     }
 
