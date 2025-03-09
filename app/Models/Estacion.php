@@ -133,6 +133,15 @@ class Estacion extends Model
         $this->save();
     }
 
+    public function cambiarEstado(int $id_estado)
+    {
+        if ($id_estado == EstadoEstacion::ACTIVA) {
+            $this->id_estado = EstadoEstacion::INACTIVA;
+        } else {
+            $this->id_estado = EstadoEstacion::ACTIVA;
+        }
+        $this->save();
+    }
 
     /**
      * FUNCIONES QUE RELACIONAN A OTROS MODELOS

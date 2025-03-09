@@ -106,7 +106,21 @@ class BicicletaController extends Controller
 
         $bicicleta->editar($id_estado, $id_estacion_actual);
 
-        return redirect()->route('bicicletas.index')->with('success', "Bicicleta {$bicicleta->patente} actualizada correctamente");
+        return redirect()->route('bicicletas.index')->with('success', "Bicicleta {$bicicleta->patente} actualizada correctamente.");
+    }
+
+    public function cambiarEstado(Request $request, Bicicleta $bicicleta)
+    {
+        $request->validate([
+            'estado' => 'required|integer'
+        ]);
+
+        $bicicleta->cambiarEstado($request->estado);
+        $bicicleta->save();
+
+        $estado = $bicicleta->id_estado == 1 ? 'habilito' : 'deshabilito';
+
+        return redirect()->route('bicicletas.index')->with('success', "La bicicleta {$bicicleta->patente} se {$estado} correctamente.");
     }
 
     public function destroy(Bicicleta $bicicleta)
