@@ -56,7 +56,7 @@
                                 <span
                                     class="h-1.5 w-1.5 rounded-full {{ $bicicleta->id_estado == '1' ? 'bg-green-600' : 'bg-red-600' }}">
                                 </span>
-                                {{ ucfirst($bicicleta->estado->nombre) }}
+                                {{ ucfirst($bicicleta->en_reserva ? $bicicleta->estado_reserva : $bicicleta->estado->nombre) }}
                             </span>
                         </td>
                         <td class="p-2 md:border md:border-grey-600 text-left block md:table-cell">
