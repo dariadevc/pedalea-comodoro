@@ -224,6 +224,7 @@ class ReservaController extends Controller
                 return response()->json(['success' => false, 'mensaje' => 'Monto insuficiente para pagar el alquiler.']);
             }
         }
+        return response()->json(['success' => false, 'mensaje' => 'No selecciono pagar.']);
     }
 
 
@@ -461,14 +462,11 @@ class ReservaController extends Controller
         /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
-
+        
         /** @var \App\Models\Reserva $reserva */
         $reserva = session('reserva_pendiente');
-
-        if (!$reserva) {
-        }
-
-
+        
+        
         if ($reserva->reservar($cliente, $usuario)) {
             session()->forget('reserva_pendiente');
             return response()->json([
@@ -776,6 +774,7 @@ class ReservaController extends Controller
         $reserva = session('reserva_devolver');
         $estacion_retiro = $reserva->estacionRetiro->nombre;
         $estacion_devolucion = $reserva->estacionDevolucion->nombre;
+        session()->put('son_iguales', $estacion_retiro === $estacion_devolucion);
         return view('cliente.partials.devolver.formulario-calificacion', compact('estacion_retiro', 'estacion_devolucion'))->render();
     }
 
@@ -788,33 +787,54 @@ class ReservaController extends Controller
      */
     public function guardarCalificacion(Request $request): JsonResponse
     {
-        $validador = Validator::make($request->all(), [
-            'calificacion_retiro' => 'required|integer|min:1|max:5',
-            'calificacion_devolucion' => 'required|integer|min:1|max:5',
-        ], [
-            'calificacion_retiro.required' => 'La calificación de la estación de retiro es obligatoria.',
-            'calificacion_retiro.integer' => 'La calificación debe ser un número entero.',
-            'calificacion_retiro.min' => 'La calificación debe ser al menos 1.',
-            'calificacion_retiro.max' => 'La calificación no puede ser mayor a 5.',
-            'calificacion_devolucion.required' => 'La calificación de la estación de devolución es obligatoria.',
-            'calificacion_devolucion.integer' => 'La calificación debe ser un número entero.',
-            'calificacion_devolucion.min' => 'La calificación debe ser al menos 1.',
-            'calificacion_devolucion.max' => 'La calificación no puede ser mayor a 5.',
-        ]);
+        if (!session('son_iguales')) {
 
-        $calificaciones = [
-            'id_tipo_calificacion_retiro' => $request->calificacion_retiro,
-            'id_tipo_calificacion_devolucion' => $request->calificacion_devolucion
-        ];
-        session()->put('calificaciones', $calificaciones);
-
+            $validador = Validator::make($request->all(), [
+                'calificacion_retiro' => 'required|integer|min:1|max:5',
+                'calificacion_devolucion' => 'required|integer|min:1|max:5',
+            ], [
+                'calificacion_retiro.required' => 'La calificación de la estación de retiro es obligatoria.',
+                'calificacion_retiro.integer' => 'La calificación debe ser un número entero.',
+                'calificacion_retiro.min' => 'La calificación debe ser al menos 1.',
+                'calificacion_retiro.max' => 'La calificación no puede ser mayor a 5.',
+                'calificacion_devolucion.required' => 'La calificación de la estación de devolución es obligatoria.',
+                'calificacion_devolucion.integer' => 'La calificación debe ser un número entero.',
+                'calificacion_devolucion.min' => 'La calificación debe ser al menos 1.',
+                'calificacion_devolucion.max' => 'La calificación no puede ser mayor a 5.',
+            ]);
+        } else {
+            $validador = Validator::make($request->all(), [
+                'calificacion_retiro' => 'required|integer|min:1|max:5',
+            ], [
+                'calificacion_retiro.required' => 'La calificación de la estación es obligatoria.',
+                'calificacion_retiro.integer' => 'La calificación debe ser un número entero.',
+                'calificacion_retiro.min' => 'La calificación debe ser al menos 1.',
+                'calificacion_retiro.max' => 'La calificación no puede ser mayor a 5.',
+            ]);
+        }
         if ($validador->fails()) {
-            // Si hay errores, devolvemos los mensajes como JSON con el código de estado 422
             return response()->json(['errors' => $validador->errors()], 422);
         }
 
+        if (session('son_iguales')) {
+            $calificaciones = [
+                'id_tipo_calificacion_retiro' => $request->calificacion_retiro,
+            ];
+        } else {
+            $calificaciones = [
+                'id_tipo_calificacion_retiro' => $request->calificacion_retiro,
+                'id_tipo_calificacion_devolucion' => $request->calificacion_devolucion
+            ];
+        }
+        session()->put('calificaciones', $calificaciones);
+
+
         $vista_html = $this->mostrarDevolverBicicleta();
 
+        // return response()->json([
+        //     'hola' => $calificaciones,
+        //     'son_iguales' => session('son_iguales'),
+        // ]);
         return response()->json([
             'success' => true,
             'html' => $vista_html,
@@ -848,14 +868,23 @@ class ReservaController extends Controller
             return redirect()->route('devolver.index')->with('error', 'No se encontro la reserva.');
         }
         /** @var Reserva $reserva */
-        $reserva = session('reserva_devolver');
+        $reserva = session('reserva_devolver') ?? null;
+        
+        if (!$reserva) {
+            return $this->redireccionarInicio('error', 'No se encontro la reserva.');
+        }
+
         $daniosSeleccionados = session('daniosSeleccionados');
         $calificaciones = session('calificaciones');
         $danios_objetos = [];
         foreach ($daniosSeleccionados as $id_danio) {
             $danios_objetos[] = Danio::findOrFail($id_danio);
         }
-        $reserva->devolver($danios_objetos, $calificaciones);
+        $reserva->devolver($danios_objetos, $calificaciones, session('son_iguales'));
+        session()->forget('reserva_devolver');
+        session()->forget('daniosSeleccionados');
+        session()->forget('calificaciones');
+        session()->forget('son_iguales');
         return $this->redireccionarInicio('success', 'Alquiler finalizado con éxito.');
     }
 }

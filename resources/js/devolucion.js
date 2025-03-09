@@ -36,8 +36,12 @@ window.sinDanios = function (event) {
         success: function (response) {
             $('#contenedorConsultaDanios').remove();
             $('#contenedorCalificarEstaciones').html(response.html);
-            manejarClickEstrellas('retiro');
-            manejarClickEstrellas('devolucion');
+            if ($('.estrella.retirodevolucion').length > 0) {
+                manejarClickEstrellas('retirodevolucion');
+            } else {
+                manejarClickEstrellas('retiro');
+                manejarClickEstrellas('devolucion');
+            }
         },
         error: function (xhr, status, error) {
             console.log('Status:', status); // Ver el estado (como 500, 404, etc.)
@@ -52,26 +56,30 @@ function setEstrellasSeleccionadas(tipo, valor) {
     const estrellas = $(`.estrella.${tipo}`);
     estrellas.each(function (index) {
         if (index < valor) {
-            $(this).find('path').css('fill', '#FFD700'); // Cambiar a color dorado para selección
+            $(this).find('path').css('fill', '#FFD700'); // Color dorado para selección
         } else {
-            $(this).find('path').css('fill', 'none'); // Restaurar el color para no seleccionadas
+            $(this).find('path').css('fill', 'none');
         }
     });
-
-    // Opcional: Añadir clase activa para mayor control
     estrellas.removeClass('active');
     estrellas.slice(0, valor).addClass('active');
 }
+
 
 
 function manejarClickEstrellas(tipo) {
     $(`.estrella.${tipo}`).on('click', function () {
         const valor = $(this).data('valor');
         setEstrellasSeleccionadas(tipo, valor);
-        $(`#inputCalificacion${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`).val(valor);
+        if (tipo === 'retirodevolucion') {
+            // Actualiza ambos inputs
+            $('#inputCalificacionRetiro').val(valor);
+            $('#inputCalificacionDevolucion').val(valor);
+        } else {
+            $(`#inputCalificacion${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`).val(valor);
+        }
     });
 }
-
 
 
 
@@ -89,8 +97,12 @@ window.guardarDanios = function (event) {
         success: function (response) {
             $('#contenedorFormularioDanios').remove();
             $('#contenedorCalificarEstaciones').html(response.html);
-            manejarClickEstrellas('retiro');
-            manejarClickEstrellas('devolucion');
+            if ($('.estrella.retirodevolucion').length > 0) {
+                manejarClickEstrellas('retirodevolucion');
+            } else {
+                manejarClickEstrellas('retiro');
+                manejarClickEstrellas('devolucion');
+            }
 
         },
         error: function (xhr, status, error) {
@@ -114,6 +126,7 @@ window.guardarCalificacion = function (event) {
     $('#error-calificacion_devolucion').empty();
     $('#error-calificacion_retiro').empty();
     // Realiza la solicitud AJAX
+    console.log($('#formularioCalificacion').serialize());
     $.ajax({
         url: $('#formularioCalificacion').attr('action'),
         method: $('#formularioCalificacion').attr('method'),
@@ -122,6 +135,7 @@ window.guardarCalificacion = function (event) {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function (response) {
+            console.log(response);
             $('#contenedorCalificarEstaciones').remove();
             $('#contenedorDevolucion').html(response.html);
         },
