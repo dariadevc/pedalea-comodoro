@@ -22,7 +22,7 @@
     @if (isset($rutas) && count($rutas) > 0)
         <h1 class="text-2xl font-bold mb-4 text-black title-section">Grafico de Rutas</h1>
         <p class="text-center text-gray-600 mb-4">Este gráfico muestra la cantidad de veces que cada ruta ha sido utilizada durante el período seleccionado.</p>
-        <canvas id="rutasChart" width="400" height="200"></canvas>
+        <canvas id="rutasChart" width="600" height="300"></canvas>
     @else
         <p class="mt-6 text-center text-gray-500">No hay datos disponibles para el rango de fechas seleccionado.</p>
     @endif
@@ -34,24 +34,26 @@
     var alquilerChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: {!! json_encode($rutas->pluck('rutas')) !!},
+            labels: {!! json_encode($rutas->pluck('rutas')->slice(0,5)) !!},
             datasets: [{
                 label: 'Cantidad de veces utilizadas',
-                data: {!! json_encode($rutas->pluck('total')) !!},
+                data: {!! json_encode($rutas->pluck('total')->slice(0,5)) !!},
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 3
             }]
         },
         options: {
-            scales: {
-                x: {
-                    display: false
-                },
-                y: {
-                    beginAtZero: true
+    scales: {
+        x: {
+            ticks: {
+                font: {
+                    size: 10
                 }
             }
         }
+    }
+}
+
     });
 </script>
