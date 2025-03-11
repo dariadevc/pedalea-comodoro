@@ -51,10 +51,12 @@
                             <span class="inline-block w-1/3 md:hidden font-bold">Estado</span>
                             <span
                                 class="inline-flex items-center gap-1 rounded-full 
-                        {{ $bicicleta->id_estado == '1' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600' }} 
+                        {{-- {{ $bicicleta->id_estado == '1' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600' }}  --}}
+                        {{  $bicicleta->en_reserva ? 'bg-orange-50 text-orange-500' : ($bicicleta->id_estado == '1' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600') }} 
                         px-2 py-1 text-xs font-semibold">
                                 <span
-                                    class="h-1.5 w-1.5 rounded-full {{ $bicicleta->id_estado == '1' ? 'bg-green-600' : 'bg-red-600' }}">
+                                    {{-- class="h-1.5 w-1.5 rounded-full {{ $bicicleta->id_estado == '1' ? 'bg-green-600' : 'bg-red-600' }}"> --}}
+                                    class="h-1.5 w-1.5 rounded-full {{ $bicicleta->en_reserva ? 'bg-orange-500' : ($bicicleta->id_estado == '1' ? 'bg-green-600' : 'bg-red-600') }}">
                                 </span>
                                 {{ ucfirst($bicicleta->en_reserva ? $bicicleta->estado_reserva : $bicicleta->estado->nombre) }}
                             </span>

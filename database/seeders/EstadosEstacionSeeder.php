@@ -14,8 +14,8 @@ class EstadosEstacionSeeder extends Seeder
     public function run(): void
     {
         $estados = [
-            'Activa',
-            'Inactiva',
+            'Habilitada',
+            'Deshabilitada',
         ];
 
         foreach ($estados as $estado) {

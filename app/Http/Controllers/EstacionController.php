@@ -144,7 +144,7 @@ class EstacionController extends Controller
         ]);
 
         $estacion->cambiarEstado($request->estado);
-        $estado = $estacion->id_estado == 1 ? 'activo' : 'desactivo';
+        $estado = $estacion->id_estado == 1 ? 'habilito' : 'deshabilito';
 
         return redirect()->route('estaciones.index')->with('success', "La estación {$estacion->nombre} se {$estado} correctamente.");
     }
