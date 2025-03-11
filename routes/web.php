@@ -14,6 +14,7 @@ use App\Http\Controllers\InfraccionController;
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\ManualController;
 use App\Http\Controllers\MultaController;
+use App\Http\Controllers\PagoController;
 
 // Vista principal
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -148,6 +149,12 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/historial-movimiento', [HistorialController::class, 'historialMovimientos'])->name('historiales.movimientos');
 
     Route::post('multas/pagar/{multa}', [MultaController::class, 'pagar'])->name('multas.pagar');
+
+    Route::post('/pago/procesar', [PagoController::class, 'procesarPago'])->name('pago.procesar');
+    Route::get('/pago/exito', [PagoController::class, 'exito'])->name('pago.exito');
+    Route::get('/pago/error', [PagoController::class, 'error'])->name('pago.error');
+
+    Route::get('/cliente-saldo', [ClienteController::class, 'mostrarSaldo'])->name('cliente-saldo');
 });
 
 
