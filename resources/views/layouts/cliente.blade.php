@@ -100,6 +100,10 @@
                                 <x-item-sidebar ruta="reservar" @click="open = false">Reservar
                                     Bicicleta</x-item-sidebar>
                             @endif
+                            {{-- @if ($devolucionReasignada)
+                                <x-item-sidebar ruta="reserva_actual" @click="open = false">Reserva
+                                    Actual</x-item-sidebar>
+                            @endif --}}
                             <x-item-sidebar ruta="ver-mapa" @click="open = false"> Estaciones</x-item-sidebar>
                         </ul>
                     </div>

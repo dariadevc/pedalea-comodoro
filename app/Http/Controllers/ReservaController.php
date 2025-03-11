@@ -269,6 +269,39 @@ class ReservaController extends Controller
         return view('cliente.alquiler_actual', compact('reserva', 'estado_reserva', 'usuario_devuelve'));
     }
 
+    /**
+     * Muestra el alquiler actual.
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function indexAlquilerAjeno()
+    {
+        /** @var \App\Models\User $usuario */
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+
+        if ($cliente->estoySuspendido()) {
+            return $this->redireccionarInicio('error', 'Su cuenta se encuentra suspendida.');
+        }
+
+        $reserva_ajena = $cliente->obtenerReservaAjena();
+        if (!$reserva_ajena) {
+            return $this->redireccionarInicio('error', 'No tiene que realizar ninguna devolución ajena.');
+        }
+
+        $estado_reserva_ajena = $reserva_ajena->getNombreEstadoReserva();
+
+        if (!$reserva_ajena->clienteDevuelve) {
+            $usuario_devuelve = null;
+        } else {
+            $usuario_devuelve = $reserva_ajena->clienteDevuelve->usuario;
+        }
+
+
+        $reserva_ajena = $reserva_ajena->formatearDatosActiva();
+        return view('cliente.alquiler_ajeno', compact('reserva_ajena', 'estado_reserva_ajena', 'usuario_devuelve'));
+    }
+
     // -------------
     // REASIGNAR
     // -------------
@@ -462,11 +495,11 @@ class ReservaController extends Controller
         /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
-        
+
         /** @var \App\Models\Reserva $reserva */
         $reserva = session('reserva_pendiente');
-        
-        
+
+
         if ($reserva->reservar($cliente, $usuario)) {
             session()->forget('reserva_pendiente');
             return response()->json([
@@ -688,6 +721,12 @@ class ReservaController extends Controller
         return redirect()->back()->with('error', 'No hay ningun alquiler activo.');
     }
 
+
+    // -------------
+    // *DEVOLVER
+    // -------------
+
+
     /**
      * Muestra el formulario para devolver una bicicleta.
      * 
@@ -701,7 +740,10 @@ class ReservaController extends Controller
         $reserva = $cliente->obtenerReservaAlquilada();
 
         if (!$reserva) {
-            return $this->redireccionarInicio('error', 'No tiene un alquiler activo.');
+            $reserva = $cliente->obtenerReservaAjena();
+            if (!$reserva) {
+                return $this->redireccionarInicio('error', 'No tiene un alquiler activo.');
+            }
         }
 
         session()->put('reserva_devolver', $reserva);
@@ -869,7 +911,7 @@ class ReservaController extends Controller
         }
         /** @var Reserva $reserva */
         $reserva = session('reserva_devolver') ?? null;
-        
+
         if (!$reserva) {
             return $this->redireccionarInicio('error', 'No se encontro la reserva.');
         }

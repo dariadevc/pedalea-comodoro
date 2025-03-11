@@ -38,7 +38,7 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     Route::put('/bicicletas/{bicicleta}', [BicicletaController::class, 'update'])->name('bicicletas.update');
     Route::post('/bicicletas/{bicicleta}/cambiar-estado', [BicicletaController::class, 'cambiarEstado'])->name('bicicletas.cambiar-estado');
     Route::delete('/bicicletas/{bicicleta}', [BicicletaController::class, 'destroy'])->name('bicicletas.destroy');
-    
+
     // Rutas para gestión de estaciones
     Route::get('/estaciones', [EstacionController::class, 'index'])->name('estaciones.index');
     Route::get('/estaciones/create', [EstacionController::class, 'create'])->name('estaciones.create');
@@ -84,6 +84,7 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     Route::get('/reservar', [ReservaController::class, 'indexReserva'])->name('reservar.index');
     Route::get('/alquiler-actual',  [ReservaController::class, 'indexAlquilerActual'])->name('alquiler_actual');
+    Route::get('/alquiler-ajeno',  [ReservaController::class, 'indexAlquilerAjeno'])->name('alquiler_ajeno');
     Route::post('/alquiler-actual/buscar-usuario', [])->name('alquiler_actual.buscar-usuario');
 
     // * DEVOLVER
