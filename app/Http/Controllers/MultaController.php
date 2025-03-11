@@ -17,6 +17,10 @@ class MultaController extends Controller
             $cliente = $usuario->obtenerCliente();
             if ($multa->pagar($cliente)) {
                 return redirect()->back()->with('success', 'Multa pagada correctamente');
+            } else {
+                return response()->json([
+                    'error' => 'No se pudo pagar la multa.',
+                ], 400);
             }
         }
     }

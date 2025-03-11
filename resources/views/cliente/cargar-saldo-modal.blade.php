@@ -8,5 +8,6 @@
             </svg>
         </button>
         @include('cliente.partials.pasarela-de-pago')
+
     </div>
 </div>
