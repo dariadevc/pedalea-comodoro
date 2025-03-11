@@ -91,11 +91,7 @@ class Cliente extends Model
         $limite_multiplicador_negativo = Configuracion::where('clave', 'limite_multiplicador_negativo')->first();
         $monto_limite_negativo = floatval($tarifa->valor) * floatval($limite_multiplicador_negativo->valor);
         $monto_limite_negativo *= -1;
-        FacadesLog::info($this->saldo);
-        FacadesLog::info($monto);
-        FacadesLog::info($monto_limite_negativo);
         if ($this->saldo - $monto < $monto_limite_negativo) {
-            FacadesLog::info('entro por aca');
             return false;
         }
         $this->saldo -= $monto;

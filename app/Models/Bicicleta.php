@@ -43,6 +43,15 @@ class Bicicleta extends Model
         $this->save();
     }
 
+    public function cambiarEstado(int $id_estado): void
+    {
+        if ($id_estado == EstadoBicicleta::DISPONIBLE) {
+            $this->deshabilitar();
+        } else {
+            $this->habilitar();
+        }
+    }
+
     /**
      * Verifica si la bicicleta esta en un alquiler.
      * 

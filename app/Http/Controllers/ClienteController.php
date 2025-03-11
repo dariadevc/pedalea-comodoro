@@ -37,7 +37,6 @@ class ClienteController extends Controller
      */
     public function storeCargarSaldo(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'amount' => 'required|numeric|min:100',
             'cardNumber' => 'required|digits_between:16,19',
@@ -84,6 +83,18 @@ class ClienteController extends Controller
         return redirect()->back()->with('error', 'No se pudo cargar el saldo. Intente nuevamente.')->withInput();
     }
 
+
+    /**
+     * Actualiza el saldo del cliente en la base de datos.
+     * 
+     * @param Request $request
+     * 
+     */
+    public function storeCargarSaldoPrueba()
+    {
+        
+    }
+
     public function verPerfilCliente(Request $request)
     {
         /** @var \App\Models\User $usuario */
@@ -100,5 +111,12 @@ class ClienteController extends Controller
             'success' => true,
             'html' => $vista_html
         ]]);
+    }
+
+    public function mostrarSaldo() 
+    {
+        return response()->json([
+            'saldo' => Auth::user()->obtenerCliente()->saldo
+        ]);
     }
 }

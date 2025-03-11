@@ -86,9 +86,9 @@
                 </button>
             </div>
         </div>
+    </div>
+@endsection
 
-    @endsection
-
-    @section('scripts')
-        @vite('resources/js/cancelar.js')
-    @endsection
+@section('scripts')
+    @vite('resources/js/cancelar.js')
+@endsection
