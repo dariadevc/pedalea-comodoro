@@ -26,7 +26,32 @@ class EstacionController extends Controller
      */
     public function index(): View
     {
-        $estaciones = Estacion::with(['estado'])->withCount('bicicletas')->get();
+        $estaciones = Estacion::with(['estado'])
+            ->withCount('bicicletas')
+            ->withCount([
+                'reservasDevolucion as en_reserva_devolucion' => function ($query) {
+                    $query->whereIn('id_estado', [
+                        EstadoReserva::ACTIVA,
+                        EstadoReserva::MODIFICADA,
+                        EstadoReserva::ALQUILADA,
+                        EstadoReserva::REASIGNADA
+                    ]);
+                },
+                'reservasRetiro as en_reserva_retiro' => function ($query) {
+                    $query->whereIn('id_estado', [
+                        EstadoReserva::ACTIVA,
+                        EstadoReserva::MODIFICADA,
+                        EstadoReserva::ALQUILADA,
+                        EstadoReserva::REASIGNADA
+                    ]);
+                }
+            ])
+            ->get()
+            ->map(function ($estacion) {
+                $estacion->en_reserva_devolucion = $estacion->en_reserva_devolucion > 0 ? true : false;
+                $estacion->en_reserva_retiro = $estacion->en_reserva_retiro > 0 ? true : false;
+                return $estacion;
+            });
         return view('administrativo.estaciones.index', ['estaciones' => $estaciones]);
     }
 
@@ -113,6 +138,18 @@ class EstacionController extends Controller
 
         $estacion->save();
         return redirect()->route('estaciones.index')->with('success', "Estación {$estacion->nombre} actualizada correctamente");
+    }
+
+    public function cambiarEstado(Request $request, Estacion $estacion)
+    {
+        $request->validate([
+            'estado' => 'required|integer'
+        ]);
+
+        $estacion->cambiarEstado($request->estado);
+        $estado = $estacion->id_estado == 1 ? 'habilito' : 'deshabilito';
+
+        return redirect()->route('estaciones.index')->with('success', "La estación {$estacion->nombre} se {$estado} correctamente.");
     }
 
     /**
