@@ -30,6 +30,8 @@ $(document).ready(function () {
 window.traerEstacionesDisponibles = function () {
     var datos = $('#formularioHorarioRetiro').serialize();
     $('.error-message').text('');
+    $('#error-horario-retiro').prop('disabled', true);
+    $('#error-horario-retiro').empty();
 
     $.ajax({
         url: $('#formularioHorarioRetiro').attr('action'),
@@ -39,7 +41,8 @@ window.traerEstacionesDisponibles = function () {
             if (response.success) {
                 window.activarFormularioDatosReserva(response);
             } else {
-
+                $('#error-horario-retiro').prop('disabled', false);
+                $('#error-horario-retiro').append(response.mensaje);
             }
         },
         error: function (xhr) {
