@@ -16,8 +16,7 @@
 
             <div>
                 <label for="monto" class="block text-pc-texto-h font-semibold mb-2">Monto:</label>
-                <input type="number" name="monto" id="monto"
-                    value="{{ $monto_tarifa }}"
+                <input type="number" name="monto" id="monto" value="{{ $monto_tarifa }}"
                     class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-pc-rojo focus:border-pc-rojo"
                     required>
 
@@ -26,11 +25,12 @@
             <div>
                 <label class="block text-pc-texto-h font-semibold mb-2">Ultima fecha de modificación:</label>
                 <p class="w-full border border-gray-300 rounded-md py-2 px-3 bg-gray-100 text-pc-texto-h">
-                    {{ $ultima_fecha_modificacion_tarifa }}
+                    {{ ucfirst(\Carbon\Carbon::parse($ultima_fecha_modificacion_tarifa)->locale('es')->translatedFormat('d/m/Y')) }}
                 </p>
             </div>
 
             <div class="flex justify-between items-center mt-6">
+
                 <button type="submit"
                     class="bg-pc-rojo hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md shadow">
                     Actualizar
