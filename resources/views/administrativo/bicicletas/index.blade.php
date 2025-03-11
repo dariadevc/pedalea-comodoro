@@ -67,9 +67,9 @@
                             <span class="inline-block w-1/3 md:hidden font-bold">Acciones</span>
                             @if ($bicicleta->en_reserva)
                                 <button type="button"
-                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded">Editar</button>
+                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded" disabled>Editar</button>
                                 <button type="button"
-                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded ml-2">
+                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded ml-2" disabled>
                                     @if ($bicicleta->id_estado == 1)
                                         Deshabilitar
                                     @else
@@ -77,7 +77,7 @@
                                     @endif
                                 </button>
                                 <button type="button"
-                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded ml-2">Eliminar</button>
+                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded ml-2" disabled>Eliminar</button>
                             @else
                                 <a href="{{ route('bicicletas.edit', $bicicleta->id_bicicleta) }}"
                                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 border border-blue-500 rounded">Editar</a>

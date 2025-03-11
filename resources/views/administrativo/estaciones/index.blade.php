@@ -73,11 +73,11 @@
                             <span class="inline-block w-1/3 md:hidden font-bold">Acciones</span>
                             @if ($estacion->en_reserva_retiro || $estacion->en_reserva_devolucion)
                                 <button type="button"
-                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded">Editar</button>
+                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded" disabled>Editar</button>
                                 <button type="button"
-                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded ml-2">Deshabilitar</button>
+                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded ml-2" disabled>Deshabilitar</button>
                                 <button type="button"
-                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded ml-2">Eliminar</button>
+                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded ml-2" disabled>Eliminar</button>
                             @else
                                 <a href="{{ route('estaciones.edit', $estacion->id_estacion) }}"
                                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 border border-blue-500 rounded">Editar</a>
