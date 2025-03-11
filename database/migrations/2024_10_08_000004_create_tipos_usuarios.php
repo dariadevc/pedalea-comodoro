@@ -11,38 +11,36 @@ return new class extends Migration
      */
     public function up(): void
     {
-        {
-            Schema::create('estados_clientes', function (Blueprint $table) {
-                $table->id('id_estado');
-                $table->string('nombre');
-            });
-        }
+        Schema::create('estados_clientes', function (Blueprint $table) {
+            $table->id('id_estado');
+            $table->string('nombre');
+        });
+
 
         Schema::create('clientes', function (Blueprint $table) {
             $table->foreignId('id_usuario')
-            ->constrained('usuarios', 'id_usuario')
-            ->onDelete('cascade');
+                ->constrained('usuarios', 'id_usuario')
+                ->onDelete('cascade');
             $table->foreignId('id_estado_cliente')->constrained('estados_clientes', 'id_estado');
             $table->integer('puntaje');
             $table->double('saldo');
             $table->date('fecha_nacimiento');
             $table->primary(['id_usuario']);
         });
-        
+
         Schema::create('inspectores', function (Blueprint $table) {
             $table->foreignId('id_usuario')
-            ->constrained('usuarios', 'id_usuario')
-            ->onDelete('cascade');
-            
-            $table->primary(['id_usuario']);
+                ->constrained('usuarios', 'id_usuario')
+                ->onDelete('cascade');
 
+            $table->primary(['id_usuario']);
         });
-        
+
 
         Schema::create('administrativos', function (Blueprint $table) {
             $table->foreignId('id_usuario')
-            ->constrained('usuarios', 'id_usuario')
-            ->onDelete('cascade');
+                ->constrained('usuarios', 'id_usuario')
+                ->onDelete('cascade');
             $table->primary(['id_usuario']);
         });
     }

@@ -58,7 +58,6 @@ window.mandarFormularioBiciNoDisponible = function () {
 
 
 window.mandarFormularioPagar = function (valorBoton) {
-    console.log(valorBoton);
     $('#pagar').val(valorBoton);
 
     if (valorBoton === "") {
@@ -66,8 +65,10 @@ window.mandarFormularioPagar = function (valorBoton) {
         return;
     }
 
-    var datos = $('#formularioPagar').serialize();
-    console.log(datos);
+    let form = $('#formularioPagar');
+    var datos = form.serialize();
+    var submitButton = form.find('button[type="button"]');
+    submitButton.prop('disabled', true);
 
     $.ajax({
         url: urlPagar,
@@ -78,17 +79,20 @@ window.mandarFormularioPagar = function (valorBoton) {
         },
         success: function (response) {
             if (response.success) {
+                submitButton.prop('disabled', true);
                 window.location.href = response.redirect;
             } else {
                 window.toggleModal('modalConfirmacion');
             }
         },
         error: function (xhr, status, error) {
-            console.log('Status:', status); // Ver el estado (como 500, 404, etc.)
-            console.log('Error:', error); // Mensaje general de error
-            console.log('Response:', xhr.responseText); // Ver el cuerpo completo de la respuesta
+            console.log('Status:', status);
+            console.log('Error:', error);
+            console.log('Response:', xhr.responseText);
+        },
+        complete: function () {
+            submitButton.prop('disabled', false);
         }
-
     });
 };
 

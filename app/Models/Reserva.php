@@ -3,14 +3,10 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use GuzzleHttp\Client;
 use App\Mail\MailTextoSimple;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
 
 class Reserva extends Model
 {
@@ -155,7 +151,7 @@ class Reserva extends Model
              * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE
              */
 
-            Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
+            Mail::to($destinatario)->queue(new MailTextoSimple($mensaje, $asunto));
             $this->save();
 
             return true;
@@ -182,12 +178,9 @@ class Reserva extends Model
             $destinatario = $usuario->email;
 
             /**
-             * $mensaje, $asunto HAY QUE FIJARSE QUE PONEMOS
-             * ------
              * NO OLVIDARSE DE DESCOMENTAR LA LINEA DEL MAIL PARA QUE SE MANDE
              */
-
-            Mail::to($destinatario)->send(new MailTextoSimple($mensaje, $asunto));
+            Mail::to($destinatario)->queue(new MailTextoSimple($mensaje, $asunto));
             $this->save();
 
             return true;
@@ -415,15 +408,17 @@ class Reserva extends Model
      * 
      * @return void
      */
-    public function devolver(array $danios_objetos, array $calificaciones): void
+    public function devolver(array $danios_objetos, array $calificaciones, bool $son_iguales = false): void
     {
+        if (!$son_iguales) {
+            /** @var Estacion $estacion_devolucion */
+            $estacion_devolucion = $this->estacionDevolucion;
+            $estacion_devolucion->generarCalificacion($calificaciones['id_tipo_calificacion_devolucion']);
+        }
         /** @var Estacion $estacion_retiro */
         $estacion_retiro = $this->estacionRetiro;
         $estacion_retiro->generarCalificacion($calificaciones['id_tipo_calificacion_retiro']);
 
-        /** @var Estacion $estacion_devolucion */
-        $estacion_devolucion = $this->estacionDevolucion;
-        $estacion_devolucion->generarCalificacion($calificaciones['id_tipo_calificacion_devolucion']);
 
         $puntaje_obtenido = PuntajeDevolucion::calcularPuntajeObtenido(Carbon::now(), $this->fecha_hora_devolucion->copy()->addMinutes(15), $danios_objetos);
 

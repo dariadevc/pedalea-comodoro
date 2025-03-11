@@ -197,7 +197,9 @@ window.enviarFormularioDatosIncorrectos = function () {
 
 window.enviarFormularioPagarReserva = function () {
     var form = $('#formularioPagarReserva');
-    console.log('entre por aca');
+    var submitButton = form.find('button[type="button"]');
+    submitButton.prop('disabled', true);
+    
     $.ajax({
         url: form.attr('action'),
         type: form.attr('method'),
@@ -207,16 +209,19 @@ window.enviarFormularioPagarReserva = function () {
         },
         success: function (response) {
             if (response.success) {
+                submitButton.prop('disabled', true);
                 window.location.href = response.redirect;
-            } else {
+            } else if (response.success === false) {
                 window.toggleModal('modalConfirmacion');
-
             }
         },
         error: function (xhr, status, error) {
             console.log('Status:', status);
             console.log('Error:', error);
             console.log('Response:', xhr.responseText);
+        },
+        complete: function () {
+            submitButton.prop('disabled', false);
         }
     });
 }
