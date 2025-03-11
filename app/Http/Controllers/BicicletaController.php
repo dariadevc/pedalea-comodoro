@@ -22,9 +22,39 @@ class BicicletaController extends Controller
      */
     public function index(): View
     {
-        $bicicletas = Bicicleta::with(['estado', 'estacionActual'])->get();
+        $bicicletas = Bicicleta::with(['estado', 'estacionActual'])
+            ->withCount(['reservas as en_reserva' => function ($query) {
+                $query->whereIn('id_estado', [
+                    EstadoReserva::ACTIVA,
+                    EstadoReserva::MODIFICADA,
+                    EstadoReserva::ALQUILADA,
+                    EstadoReserva::REASIGNADA
+                ]);
+            }])
+            ->with(['reservas' => function ($query) {
+                $query->whereIn('id_estado', [
+                    EstadoReserva::ACTIVA,
+                    EstadoReserva::MODIFICADA,
+                    EstadoReserva::ALQUILADA,
+                    EstadoReserva::REASIGNADA
+                ])->latest();
+            }])
+            ->get()
+            ->map(function ($bicicleta) {
+                $bicicleta->en_reserva = $bicicleta->en_reserva > 0;
+                $nombre_estado = $bicicleta->reservas->first()->estado->id_estado ?? null;
+                if ($nombre_estado == EstadoReserva::ACTIVA || $nombre_estado == EstadoReserva::MODIFICADA) {
+                    $nombre_estado = 'Reservada';
+                } elseif ($nombre_estado == EstadoReserva::ALQUILADA || $nombre_estado == EstadoReserva::REASIGNADA) {
+                    $nombre_estado = 'Alquilada';
+                }
+                $bicicleta->estado_reserva = $nombre_estado;
+                unset($bicicleta->reservas);
+                return $bicicleta;
+            });
         return view('administrativo.bicicletas.index', compact('bicicletas'));
     }
+
 
     /**
      * Muestra el formulario para crear una bicicleta.
@@ -92,7 +122,21 @@ class BicicletaController extends Controller
 
         $bicicleta->editar($id_estado, $id_estacion_actual);
 
-        return redirect()->route('bicicletas.index')->with('success', "Bicicleta {$bicicleta->patente} actualizada correctamente");
+        return redirect()->route('bicicletas.index')->with('success', "Bicicleta {$bicicleta->patente} actualizada correctamente.");
+    }
+
+    public function cambiarEstado(Request $request, Bicicleta $bicicleta)
+    {
+        $request->validate([
+            'estado' => 'required|integer'
+        ]);
+
+        $bicicleta->cambiarEstado($request->estado);
+        $bicicleta->save();
+
+        $estado = $bicicleta->id_estado == 1 ? 'habilito' : 'deshabilito';
+
+        return redirect()->route('bicicletas.index')->with('success', "La bicicleta {$bicicleta->patente} se {$estado} correctamente.");
     }
 
     public function destroy(Bicicleta $bicicleta)

@@ -12,7 +12,10 @@ use App\Models\EstadoReserva;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+
+use function PHPSTORM_META\type;
 
 class EstacionController extends Controller
 {
@@ -23,7 +26,32 @@ class EstacionController extends Controller
      */
     public function index(): View
     {
-        $estaciones = Estacion::with(['estado'])->withCount('bicicletas')->get();
+        $estaciones = Estacion::with(['estado'])
+            ->withCount('bicicletas')
+            ->withCount([
+                'reservasDevolucion as en_reserva_devolucion' => function ($query) {
+                    $query->whereIn('id_estado', [
+                        EstadoReserva::ACTIVA,
+                        EstadoReserva::MODIFICADA,
+                        EstadoReserva::ALQUILADA,
+                        EstadoReserva::REASIGNADA
+                    ]);
+                },
+                'reservasRetiro as en_reserva_retiro' => function ($query) {
+                    $query->whereIn('id_estado', [
+                        EstadoReserva::ACTIVA,
+                        EstadoReserva::MODIFICADA,
+                        EstadoReserva::ALQUILADA,
+                        EstadoReserva::REASIGNADA
+                    ]);
+                }
+            ])
+            ->get()
+            ->map(function ($estacion) {
+                $estacion->en_reserva_devolucion = $estacion->en_reserva_devolucion > 0 ? true : false;
+                $estacion->en_reserva_retiro = $estacion->en_reserva_retiro > 0 ? true : false;
+                return $estacion;
+            });
         return view('administrativo.estaciones.index', ['estaciones' => $estaciones]);
     }
 
@@ -112,6 +140,18 @@ class EstacionController extends Controller
         return redirect()->route('estaciones.index')->with('success', "Estación {$estacion->nombre} actualizada correctamente");
     }
 
+    public function cambiarEstado(Request $request, Estacion $estacion)
+    {
+        $request->validate([
+            'estado' => 'required|integer'
+        ]);
+
+        $estacion->cambiarEstado($request->estado);
+        $estado = $estacion->id_estado == 1 ? 'habilito' : 'deshabilito';
+
+        return redirect()->route('estaciones.index')->with('success', "La estación {$estacion->nombre} se {$estado} correctamente.");
+    }
+
     /**
      * Elimina suavemente (soft delete) una estación de la base de datos.
      *
@@ -188,7 +228,6 @@ class EstacionController extends Controller
         ]);
 
         if ($validador->fails()) {
-            // Si hay errores, devolvemos los mensajes como JSON con el código de estado 422
             return response()->json(['errors' => $validador->errors()], 422);
         }
 
@@ -197,6 +236,13 @@ class EstacionController extends Controller
         $estaciones_disponibles = [];
         $estaciones_devolucion = [];
         $horario_retiro = $request->input('horario_retiro');
+
+        if ($estaciones->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'No hay estaciones disponibles actualmente. Por favor intente en unos minutos.',
+            ]);
+        }
 
         foreach ($estaciones as $estacion) {
             $estaciones_devolucion[] = [

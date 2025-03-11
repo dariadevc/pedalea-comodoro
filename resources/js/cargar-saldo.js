@@ -13,6 +13,21 @@ $(document).ready(function () {
 
     window.ocultarBusqueda = function () {
         $('#overlay').addClass('invisible');
+
+        var url = "/cliente-saldo";
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (response) {
+                console.log(response.saldo);
+                $('#idSaldo').empty();
+                $('#idSaldo').text('Saldo actual disponible: $' + response.saldo + '.00');
+            },
+            error: function (xhr, status, error) {
+                console.log('Error:', error);
+            }
+        });
     }
 
 
@@ -30,51 +45,51 @@ $(document).ready(function () {
         mostrarBusqueda();
     });
 
-    $(document).on('submit', '#paymentForm', function (event) {
-        event.preventDefault();
+    // $(document).on('submit', '#paymentForm', function (event) {
+    //     event.preventDefault();
 
-        $('#errorCarga').addClass('invisible');
-        $('#paymentForm .text-red-500').addClass('hidden').text('');
+    //     $('#errorCarga').addClass('invisible');
+    //     $('#paymentForm .text-red-500').addClass('hidden').text('');
 
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: $(this).serialize(),
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (response) {
-                if (response.success) {
-                    window.ocultarBusqueda();
-                    $('#idSaldo').empty();
-                    $('#idSaldo').text('Saldo actual disponible: $' + response.saldo + '.00');
-                    $('#contenedorSaldoCargado h2').empty();
-                    $('#contenedorSaldoCargado h2').text(response.mensaje);
-                    $('#contenedorSaldoCargado').removeClass('invisible');
-                } else {
-                    $('#errorCarga').empty();
-                    $('#errorCarga').text(response.mensaje);
-                    $('#errorCarga').removeClass('invisible');
-                }
-            },
-            error: function (xhr) {
-                if (xhr.status === 422) {
-                    const errors = xhr.responseJSON.errors;
-                    for (let key in errors) {
-                        // Seleccionar el campo y buscar un mensaje de error asociado
-                        let errorElement = $(`#${key}`).next('.text-red-500');
-                        if (errorElement.length) {
-                            // Mostrar el mensaje si el elemento ya existe
-                            errorElement.removeClass('hidden').text(errors[key][0]);
-                        } else {
-                            // Crear el mensaje de error si no existe
-                            $(`#${key}`).after(`<div class="text-red-500 text-sm mt-1">${errors[key][0]}</div>`);
-                        }
-                    }
-                } else {
-                    alert('Ocurrió un error inesperado. Por favor, intenta de nuevo.');
-                }
-            }
-        });
-    });
+    //     $.ajax({
+    //         url: $(this).attr('action'),
+    //         type: 'POST',
+    //         data: $(this).serialize(),
+    //         headers: {
+    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //         },
+    //         success: function (response) {
+    //             if (response.success) {
+    //                 window.ocultarBusqueda();
+    //                 $('#idSaldo').empty();
+    //                 $('#idSaldo').text('Saldo actual disponible: $' + response.saldo + '.00');
+    //                 $('#contenedorSaldoCargado h2').empty();
+    //                 $('#contenedorSaldoCargado h2').text(response.mensaje);
+    //                 $('#contenedorSaldoCargado').removeClass('invisible');
+    //             } else {
+    //                 $('#errorCarga').empty();
+    //                 $('#errorCarga').text(response.mensaje);
+    //                 $('#errorCarga').removeClass('invisible');
+    //             }
+    //         },
+    //         error: function (xhr) {
+    //             if (xhr.status === 422) {
+    //                 const errors = xhr.responseJSON.errors;
+    //                 for (let key in errors) {
+    //                     // Seleccionar el campo y buscar un mensaje de error asociado
+    //                     let errorElement = $(`#${key}`).next('.text-red-500');
+    //                     if (errorElement.length) {
+    //                         // Mostrar el mensaje si el elemento ya existe
+    //                         errorElement.removeClass('hidden').text(errors[key][0]);
+    //                     } else {
+    //                         // Crear el mensaje de error si no existe
+    //                         $(`#${key}`).after(`<div class="text-red-500 text-sm mt-1">${errors[key][0]}</div>`);
+    //                     }
+    //                 }
+    //             } else {
+    //                 alert('Ocurrió un error inesperado. Por favor, intenta de nuevo.');
+    //             }
+    //         }
+    //     });
+    // });
 });

@@ -14,6 +14,7 @@ use App\Http\Controllers\InfraccionController;
 use App\Http\Controllers\AdministrativoController;
 use App\Http\Controllers\ManualController;
 use App\Http\Controllers\MultaController;
+use App\Http\Controllers\PagoController;
 
 // Vista principal
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -35,14 +36,16 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     Route::post('/bicicletas', [BicicletaController::class, 'store'])->name('bicicletas.store');
     Route::get('/bicicletas/edit/{bicicleta}', [BicicletaController::class, 'edit'])->name('bicicletas.edit');
     Route::put('/bicicletas/{bicicleta}', [BicicletaController::class, 'update'])->name('bicicletas.update');
+    Route::post('/bicicletas/{bicicleta}/cambiar-estado', [BicicletaController::class, 'cambiarEstado'])->name('bicicletas.cambiar-estado');
     Route::delete('/bicicletas/{bicicleta}', [BicicletaController::class, 'destroy'])->name('bicicletas.destroy');
-
+    
     // Rutas para gestión de estaciones
     Route::get('/estaciones', [EstacionController::class, 'index'])->name('estaciones.index');
     Route::get('/estaciones/create', [EstacionController::class, 'create'])->name('estaciones.create');
     Route::post('/estaciones', [EstacionController::class, 'store'])->name('estaciones.store');
     Route::get('/estaciones/edit/{estacion}', [EstacionController::class, 'edit'])->name('estaciones.edit');
     Route::put('/estaciones/{estacion}', [EstacionController::class, 'update'])->name('estaciones.update');
+    Route::post('/estaciones/{estacion}/cambiar-estado', [EstacionController::class, 'cambiarEstado'])->name('estaciones.cambiar-estado');
     Route::delete('/estaciones/{estacion}', [EstacionController::class, 'destroy'])->name('estaciones.destroy');
 
     // Rutas para gestion tarifas
@@ -148,6 +151,12 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
     Route::get('/historial-movimiento', [HistorialController::class, 'historialMovimientos'])->name('historiales.movimientos');
 
     Route::post('multas/pagar/{multa}', [MultaController::class, 'pagar'])->name('multas.pagar');
+
+    Route::post('/pago/procesar', [PagoController::class, 'procesarPago'])->name('pago.procesar');
+    Route::get('/pago/exito', [PagoController::class, 'exito'])->name('pago.exito');
+    Route::get('/pago/error', [PagoController::class, 'error'])->name('pago.error');
+
+    Route::get('/cliente-saldo', [ClienteController::class, 'mostrarSaldo'])->name('cliente-saldo');
 });
 
 
