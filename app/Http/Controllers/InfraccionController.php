@@ -29,18 +29,19 @@ class InfraccionController extends Controller
         $request->validate([
             'patente' => 'required|string',
             'motivo' => 'required|string',
-            'puntos' => 'required|integer|min:0',
+            'puntos' => 'required|integer|min:0|max:200'],[
+            'puntos.required' => 'El valor debe de ser mayor o igual a 10 y menor o igual a 200 <br>'
         ]);
 
         $bicicleta = Bicicleta::where('patente', $request->patente)->first();
         if (!$bicicleta) {
-            return redirect()->back()->with('error', 'Bicicleta no encontrada')->withInput();
+            return redirect()->back()->with('error', 'La bicicleta de patente ' . $request->patente . ' no existe')->withInput();
         }
 
         $reserva = $bicicleta->reservas()->whereIn('id_estado', [EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->first();
 
         if (!$reserva) {
-            return redirect()->back()->with('error', 'No se encontró una reserva activa para esta bicicleta')->withInput();
+            return redirect()->back()->with('error', 'No se encontró una reserva activa para esta bicicleta '. strtoupper($request->patente))->withInput();
         }
         if ($request->puntos > 0) {
             $puntos_a_restar = $request->puntos * -1;

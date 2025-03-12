@@ -38,7 +38,7 @@ Route::middleware(['auth', 'role:administrativo'])->group(function () {
     Route::put('/bicicletas/{bicicleta}', [BicicletaController::class, 'update'])->name('bicicletas.update');
     Route::post('/bicicletas/{bicicleta}/cambiar-estado', [BicicletaController::class, 'cambiarEstado'])->name('bicicletas.cambiar-estado');
     Route::delete('/bicicletas/{bicicleta}', [BicicletaController::class, 'destroy'])->name('bicicletas.destroy');
-    
+
     // Rutas para gestión de estaciones
     Route::get('/estaciones', [EstacionController::class, 'index'])->name('estaciones.index');
     Route::get('/estaciones/create', [EstacionController::class, 'create'])->name('estaciones.create');
@@ -71,6 +71,7 @@ Route::middleware(['auth', 'role:inspector'])->group(function () {
     Route::post('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
     Route::put('/bicicletas/deshabilitar', [BicicletaController::class, 'deshabilitar'])->name('bicicletas.deshabilitar');
     Route::post('/generar-infraccion', [InfraccionController::class, 'generarInfraccion'])->name('infraccion.generar');
+
 });
 
 //* CLIENTE

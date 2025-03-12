@@ -11,17 +11,17 @@
         <p class="text-xl font-semibold text-pc-texto-h">¡Hola <span class="font-bold text-pc-rojo">
                 {{ Auth::user()->nombre }} {{ Auth::user()->apellido }}</span>!</p>
     </div>
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+            <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <span class="block sm:inline">{{ session('error') }}</span>
+        </div>
+    @endif
     <div class="grid grid-cols-2 gap-6">
-        @if (session('success'))
-            <div class="alert alert-success mb-4 text-white">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger text-white">
-                {{ session('error') }}
-            </div>
-        @endif
         <a class=" bg-gray-50 w-full h-36 p-4 shadow-md rounded-xl flex flex-col items-center gap-1"
             href="{{ route('inspector.bicicletas') }}">
             <img src="img/bicicleta.png" alt="" class="h-14 w-14">
