@@ -17,7 +17,7 @@ class BicicletaController extends Controller
 {
     /**
      * Muestra el listado de bicicletas.
-     * 
+     *
      * @return \Illuminate\View\View
      */
     public function index(): View
@@ -58,7 +58,7 @@ class BicicletaController extends Controller
 
     /**
      * Muestra el formulario para crear una bicicleta.
-     * 
+     *
      * @return \Illuminate\View\View
      */
     public function create()
@@ -85,9 +85,9 @@ class BicicletaController extends Controller
 
     /**
      * Muestra el formulario para editar una bicicleta.
-     * 
+     *
      * @param Bicicleta $bicicleta
-     * 
+     *
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function edit(Bicicleta $bicicleta)
@@ -173,12 +173,16 @@ class BicicletaController extends Controller
             $estadoDeshabilitado = 2;
             $bicicleta->id_estado = $estadoDeshabilitado;
             $bicicleta->save();
-            return redirect()->route('inspector.bicicletas')->with('success', "Bicicleta {$bicicleta->patente} deshabilitada correctamente");
+            return redirect()->route('inicio')->with('success', "Bicicleta {$bicicleta->patente} deshabilitada correctamente");
         }
     }
 
     public function vistaDeshabilitar()
     {
         return view('inspector.bicicletas');
+    }
+    public function volverInicio()
+    {
+        return view('inspector.inicio');
     }
 }
