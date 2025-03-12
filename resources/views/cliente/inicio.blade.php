@@ -120,6 +120,28 @@
                     </button>
                 </div>
             @endif
+            @if ($reserva_ajena)
+                <div class="bg-gradient-to-br from-pc-celeste to-pc-azul w-full p-4 shadow-md rounded-xl flex flex-col">
+                    <h2
+                        class="text-sm text-left uppercase font-semibold text-slate-50 tracking-wider border-b-2 border-slate-50">
+                        Devolución
+                    </h2>
+                    <p class="mt-4 text-left text-slate-50">Devolvé la bicicleta alquilada por <span
+                            class="font-semibold">{{ $nombre_cliente_reservo }}</span>. en la
+                        estación <span class="font-semibold">{{ $reserva_ajena['estacion_devolucion_nombre'] }}</span>,
+                        tenes tiempo hasta
+                        las
+                        <span class="font-semibold">{{ $hora_devolucion_reserva_ajena_15_mas }}hs</span>.
+                    </p>
+                    <p class="mt-4 text-left text-slate-50 text-sm">Para <span class="font-semibold">devolver</span>,
+                        clickea en
+                        el botón de abajo.</p>
+                    <button class="mt-3 text-center">
+                        <a href="{{ route('alquiler_ajeno') }}"
+                            class="py-2 px-4 rounded-full font-semibold bg-slate-50 shadow-sm">Devolver Bicicleta</a>
+                    </button>
+                </div>
+            @endif
 
 
 

@@ -6,8 +6,10 @@ use Illuminate\View\View;
 use App\Models\Configuracion;
 use App\Models\Cliente;
 use App\Models\Reserva;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 class InicioController extends Controller
 {
@@ -76,13 +78,14 @@ class InicioController extends Controller
             'puntaje' => $cliente->puntaje,
             'reservasRecientes' => $reservasRecientes
         ];
-        
+
         $reserva = $cliente->obtenerUltimaReserva();
         $hora_devolucion_reserva_15_mas = null;
         $hora_retiro_reserva_15_menos = null;
         $hora_retiro_reserva_15_mas = null;
         $estado = null;
-        
+
+
         if ($reserva) {
             $hora_retiro_reserva_15_menos = $reserva->fecha_hora_retiro->copy()->subMinutes(15)->format('H:i');
             $hora_retiro_reserva_15_mas = $reserva->fecha_hora_retiro->copy()->addMinutes(15)->format('H:i');
@@ -90,7 +93,24 @@ class InicioController extends Controller
             $estado = $reserva->getNombreEstadoReserva();
             $reserva = $reserva->formatearDatosActiva();
         }
-        return view('cliente.inicio', compact('datos', 'estado', 'reserva', 'hora_retiro_reserva_15_menos', 'hora_retiro_reserva_15_mas', 'hora_devolucion_reserva_15_mas'));
+
+        $reserva_ajena = $cliente->obtenerReservaAjena();
+        $hora_devolucion_reserva_ajena_15_mas = null;
+        $estado_reserva_ajena = null;
+        $nombre_cliente_reservo = null;
+
+        if ($reserva_ajena) {
+            $hora_devolucion_reserva_ajena_15_mas = $reserva_ajena->fecha_hora_devolucion->copy()->addMinutes(15)->format('H:i');
+            // $estado_reserva_ajena = $reserva_ajena->getNombreEstadoReserva();
+            $nombre_cliente_reservo = DB::table('reservas')
+                ->join('usuarios as u', 'reservas.id_cliente_reservo', '=', 'u.id_usuario')
+                ->select(DB::raw("CONCAT(u.nombre, ' ', u.apellido) as nombre_cliente_reservo"))
+                ->where('reservas.id_reserva', '=', $reserva_ajena->id_reserva)
+                ->value('nombre_cliente_reservo');
+            $reserva_ajena = $reserva_ajena->formatearDatosActiva();
+        }
+
+        return view('cliente.inicio', compact('datos', 'estado', 'reserva', 'hora_retiro_reserva_15_menos', 'hora_retiro_reserva_15_mas', 'hora_devolucion_reserva_15_mas', 'reserva_ajena', 'hora_devolucion_reserva_ajena_15_mas', 'estado_reserva_ajena', 'nombre_cliente_reservo'));
     }
 
 

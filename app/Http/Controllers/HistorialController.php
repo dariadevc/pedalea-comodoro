@@ -67,7 +67,7 @@ class HistorialController extends Controller
                 )
                 ->where('reservas.id_cliente_reservo', $cliente->id_usuario)
                 ->whereBetween('reservas.fecha_hora_retiro', [$fechaInicio, $fechaFin])
-                ->whereIn('reservas.id_estado', [1, 2, 3, 4])
+                ->whereIn('reservas.id_estado', [1, 2, 3, 4, 5, 6])
                 ->orderBy('created_at', 'desc')
                 ->orderBy('fecha_hora_devolucion', 'desc')
                 ->paginate(10);

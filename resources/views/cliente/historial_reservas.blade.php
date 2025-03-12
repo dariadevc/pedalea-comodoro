@@ -87,7 +87,7 @@
                                             <span class="font-semibold text-sm text-gray-600 w-48 mr-3">Cliente
                                                 Devuelve</span>
                                             <span
-                                                class="text-gray-700 text-sm">{{ $reserva->apellido_usuario_devuelve . $reserva->nombre_usuario_devuelve }}</span>
+                                                class="text-gray-700 text-sm">{{ $reserva->apellido_usuario_devuelve . ' ' . $reserva->nombre_usuario_devuelve }}</span>
                                         </div>
                                     @endif
                                     @if ($reserva->puntaje)

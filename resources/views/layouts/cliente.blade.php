@@ -13,8 +13,6 @@
 </head>
 
 <body class="antialiased font-Montserrat bg-gray-100">
-
-
     <div x-data="{ active: 'inicio', open: false }" @resize.window="if (window.innerWidth >= 1024) open = true" @click.away="open = false"
         x-init="window.addEventListener('resize', () => {
             if (window.innerWidth < 1024) open = false;
@@ -99,6 +97,9 @@
                             @else
                                 <x-item-sidebar ruta="reservar" @click="open = false">Reservar
                                     Bicicleta</x-item-sidebar>
+                            @endif
+                            @if ($existe_reserva_ajena)
+                                <x-item-sidebar ruta="alquiler_ajeno" @click="open = false">Alquiler Ajeno</x-item-sidebar>
                             @endif
                             <x-item-sidebar ruta="ver-mapa" @click="open = false"> Estaciones</x-item-sidebar>
                         </ul>

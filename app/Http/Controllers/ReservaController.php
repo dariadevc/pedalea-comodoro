@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\Cliente;
 use App\Models\User;
 use App\Models\Danio;
+use App\Models\Cliente;
 use App\Models\Reserva;
 use App\Models\Estacion;
 use Illuminate\View\View;
@@ -269,6 +269,41 @@ class ReservaController extends Controller
         return view('cliente.alquiler_actual', compact('reserva', 'estado_reserva', 'usuario_devuelve'));
     }
 
+    /**
+     * Muestra el alquiler actual.
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function indexAlquilerAjeno()
+    {
+        /** @var \App\Models\User $usuario */
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+
+        if ($cliente->estoySuspendido()) {
+            return $this->redireccionarInicio('error', 'Su cuenta se encuentra suspendida.');
+        }
+
+        $reserva_ajena = $cliente->obtenerReservaAjena();
+        if (!$reserva_ajena) {
+            return $this->redireccionarInicio('error', 'No tiene que realizar ninguna devolución ajena.');
+        }
+
+        $estado_reserva_ajena = $reserva_ajena->getNombreEstadoReserva();
+
+        if (!$reserva_ajena->clienteDevuelve) {
+            $usuario_devuelve = null;
+            $usuario_reservo = null;
+        } else {
+            $usuario_devuelve = $reserva_ajena->clienteDevuelve->usuario;
+            $usuario_reservo = $reserva_ajena->clienteReservo->usuario;
+        }
+
+
+        $reserva_ajena = $reserva_ajena->formatearDatosActiva();
+        return view('cliente.alquiler_ajeno', compact('reserva_ajena', 'estado_reserva_ajena', 'usuario_devuelve', 'usuario_reservo'));
+    }
+
     // -------------
     // REASIGNAR
     // -------------
@@ -432,7 +467,7 @@ class ReservaController extends Controller
      * 
      * @return string|void
      */
-    public function reservarPasos(Request $request): string
+    public function reservarPasos(Request $request)
     {
         switch ($request->input('paso')) {
             case '1':
@@ -462,11 +497,11 @@ class ReservaController extends Controller
         /** @var \App\Models\User $usuario */
         $usuario = Auth::user();
         $cliente = $usuario->obtenerCliente();
-        
+
         /** @var \App\Models\Reserva $reserva */
         $reserva = session('reserva_pendiente');
-        
-        
+
+
         if ($reserva->reservar($cliente, $usuario)) {
             session()->forget('reserva_pendiente');
             return response()->json([
@@ -688,6 +723,12 @@ class ReservaController extends Controller
         return redirect()->back()->with('error', 'No hay ningun alquiler activo.');
     }
 
+
+    // -------------
+    // *DEVOLVER
+    // -------------
+
+
     /**
      * Muestra el formulario para devolver una bicicleta.
      * 
@@ -704,8 +745,31 @@ class ReservaController extends Controller
             return $this->redireccionarInicio('error', 'No tiene un alquiler activo.');
         }
 
+        $id_reserva = $reserva->id_reserva;
+
         session()->put('reserva_devolver', $reserva);
-        return view('cliente.devolver');
+        return view('cliente.devolver', compact('id_reserva'));
+    }
+
+    /**
+     * Muestra el formulario para devolver una bicicleta ajena.
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function indexDevolverAjeno()
+    {
+        /** @var \App\Models\User $usuario */
+        $usuario = Auth::user();
+        $cliente = $usuario->obtenerCliente();
+        $reserva = $cliente->obtenerReservaAjena();
+
+        if (!$reserva) {
+            return $this->redireccionarInicio('error', 'No tiene un alquiler ajeno.');
+        }
+        $id_reserva = $reserva->id_reserva;
+
+        session()->put('reserva_devolver_ajena', $reserva);
+        return view('cliente.devolver', compact('id_reserva'));
     }
 
     /**
@@ -713,10 +777,10 @@ class ReservaController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function mostrarDanios(Request $request): JsonResponse
+    public function mostrarDanios($id_reserva): JsonResponse
     {
         $danios = Danio::all();
-        $vista_html = view('cliente.partials.devolver.formulario-danio', compact('danios'))->render();
+        $vista_html = view('cliente.partials.devolver.formulario-danio', compact('danios', 'id_reserva'))->render();
         return response()->json([
             'success' => true,
             'html' => $vista_html,
@@ -730,7 +794,7 @@ class ReservaController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function guardarDanios(Request $request): JsonResponse
+    public function guardarDanios(Request $request, $id_reserva): JsonResponse
     {
         $validador = Validator::make($request->all(), [
             'elementos' => 'required|array|min:1',
@@ -745,9 +809,17 @@ class ReservaController extends Controller
         }
 
         $elementosSeleccionados = $request->input('elementos', []);
-        session()->put('daniosSeleccionados', $elementosSeleccionados);
+        if (session()->has('reserva_devolver_ajena')) {
+            if (session('reserva_devolver_ajena')->id_reserva == $id_reserva) {
+                session()->put('daniosSeleccionadosAjena', $elementosSeleccionados);
+            } else {
+                session()->put('daniosSeleccionados', $elementosSeleccionados);
+            }
+        } else {
+            session()->put('daniosSeleccionados', $elementosSeleccionados);
+        }
 
-        $vista_calificar = $this->mostrarCalificacion();
+        $vista_calificar = $this->mostrarCalificacion($id_reserva);
         return response()->json(['success' => true, 'html' => $vista_calificar]);
     }
 
@@ -756,10 +828,11 @@ class ReservaController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sinDanios(): JsonResponse
+    public function sinDanios($id_reserva): JsonResponse
     {
         session()->put('daniosSeleccionados', []);
-        $vista_calificar = $this->mostrarCalificacion();
+        session()->put('daniosSeleccionadosAjena', []);
+        $vista_calificar = $this->mostrarCalificacion($id_reserva);
         return response()->json(['success' => true, 'html' => $vista_calificar]);
     }
 
@@ -768,14 +841,29 @@ class ReservaController extends Controller
      * 
      * @return string Retorna una vista renderizada.
      */
-    public function mostrarCalificacion(): string
+    public function mostrarCalificacion($id_reserva): string
     {
-        /** @var Reserva $reserva */
-        $reserva = session('reserva_devolver');
-        $estacion_retiro = $reserva->estacionRetiro->nombre;
-        $estacion_devolucion = $reserva->estacionDevolucion->nombre;
-        session()->put('son_iguales', $estacion_retiro === $estacion_devolucion);
-        return view('cliente.partials.devolver.formulario-calificacion', compact('estacion_retiro', 'estacion_devolucion'))->render();
+        if (session()->has('reserva_devolver_ajena')) {
+            if (session('reserva_devolver_ajena')->id_reserva == $id_reserva) {
+                $reserva_ajena = session('reserva_devolver_ajena');
+                $estacion_retiro = $reserva_ajena->estacionRetiro->nombre;
+                $estacion_devolucion = $reserva_ajena->estacionDevolucion->nombre;
+                session()->put('son_iguales_ajena', $estacion_retiro === $estacion_devolucion);
+            } else {
+                /** @var Reserva $reserva */
+                $reserva = session('reserva_devolver');
+                $estacion_retiro = $reserva->estacionRetiro->nombre;
+                $estacion_devolucion = $reserva->estacionDevolucion->nombre;
+                session()->put('son_iguales', $estacion_retiro === $estacion_devolucion);
+            }
+        } else {
+            /** @var Reserva $reserva */
+            $reserva = session('reserva_devolver');
+            $estacion_retiro = $reserva->estacionRetiro->nombre;
+            $estacion_devolucion = $reserva->estacionDevolucion->nombre;
+            session()->put('son_iguales', $estacion_retiro === $estacion_devolucion);
+        }
+        return view('cliente.partials.devolver.formulario-calificacion', compact('estacion_retiro', 'estacion_devolucion', 'id_reserva'))->render();
     }
 
     /**
@@ -785,70 +873,91 @@ class ReservaController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function guardarCalificacion(Request $request): JsonResponse
+    public function guardarCalificacion(Request $request, $id_reserva): JsonResponse
     {
-        if (!session('son_iguales')) {
-
-            $validador = Validator::make($request->all(), [
-                'calificacion_retiro' => 'required|integer|min:1|max:5',
-                'calificacion_devolucion' => 'required|integer|min:1|max:5',
-            ], [
-                'calificacion_retiro.required' => 'La calificación de la estación de retiro es obligatoria.',
-                'calificacion_retiro.integer' => 'La calificación debe ser un número entero.',
-                'calificacion_retiro.min' => 'La calificación debe ser al menos 1.',
-                'calificacion_retiro.max' => 'La calificación no puede ser mayor a 5.',
-                'calificacion_devolucion.required' => 'La calificación de la estación de devolución es obligatoria.',
-                'calificacion_devolucion.integer' => 'La calificación debe ser un número entero.',
-                'calificacion_devolucion.min' => 'La calificación debe ser al menos 1.',
-                'calificacion_devolucion.max' => 'La calificación no puede ser mayor a 5.',
-            ]);
-        } else {
-            $validador = Validator::make($request->all(), [
-                'calificacion_retiro' => 'required|integer|min:1|max:5',
-            ], [
-                'calificacion_retiro.required' => 'La calificación de la estación es obligatoria.',
-                'calificacion_retiro.integer' => 'La calificación debe ser un número entero.',
-                'calificacion_retiro.min' => 'La calificación debe ser al menos 1.',
-                'calificacion_retiro.max' => 'La calificación no puede ser mayor a 5.',
-            ]);
+        $requiresDevolucion = false;
+        if (session()->has('reserva_devolver')) {
+            // Si la reserva es la propia, se usa 'son_iguales'; de lo contrario, se usa 'son_iguales_ajena'
+            $requiresDevolucion = (session('reserva_devolver')->id_reserva == $id_reserva)
+                ? !session('son_iguales')
+                : !session('son_iguales_ajena');
+        } elseif (session()->has('reserva_devolver_ajena')) {
+            $requiresDevolucion = !session('son_iguales_ajena');
         }
+    
+        // Configura las reglas y mensajes de validación según si se requiere o no la calificación de devolución.
+        if ($requiresDevolucion) {
+            $rules = [
+                'calificacion_retiro'     => 'required|integer|min:1|max:5',
+                'calificacion_devolucion' => 'required|integer|min:1|max:5',
+            ];
+            $messages = [
+                'calificacion_retiro.required'     => 'La calificación de la estación de retiro es obligatoria.',
+                'calificacion_retiro.integer'      => 'La calificación debe ser un número entero.',
+                'calificacion_retiro.min'          => 'La calificación debe ser al menos 1.',
+                'calificacion_retiro.max'          => 'La calificación no puede ser mayor a 5.',
+                'calificacion_devolucion.required' => 'La calificación de la estación de devolución es obligatoria.',
+                'calificacion_devolucion.integer'  => 'La calificación debe ser un número entero.',
+                'calificacion_devolucion.min'      => 'La calificación debe ser al menos 1.',
+                'calificacion_devolucion.max'      => 'La calificación no puede ser mayor a 5.',
+            ];
+        } else {
+            $rules = [
+                'calificacion_retiro' => 'required|integer|min:1|max:5',
+            ];
+            $messages = [
+                'calificacion_retiro.required' => 'La calificación de la estación es obligatoria.',
+                'calificacion_retiro.integer'  => 'La calificación debe ser un número entero.',
+                'calificacion_retiro.min'      => 'La calificación debe ser al menos 1.',
+                'calificacion_retiro.max'      => 'La calificación no puede ser mayor a 5.',
+            ];
+        }
+    
+        $validador = Validator::make($request->all(), $rules, $messages);
+    
         if ($validador->fails()) {
             return response()->json(['errors' => $validador->errors()], 422);
         }
-
-        if (session('son_iguales')) {
-            $calificaciones = [
-                'id_tipo_calificacion_retiro' => $request->calificacion_retiro,
-            ];
-        } else {
-            $calificaciones = [
-                'id_tipo_calificacion_retiro' => $request->calificacion_retiro,
-                'id_tipo_calificacion_devolucion' => $request->calificacion_devolucion
-            ];
+    
+        // Determina si se trata de una reserva "ajena"
+        $isAjenna = session()->has('reserva_devolver_ajena') 
+            && session('reserva_devolver_ajena')->id_reserva == $id_reserva;
+    
+        // Obtiene la bandera 'son_iguales' según corresponda
+        $flagSonIguales = $isAjenna ? session('son_iguales_ajena') : session('son_iguales');
+    
+        // Prepara las calificaciones a guardar
+        $calificaciones = [
+            'id_tipo_calificacion_retiro' => $request->calificacion_retiro,
+        ];
+        if (!$flagSonIguales) {
+            $calificaciones['id_tipo_calificacion_devolucion'] = $request->calificacion_devolucion;
         }
-        session()->put('calificaciones', $calificaciones);
-
-
-        $vista_html = $this->mostrarDevolverBicicleta();
-
-        // return response()->json([
-        //     'hola' => $calificaciones,
-        //     'son_iguales' => session('son_iguales'),
-        // ]);
+    
+        // Guarda las calificaciones en sesión según el tipo
+        if ($isAjenna) {
+            session()->put('calificaciones_ajena', $calificaciones);
+        } else {
+            session()->put('calificaciones', $calificaciones);
+        }
+    
+        $vista_html = $this->mostrarDevolverBicicleta($id_reserva);
+    
         return response()->json([
             'success' => true,
-            'html' => $vista_html,
+            'html'    => $vista_html,
         ]);
     }
+    
 
     /**
      * Muestra el formulario para devolver una bicicleta.
      * 
      * @return string Retorna una vista renderizada.
      */
-    public function mostrarDevolverBicicleta(): string
+    public function mostrarDevolverBicicleta($id_reserva): string
     {
-        return view('cliente.partials.devolver.confirmacion-devolucion')->render();
+        return view('cliente.partials.devolver.confirmacion-devolucion', compact('id_reserva'))->render();
     }
 
     /**
@@ -856,35 +965,74 @@ class ReservaController extends Controller
      * 
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function devolverConfirmar(): RedirectResponse
+    public function devolverConfirmar($id_reserva): RedirectResponse
     {
-        if (!session()->has('daniosSeleccionados')) {
-            return redirect()->route('devolver.index')->with('error', 'No eligio si tuvo daños o no la bicicleta.');
+        if (session()->has('reserva_devolver_ajena')) {
+            if (session('reserva_devolver_ajena')->id_reserva == $id_reserva) {
+                if (!session()->has('daniosSeleccionadosAjena')) {
+                    return redirect()->route('devolver.index')->with('error', 'No eligio si tuvo daños o no la bicicleta.');
+                }
+                if (!session()->has('calificaciones_ajena')) {
+                    return redirect()->route('devolver.index')->with('error', 'No califico las estaciones de devolucion y retiro.');
+                }
+                if (!session()->has('reserva_devolver_ajena')) {
+                    return redirect()->route('devolver.index')->with('error', 'No se encontro la reserva.');
+                }
+                /** @var Reserva $reserva */
+                $reserva = session('reserva_devolver_ajena') ?? null;
+                $daniosSeleccionados = session('daniosSeleccionadosAjena');
+                $calificaciones = session('calificaciones_ajena');
+                $son_iguales = session('son_iguales_ajena');
+            } else {
+                if (!session()->has('daniosSeleccionados')) {
+                    return redirect()->route('devolver.index')->with('error', 'No eligio si tuvo daños o no la bicicleta.');
+                }
+                if (!session()->has('calificaciones')) {
+                    return redirect()->route('devolver.index')->with('error', 'No califico las estaciones de devolucion y retiro.');
+                }
+                if (!session()->has('reserva_devolver')) {
+                    return redirect()->route('devolver.index')->with('error', 'No se encontro la reserva.');
+                }
+                /** @var Reserva $reserva */
+                $reserva = session('reserva_devolver') ?? null;
+                $daniosSeleccionados = session('daniosSeleccionados');
+                $calificaciones = session('calificaciones');
+                $son_iguales = session('son_iguales');
+            }
+        } else {
+            if (!session()->has('daniosSeleccionados')) {
+                return redirect()->route('devolver.index')->with('error', 'No eligio si tuvo daños o no la bicicleta.');
+            }
+            if (!session()->has('calificaciones')) {
+                return redirect()->route('devolver.index')->with('error', 'No califico las estaciones de devolucion y retiro.');
+            }
+            if (!session()->has('reserva_devolver')) {
+                return redirect()->route('devolver.index')->with('error', 'No se encontro la reserva.');
+            }
+            /** @var Reserva $reserva */
+            $reserva = session('reserva_devolver') ?? null;
+            $daniosSeleccionados = session('daniosSeleccionados');
+            $calificaciones = session('calificaciones');
+            $son_iguales = session('son_iguales');
         }
-        if (!session()->has('calificaciones')) {
-            return redirect()->route('devolver.index')->with('error', 'No califico las estaciones de devolucion y retiro.');
-        }
-        if (!session()->has('reserva_devolver')) {
-            return redirect()->route('devolver.index')->with('error', 'No se encontro la reserva.');
-        }
-        /** @var Reserva $reserva */
-        $reserva = session('reserva_devolver') ?? null;
-        
+
         if (!$reserva) {
             return $this->redireccionarInicio('error', 'No se encontro la reserva.');
         }
-
-        $daniosSeleccionados = session('daniosSeleccionados');
-        $calificaciones = session('calificaciones');
         $danios_objetos = [];
         foreach ($daniosSeleccionados as $id_danio) {
             $danios_objetos[] = Danio::findOrFail($id_danio);
         }
-        $reserva->devolver($danios_objetos, $calificaciones, session('son_iguales'));
+
+        $reserva->devolver($danios_objetos, $calificaciones, $son_iguales);
         session()->forget('reserva_devolver');
         session()->forget('daniosSeleccionados');
         session()->forget('calificaciones');
         session()->forget('son_iguales');
+        session()->forget('reserva_devolver_ajena');
+        session()->forget('daniosSeleccionadosAjena');
+        session()->forget('calificaciones_ajena');
+        session()->forget('son_iguales_ajena');
         return $this->redireccionarInicio('success', 'Alquiler finalizado con éxito.');
     }
 }

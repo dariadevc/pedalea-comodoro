@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
@@ -26,12 +24,18 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('layouts.cliente', function ($view) {
             if (Auth::check()) {
-                /** @var \App\Models\User $usuario */
+                /** @var Usuario */
                 $usuario = Auth::user();
-                $reserva = $usuario->obtenerCliente()->obtenerReserva();
-                $view->with('reserva', $reserva);
+                $cliente = $usuario->obtenerCliente();
+                $reserva = $cliente->obtenerReserva();
+                $existe_reserva_ajena = $cliente->obtenerReservaAjena() ? true : false;
+                $view->with([
+                    'reserva' => $reserva,
+                    'existe_reserva_ajena' => $existe_reserva_ajena,
+                ]);
             }
         });
+
         Paginator::useTailwind();
     }
 }

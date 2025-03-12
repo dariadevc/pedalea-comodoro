@@ -29,5 +29,6 @@ export default defineConfig({
         alias: {
             $: 'jquery',
         },
+    cors: true,
     },
 });

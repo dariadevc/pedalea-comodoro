@@ -28,7 +28,7 @@ class Cliente extends Model
 
     protected $casts = [
         'fecha_nacimiento' => 'date',
-    ]; 
+    ];
 
     /**
      * Obtener una reserva activa o modificada, si no existe devuelve null.
@@ -48,6 +48,11 @@ class Cliente extends Model
     public function obtenerReservaAlquiladaReasignada(): ?Reserva
     {
         return $this->reservaReservo->whereIn('id_estado', [EstadoReserva::ALQUILADA, EstadoReserva::REASIGNADA])->first();
+    }
+
+    public function obtenerReservaAjena(): ?Reserva
+    {
+        return $this->reservaDevuelve()->where('id_cliente_devuelve', $this->id_usuario)->where('id_estado', [EstadoReserva::REASIGNADA])->first();
     }
 
     /**

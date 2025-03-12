@@ -35,7 +35,7 @@ class Reserva extends Model
         'id_reserva',
     ];
 
-    protected $dates = [
+    protected $casts = [
         'fecha_hora_devolucion',
         'fecha_hora_retiro',
         'created_at'
