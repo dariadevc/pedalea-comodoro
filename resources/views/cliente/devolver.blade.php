@@ -4,7 +4,7 @@
 @section('nombre_seccion', 'Devolver')
 
 @section('contenido')
-    @include('cliente.partials.devolver.consulta-danios')
+    @include('cliente.partials.devolver.consulta-danios', ['id_reserva' => $id_reserva])
     <div id="contenedorFormularioDanios"></div>
     <div id="contenedorCalificarEstaciones"></div>
     <div id="contenedorDevolucion"></div>

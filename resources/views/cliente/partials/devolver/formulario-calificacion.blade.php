@@ -1,4 +1,4 @@
-<form id="formularioCalificacion" action="{{ route('devolver.guardar-calificacion') }}" method="POST" class="mt-4">
+<form id="formularioCalificacion" action="{{ route('devolver.guardar-calificacion', $id_reserva) }}" method="POST" class="mt-4">
     @csrf
     <div class="flex flex-col gap-4">
         @if ($estacion_retiro == $estacion_devolucion)

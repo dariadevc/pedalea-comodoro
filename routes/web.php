@@ -89,13 +89,14 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     // * DEVOLVER
     Route::get('/devolver', [ReservaController::class, 'indexDevolver'])->name('devolver.index');
-    Route::post('/devolver-mostrar-danios', [ReservaController::class, 'mostrarDanios'])->name('devolver.mostrar-danios');
-    Route::post('/devolver-guardar-danios', [ReservaController::class, 'guardarDanios'])->name('devolver.guardar-danios');
-    Route::post('/devolver-sin-danios', [ReservaController::class, 'sinDanios'])->name('devolver.sin-danios');
-    Route::post('/devolver-mostrar-calificacion', [ReservaController::class, 'mostrarCalificacion'])->name('devolver.mostrar-calificacion');
-    Route::post('/devolver-guardar-calificacion', [ReservaController::class, 'guardarCalificacion'])->name('devolver.guardar-calificacion');
-    Route::post('/devolver-mostrar-devolver-bicicleta', [ReservaController::class, 'mostrarDevolverBicicleta'])->name('devolver.mostrar-devolver-bicicleta');
-    Route::post('/devolver', [ReservaController::class, 'devolverConfirmar'])->name('devolver.confirmar');
+    Route::get('/devolver-ajeno', [ReservaController::class, 'indexDevolverAjeno'])->name('devolver.ajeno.index');
+    Route::post('/devolver-mostrar-danios/{id_reserva}', [ReservaController::class, 'mostrarDanios'])->name('devolver.mostrar-danios');
+    Route::post('/devolver-guardar-danios/{id_reserva}', [ReservaController::class, 'guardarDanios'])->name('devolver.guardar-danios');
+    Route::post('/devolver-sin-danios/{id_reserva}', [ReservaController::class, 'sinDanios'])->name('devolver.sin-danios');
+    Route::post('/devolver-mostrar-calificacion/{id_reserva}', [ReservaController::class, 'mostrarCalificacion'])->name('devolver.mostrar-calificacion');
+    Route::post('/devolver-guardar-calificacion/{id_reserva}', [ReservaController::class, 'guardarCalificacion'])->name('devolver.guardar-calificacion');
+    Route::post('/devolver-mostrar-devolver-bicicleta/{id_reserva}', [ReservaController::class, 'mostrarDevolverBicicleta'])->name('devolver.mostrar-devolver-bicicleta');
+    Route::post('/devolver/{id_reserva}', [ReservaController::class, 'devolverConfirmar'])->name('devolver.confirmar');
 
 
 

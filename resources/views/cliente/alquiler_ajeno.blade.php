@@ -42,6 +42,10 @@
                             Asignada</h3>
                         <p class="pl-4 text-lg">{{ $reserva_ajena['bicicleta_patente'] }}</p>
                     </div>
+                    <div class="flex flex-col gap-1">
+                        <h3 class="font-semibold text-sm text-pc-texto-h border-b-2 border-pc-azul self-start">Cliente Alquilo</h3>
+                        <p class="pl-4 text-lg">{{ $usuario_reservo->nombre . ' ' . $usuario_reservo->apellido }}</p>
+                    </div>
                     @if ($estado_reserva_ajena == 'Reasignada')
                         @include('cliente.partials.usuario_devuelve_reasignar', [
                             'usuario_devuelve' => $usuario_devuelve,
@@ -55,7 +59,7 @@
 
 
         <div id="contenedor_botones" class="flex flex-col gap-4 justify-center">
-            <a href="{{ route('devolver.index') }}"
+            <a href="{{ route('devolver.ajeno.index') }}"
                 class="shadow-md py-3 px-6 rounded-full transition duration-500 font-semibold uppercase bg-slate-50 outline outline-4 -outline-offset-4 outline-pc-azul text-pc-azul hover:bg-pc-azul hover:text-slate-50 text-center">Devolver
                 Bicicleta</a>
         </div>
