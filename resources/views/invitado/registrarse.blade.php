@@ -31,7 +31,7 @@
                     <legend class="font-semibold text-lg pr-2 text-pc-texto-h my-4">Información Personal</legend>
                     <div class="flex flex-col gap-2">
                         <label for="nombre">Nombre</label>
-                        <x-text-input type="text" name="nombre" id='nombre' placeholder="Jane" maxlength="25"
+                        <x-text-input type="text" name="nombre" id='nombre' placeholder="Francisco" maxlength="25"
                             value="{{ old('nombre') }}" required autofocus autocomplete="nombre" />
                         @error('nombre')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -40,7 +40,7 @@
 
                     <div class="flex flex-col gap-2">
                         <label for="apellido">Apellido</label>
-                        <x-text-input type="text" name="apellido" id='apellido' placeholder="Doe" maxlength="25"
+                        <x-text-input type="text" name="apellido" id='apellido' placeholder="Campos" maxlength="25"
                             value="{{ old('apellido') }}" required autocomplete="apellido" />
                         @error('apellido')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -79,13 +79,19 @@
                     </div>
 
                     <div class="flex flex-col gap-2">
-                        <label for="celular">Número de Celular</label>
-                        <x-text-input type="tel" name="numero_telefono" id="numero_telefono" placeholder="+542974148635"
-                            value="{{ old('numero_telefono') }}" required autocomplete="numero_telefono" />
+                        <label for="numero_telefono">Número de Celular</label>
+                        <div class="flex overflow-hidden">
+                            <span class="flex items-center px-3 p-2 rounded-l-xl bg-gray-200 text-black">+54</span>
+                            <input type="tel" name="numero_telefono" id="numero_telefono"
+                                placeholder="2974148635" value="{{ old('numero_telefono') }}" required
+                                autocomplete="numero_telefono" class="flex-1 border rounded-r-xl focus:ring-0 p-2 border-gray-300 w-full shadow-sm" />
+                        </div>
                         @error('numero_telefono')
                             <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
+
+
                 </fieldset>
 
                 {{-- INFORMACIÓN DE INICIO DE SESIÓN --}}
