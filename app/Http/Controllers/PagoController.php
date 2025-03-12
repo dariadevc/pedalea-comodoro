@@ -11,6 +11,15 @@ class PagoController extends Controller
 {
     public function procesarPago(Request $request)
     {
+        $request->validate([
+            'monto' => 'required|numeric|min:1|max:100000',
+        ], [
+            'monto.required' => 'El monto es obligatorio.',
+            'monto.numeric' => 'El monto debe ser un número.',
+            'monto.min' => 'El monto mínimo es de $1',
+            'monto.max' => 'El monto máximo es de $100.000'
+        ]);
+
         session(['monto_pago' => intval($request->monto)]);
 
         // Configurar Mercado Pago

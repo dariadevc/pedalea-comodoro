@@ -8,11 +8,10 @@
         <div class="text-2xl font-bold text-pc-texto-h mb-4 text-center hidden lg:block">
             <h2>Historial de Multas</h2>
         </div>
-        @if (session('success'))
-            <div class="alert alert-success bg-pc-azul text-white rounded-md p-4 mb-2 font-semibold text-center text-sm">
-                {{ session('success') }}
-            </div>
-        @endif
+        <div id="alertaSuccess" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative hidden"
+            role="alert">
+            <span class="block sm:inline"></span>
+        </div>
 
         {{-- FORMULARIO DE FECHAS --}}
         <section class="gap-2 bg-gray-50 py-2 px-6 rounded-full text-sm border-2 inline-flex w-fit">
@@ -48,12 +47,13 @@
                     <tbody>
                         @foreach ($multas as $multa)
                             <tr class="hover:bg-gray-100">
-                                <td class="py-2 px-4 border-b font-semibold">{{ $multa->nombre_estado }}</td>
+                                <td data-id="{{ $multa->id_multa }}" class="nombreEstado py-2 px-4 border-b font-semibold">
+                                    {{ $multa->nombre_estado }}</td>
                                 <td class="py-2 px-4 border-b">${{ $multa->monto }}</td>
                                 <td class="py-2 px-4 border-b">{{ $multa->fecha_hora->format('d/m/Y H:i') }}</td>
                                 <td class="py-2 px-4 border-b">{{ $multa->descripcion }}</td>
                                 @if ($multa->nombre_estado == 'Pendiente')
-                                    <td class="py-2 px-4 border-b">
+                                    <td data-id="{{ $multa->id_multa }}" class="columnaPagar py-2 px-4 border-b">
                                         <form action="{{ route('multas.pagar', $multa->id_multa) }}" method="POST"
                                             class="ajax-pago">
                                             @csrf
@@ -93,16 +93,22 @@
         </div>
     </div>
 
-    <div id="overlay" class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 invisible">
+    <div id="overlay" class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-30 invisible">
         <div id="tarjeta_cargar_saldo"
-            class="flex flex-col p-8 gap-2 bg-gray-50 border-blue-500 border-4 rounded-3xl shadow-lg w-3/4 max-w-md">
-            <button id="cerrar_tarjeta" class="place-self-end" onclick="ocultarBusqueda()">
-                <svg xmlns="http://www.w3.org/2000/svg" height="25px" width="25px" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" class="text-gray-800">
+            class="relative flex flex-col bg-white rounded-3xl shadow-xl w-[500px] max-w-[90%]">
+            
+            <!-- Botón de cerrar -->
+            <button id="cerrar_tarjeta" class="absolute right-6 top-6 text-gray-400 hover:text-gray-600 transition-colors" onclick="ocultarBusqueda()">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" width="20px" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            @include('cliente.partials.pasarela-de-pago')
+    
+            <!-- Contenido -->
+            <div class="p-8">
+                @include('cliente.partials.pasarela-de-pago')
+            </div>
         </div>
     </div>
 @endsection
@@ -131,8 +137,15 @@
                     },
                     dataType: 'json',
                     success: function(response) {
-                        console.log('Respuesta exitosa:', response);
+                        if (response.success) {
+                            $('#alertaSuccess').removeClass('hidden').find('span').text(response
+                                .mensaje);
+                            $(`.columnaPagar[data-id="${response.id_multa}"]`).addClass(
+                                'hidden');
+                            $(`.nombreEstado[data-id="${response.id_multa}"]`).text('Pagada');
+                        }
                     },
+
                     error: function(xhr, status, error) {
                         console.log(xhr);
                         console.log(status);

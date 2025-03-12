@@ -1,34 +1,50 @@
-<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-    @if (session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2" role="alert">
-            <span class="block sm:inline">{{ session('error') }}</span>
-        </div>
-    @endif
+<section id="cargar-saldo" class="relative flex flex-col items-center justify-center px-10 my-12 h-auto">
+    <div
+        class="container bg-gray-100 flex flex-col rounded-2xl shadow-lg max-w-4xl p-8 justify-center items-center gap-3 px-8 md:px-16">
+        <h2 class="font-bold text-3xl text-pc-azul border-b border-pc-azul py-4">Cargar Saldo</h2>
+        <p class="text-sm mt-4 text-pc-texto-p">Ingresa el monto que deseas cargar a tu cuenta</p>
 
-    <div id="errorCarga" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2 invisible"
-        role="alert">
-        <span class="block sm:inline"></span>
+        @if (session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative w-full my-2"
+                role="alert">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+        @endif
+
+        <div id="errorCarga"
+            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative w-full my-2 hidden"
+            role="alert">
+            <span class="block sm:inline"></span>
+        </div>
+
+        {{-- FORMULARIO --}}
+        <form id="cargarSaldoForm" class="flex flex-col gap-8 mt-2 items-center w-full">
+            @csrf
+            {{-- INFORMACIÓN DE PAGO --}}
+            <fieldset class="grid grid-cols-1 gap-6 border-t- w-full">
+                <div class="flex flex-col gap-2">
+                    <label for="monto">Monto a cargar</label>
+                    <div class="flex overflow-hidden">
+                        <span class="flex items-center px-3 p-2 rounded-l-xl bg-gray-200 text-black">$</span>
+                        <input type="number" name="monto" id="monto" placeholder="1000" required autofocus
+                            class="flex-1 border rounded-r-xl focus:ring-0 p-2 border-gray-300 w-full shadow-sm" />
+                    </div>
+                </div>
+            </fieldset>
+
+            <x-btn-azul-blanco type="submit">{{ 'Proceder al Pago' }}</x-btn-azul-blanco>
+        </form>
     </div>
-    <h2 class="text-2xl font-bold text-red-600 mb-4">Cargar Saldo</h2>
-    
-    <!-- Formulario con id y data-atributo para AJAX -->
-    <form id="cargarSaldoForm">
-        @csrf
-        <label for="monto">Monto a cargar:</label>
-        <input type="number" name="monto" required>
-        <button type="submit">Pagar</button>
-    </form>
-</div>
+</section>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
     $(document).ready(function() {
         $('#cargarSaldoForm').submit(function(e) {
             e.preventDefault();
 
             var formData = $(this).serialize();
-
+            $('#errorCarga').addClass('hidden').find('span').text('');
             $.ajax({
                 url: '{{ route('pago.procesar') }}',
                 type: 'POST',
@@ -37,69 +53,16 @@
                     window.open(response.redirect, '_blank');
                 },
                 error: function(xhr, status, error) {
-                    $('#errorCarga').text('Hubo un error al procesar el pago.').removeClass('invisible');
+                    var errorMessage = 'Hubo un error al procesar el pago.';
+
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+
+                    $('#errorCarga').removeClass('hidden').find('span').text(
+                        errorMessage);
                 }
             });
         });
     });
 </script>
-
-{{-- <form id="paymentForm" action="{{ route('cargar-saldo.store') }}" method="POST" class="space-y-4">
-    @csrf
-    <div>
-        <label for="amount" class="block text-lg font-medium text-gray-700">Monto</label>
-        <select id="amount" name="amount"
-            class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-600">
-            <option value="1000" {{ old('amount') == '1000' ? 'selected' : '' }}>$1.000,00</option>
-            <option value="2500" {{ old('amount') == '2500' ? 'selected' : '' }}>$2.500,00</option>
-            <option value="5000" {{ old('amount') == '5000' ? 'selected' : '' }}>$5.000,00</option>
-            <option value="7500" {{ old('amount') == '7500' ? 'selected' : '' }}>$7.500,00</option>
-            <option value="10000" {{ old('amount') == '10000' ? 'selected' : '' }}>$10.000,00</option>
-        </select>
-        @error('amount')
-            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-        @enderror
-    </div>
-    <div>
-        <label for="cardNumber" class="block text-lg font-medium text-gray-700">Número de Tarjeta</label>
-        <input type="text" id="cardNumber" name="cardNumber"
-            class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-600"
-            placeholder="1234 5678 9012 3456" maxlength="19" value="{{ old('cardNumber') }}">
-        @error('cardNumber')
-            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-        @enderror
-    </div>
-    <div>
-        <label for="cardName" class="block text-lg font-medium text-gray-700">Nombre en la Tarjeta</label>
-        <input type="text" id="cardName" name="cardName"
-            class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-600"
-            placeholder="Nombre Completo" value="{{ old('cardName') }}">
-        @error('cardName')
-            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-        @enderror
-    </div>
-    <div class="flex space-x-4">
-        <div class="w-1/2">
-            <label for="expiryDate" class="block text-lg font-medium text-gray-700">Fecha de Expiración</label>
-            <input type="text" id="expiryDate" name="expiryDate"
-                class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-600"
-                placeholder="MM/AA" maxlength="5" value="{{ old('expiryDate') }}">
-            @error('expiryDate')
-                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-            @enderror
-        </div>
-        <div class="w-1/2">
-            <label for="cvv" class="block text-lg font-medium text-gray-700">CVV</label>
-            <input type="password" id="cvv" name="cvv"
-                class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-600"
-                placeholder="123" maxlength="3" value="{{ old('cvv') }}">
-            @error('cvv')
-                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-            @enderror
-        </div>
-    </div>
-    <button type="submit"
-        class="w-full bg-red-600 text-white font-semibold py-2 rounded-md hover:bg-red-700 focus:ring-2 focus:ring-red-600">
-        PAGAR
-    </button>
-</form> --}}
