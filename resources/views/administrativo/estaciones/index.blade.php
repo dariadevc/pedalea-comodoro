@@ -71,34 +71,39 @@
                         </td>
                         <td class="p-2 md:border md:border-grey-600 text-left block md:table-cell">
                             <span class="inline-block w-1/3 md:hidden font-bold">Acciones</span>
-                            @if ($estacion->en_reserva_retiro || $estacion->en_reserva_devolucion)
-                                <button type="button"
-                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded" disabled>Editar</button>
-                                <button type="button"
-                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded ml-2" disabled>Deshabilitar</button>
-                                <button type="button"
-                                    class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded ml-2" disabled>Eliminar</button>
-                            @else
-                                <a href="{{ route('estaciones.edit', $estacion->id_estacion) }}"
-                                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 border border-blue-500 rounded">Editar</a>
-                                <form action="{{ route('estaciones.cambiar-estado', $estacion->id_estacion) }}"
-                                    method="POST" style="display:inline;">
-                                    @csrf
-                                    <input type="hidden" name="estado" value="{{ $estacion->id_estado }}">
-                                    @if ($estacion->id_estado == 1)
-                                        <button type="submit"
-                                            class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-1 px-2 border border-orange-500 rounded ml-2">Deshabilitar</button>
-                                    @else
-                                        <button type="submit"
-                                            class="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-2 border border-green-600 rounded ml-2">Habilitar</button>
-                                    @endif
-                                </form>
-                                <button type="button"
-                                    onclick="mostrarModalEliminar({{ $estacion->id_estacion }}, '{{ $estacion->nombre }}')"
-                                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 border border-red-500 rounded ml-2">
-                                    Eliminar
-                                </button>
-                            @endif
+                            <div class="flex flex-wrap items-center gap-2">
+                                @if ($estacion->en_reserva_retiro || $estacion->en_reserva_devolucion)
+                                    <button type="button"
+                                        class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded"
+                                        disabled>Editar</button>
+                                    <button type="button"
+                                        class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded"
+                                        disabled>Deshabilitar</button>
+                                    <button type="button"
+                                        class="bg-gray-400 text-white font-bold py-1 px-2 border border-gray-400 rounded"
+                                        disabled>Eliminar</button>
+                                @else
+                                    <a href="{{ route('estaciones.edit', $estacion->id_estacion) }}"
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 border border-blue-500 rounded inline-block text-center">Editar</a>
+                                    <form action="{{ route('estaciones.cambiar-estado', $estacion->id_estacion) }}"
+                                        method="POST" style="display:inline;">
+                                        @csrf
+                                        <input type="hidden" name="estado" value="{{ $estacion->id_estado }}">
+                                        @if ($estacion->id_estado == 1)
+                                            <button type="submit"
+                                                class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-1 px-2 border border-orange-500 rounded">Deshabilitar</button>
+                                        @else
+                                            <button type="submit"
+                                                class="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-2 border border-green-600 rounded">Habilitar</button>
+                                        @endif
+                                    </form>
+                                    <button type="button"
+                                        onclick="mostrarModalEliminar({{ $estacion->id_estacion }}, '{{ $estacion->nombre }}')"
+                                        class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 border border-red-500 rounded">
+                                        Eliminar
+                                    </button>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                 @endforeach
