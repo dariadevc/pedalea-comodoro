@@ -96,15 +96,21 @@
     </div>
 </div>
 
-<div id="overlay" class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 invisible">
-    <div id="tarjeta_cargar_saldo"
-        class="flex flex-col p-8 gap-2 bg-gray-50 border-blue-500 border-4 rounded-3xl shadow-lg w-3/4 max-w-md">
-        <button id="cerrar_tarjeta" class="place-self-end" onclick="ocultarBusqueda()">
-            <svg xmlns="http://www.w3.org/2000/svg" height="25px" width="25px" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor" class="text-gray-800">
+<div id="overlay" class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-30 invisible">
+    <div id="tarjeta_cargar_saldo" class="relative flex flex-col bg-white rounded-3xl shadow-xl w-[500px] max-w-[90%]">
+
+        <!-- Botón de cerrar -->
+        <button id="cerrar_tarjeta" class="absolute right-6 top-6 text-gray-400 hover:text-gray-600 transition-colors"
+            onclick="ocultarBusqueda()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20px" width="20px" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
-        @include('cliente.partials.pasarela-de-pago')
+
+        <!-- Contenido -->
+        <div class="p-8">
+            @include('cliente.partials.pasarela-de-pago')
+        </div>
     </div>
 </div>
